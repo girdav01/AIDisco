@@ -90,10 +90,10 @@ python ai_discovery_scan.py -v -o detailed_scan.json --collect-logs --log-format
 ├── example_log_collection.py   # Example script for log collection
 ├── requirements.txt            # Python dependencies
 ├── sigma_rules/               # SIGMA rules directory
-│   ├── ollama_detection.yml
-│   ├── lmstudio_detection.yml
-│   ├── gpt4all_detection.yml
-│   └── vllm_detection.yml
+│   ├── ollama_detection.yml      # Comprehensive Ollama detection
+│   ├── lmstudio_detection.yml    # LM Studio detection
+│   ├── gpt4all_detection.yml     # GPT4All desktop app detection
+│   └── vllm_detection.yml        # vLLM inference library detection
 └── README.md                  # This file
 ```
 
@@ -204,16 +204,20 @@ python example_log_collection.py
 
 ## SIGMA Rules
 
-The scanner includes 8 comprehensive SIGMA rules:
+The scanner includes 4 comprehensive SIGMA rules for LLM software detection:
 
-1. **ollama_process_detection.yml** - Detects Ollama process execution
-2. **ollama_network_activity.yml** - Monitors Ollama network connections
-3. **ollama_file_detection.yml** - Identifies Ollama file system activity
-4. **lmstudio_process_detection.yml** - Detects LM Studio process execution
-5. **lmstudio_network_activity.yml** - Monitors LM Studio network connections
-6. **lmstudio_file_detection.yml** - Identifies LM Studio file system activity
-7. **llm_environment_variables.yml** - Detects LLM-related environment variables
-8. **llm_registry_detection.yml** - Monitors Windows registry entries
+1. **ollama_detection.yml** - Comprehensive Ollama detection covering processes, files, network activity, and environment variables
+2. **lmstudio_detection.yml** - LM Studio detection for processes, files, and network connections
+3. **gpt4all_detection.yml** - GPT4All desktop application detection across multiple platforms
+4. **vllm_detection.yml** - vLLM inference library detection including Python package analysis
+
+### Rule Coverage
+Each SIGMA rule provides comprehensive detection for:
+- **Process Creation**: Detects when LLM software is executed
+- **Network Activity**: Monitors API server connections and port usage
+- **File Events**: Tracks installation directories and configuration files
+- **Environment Variables**: Configuration and path detection
+- **Cross-Platform Support**: Windows, macOS, and Linux detection methods
 
 ### Rule Categories
 - **Process Creation**: Detects when LLM software is executed
