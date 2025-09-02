@@ -1,0 +1,130 @@
+title: vLLM LLM Software Detection
+id: vllm-detection-001
+status: experimental
+description: Comprehensive detection rule for vLLM Large Language Model software installation and usage
+author: Security Team
+date: 2024-08-30
+modified: 2024-08-30
+tags:
+    - attack.execution
+    - attack.t1059
+    - llm.vllm
+    - llm.detection
+references:
+    - https://vllm.ai/
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    # File path detection
+    file_paths:
+        windows:
+            - '%LOCALAPPDATA%\\vLLM'
+            - '%APPDATA%\\vLLM'
+            - 'C:\\Program Files\\vLLM'
+            - '%USERPROFILE%\\.vllm'
+            - '%USERPROFILE%\\vllm'
+            - '%USERPROFILE%\\Documents\\vllm'
+        macos:
+            - '%USERPROFILE%/.vllm'
+            - '%USERPROFILE%/vllm'
+            - '%USERPROFILE%/Library/Application Support/vLLM'
+            - '%USERPROFILE%/Library/Preferences/vLLM'
+        linux:
+            - '%USERPROFILE%/.vllm'
+            - '%USERPROFILE%/vllm'
+            - '/opt/vllm'
+            - '/usr/local/vllm'
+            - '%USERPROFILE%/.local/share/vllm'
+            - '/var/log/vllm'
+    
+    # Environment variables
+    environment_variables:
+        - 'VLLM_HOME'
+        - 'VLLM_MODEL_PATH'
+        - 'VLLM_DATA_DIR'
+        - 'CUDA_VISIBLE_DEVICES'
+    
+    # Process detection
+    process_names:
+        - 'vllm'
+        - 'vllm-engine'
+        - 'vllm-serve'
+        - 'vllm-worker'
+        - 'vllm.exe'
+    
+    # Network ports
+    network_ports:
+        - 8000  # HTTP API
+    
+    # Registry keys (Windows)
+    registry_keys:
+        - 'HKEY_CURRENT_USER\\Software\\vLLM'
+        - 'HKEY_LOCAL_MACHINE\\Software\\vLLM'
+        - 'HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall'
+        - 'HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall'
+    
+    # Command line patterns
+    command_line_patterns:
+        - 'vllm'
+        - 'vllm-engine'
+        - 'vllm-serve'
+        - 'vllm-worker'
+        - 'python.*vllm'
+        - 'vllm --version'
+    
+    # Log collection paths
+    log_collection_paths:
+        windows:
+            - '%LOCALAPPDATA%\\vLLM'
+            - '%APPDATA%\\vLLM'
+            - 'C:\\Program Files\\vLLM'
+            - '%USERPROFILE%\\.vllm'
+            - '%USERPROFILE%\\vllm'
+            - '%USERPROFILE%\\Documents\\vllm'
+        macos:
+            - '%USERPROFILE%/.vllm'
+            - '%USERPROFILE%/vllm'
+            - '%USERPROFILE%/Library/Application Support/vLLM'
+            - '%USERPROFILE%/Library/Preferences/vLLM'
+            - '%USERPROFILE%/Library/Logs/vLLM'
+        linux:
+            - '%USERPROFILE%/.vllm'
+            - '%USERPROFILE%/vllm'
+            - '/opt/vllm'
+            - '/usr/local/vllm'
+            - '%USERPROFILE%/.local/share/vllm'
+            - '/var/log/vllm'
+    
+    # Version detection methods
+    version_detection:
+        python_package:
+            - 'vllm'
+        command_line:
+            - 'vllm --version'
+        config_files:
+            - '%USERPROFILE%/.vllm/version'
+            - '%USERPROFILE%/.vllm/VERSION'
+            - '%USERPROFILE%/vllm/version.txt'
+            - '%USERPROFILE%/Library/Application Support/vLLM/version.txt'
+        setup_files:
+            - '%USERPROFILE%/.vllm/setup.py'
+            - '%USERPROFILE%/.vllm/requirements.txt'
+            - '%USERPROFILE%/vllm/setup.py'
+            - '%USERPROFILE%/vllm/requirements.txt'
+    
+    selection:
+        CommandLine|contains:
+            - 'vllm'
+            - 'vllm-engine'
+            - 'vllm-serve'
+            - 'vllm-worker'
+    condition: selection
+falsepositives:
+    - Legitimate use of vLLM for development
+level: medium
+fields:
+    - Image
+    - CommandLine
+    - User
+    - ProcessId

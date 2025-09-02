@@ -1,0 +1,131 @@
+title: GPT4All LLM Software Detection
+id: gpt4all-detection-001
+status: experimental
+description: Comprehensive detection rule for GPT4All Large Language Model software installation and usage
+author: Security Team
+date: 2024-08-30
+modified: 2024-08-30
+tags:
+    - attack.execution
+    - attack.t1059
+    - llm.gpt4all
+    - llm.detection
+references:
+    - https://gpt4all.io/
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    # File path detection
+    file_paths:
+        windows:
+            - '%LOCALAPPDATA%\\GPT4All'
+            - '%APPDATA%\\GPT4All'
+            - 'C:\\Program Files\\GPT4All'
+            - 'C:\\Program Files (x86)\\GPT4All'
+            - '%USERPROFILE%\\.gpt4all'
+            - '%USERPROFILE%\\Documents\\GPT4All'
+            - '%USERPROFILE%\\Downloads\\GPT4All'
+        macos:
+            - '/Applications/GPT4All.app'
+            - '%USERPROFILE%/Applications/GPT4All.app'
+            - '%USERPROFILE%/.gpt4all'
+            - '%USERPROFILE%/Library/Application Support/GPT4All'
+            - '%USERPROFILE%/Library/Preferences/GPT4All'
+        linux:
+            - '%USERPROFILE%/.gpt4all'
+            - '%USERPROFILE%/.local/share/gpt4all'
+            - '%USERPROFILE%/gpt4all'
+            - '/opt/gpt4all'
+            - '/usr/local/gpt4all'
+            - '%USERPROFILE%/Downloads/gpt4all'
+    
+    # Environment variables
+    environment_variables:
+        - 'GPT4ALL_MODEL_PATH'
+        - 'GPT4ALL_HOME'
+        - 'GPT4ALL_DATA_DIR'
+    
+    # Process detection
+    process_names:
+        - 'gpt4all.exe'
+        - 'GPT4All.exe'
+        - 'gpt4all-app.exe'
+        - 'gpt4all-app'
+        - 'GPT4All'
+    
+    # Network ports
+    network_ports:
+        - 4891  # HTTP API
+    
+    # Registry keys (Windows)
+    registry_keys:
+        - 'HKEY_CURRENT_USER\\Software\\GPT4All'
+        - 'HKEY_LOCAL_MACHINE\\Software\\GPT4All'
+        - 'HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall'
+        - 'HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall'
+    
+    # Command line patterns
+    command_line_patterns:
+        - 'gpt4all'
+        - 'GPT4All'
+        - 'gpt4all-app'
+    
+    # Log collection paths
+    log_collection_paths:
+        windows:
+            - '%LOCALAPPDATA%\\GPT4All'
+            - '%APPDATA%\\GPT4All'
+            - 'C:\\Program Files\\GPT4All'
+            - 'C:\\Program Files (x86)\\GPT4All'
+            - '%USERPROFILE%\\.gpt4all'
+            - '%USERPROFILE%\\Documents\\GPT4All'
+            - '%USERPROFILE%\\Downloads\\GPT4All'
+        macos:
+            - '/Applications/GPT4All.app'
+            - '%USERPROFILE%/Applications/GPT4All.app'
+            - '%USERPROFILE%/.gpt4all'
+            - '%USERPROFILE%/Library/Application Support/GPT4All'
+            - '%USERPROFILE%/Library/Preferences/GPT4All'
+            - '%USERPROFILE%/Library/Logs/GPT4All'
+        linux:
+            - '%USERPROFILE%/.gpt4all'
+            - '%USERPROFILE%/.local/share/gpt4all'
+            - '%USERPROFILE%/gpt4all'
+            - '/opt/gpt4all'
+            - '/usr/local/gpt4all'
+            - '%USERPROFILE%/Downloads/gpt4all'
+    
+    # Version detection methods
+    version_detection:
+        config_files:
+            - '%LOCALAPPDATA%/GPT4All/version.txt'
+            - '%LOCALAPPDATA%/GPT4All/VERSION'
+            - '%LOCALAPPDATA%/GPT4All/app/version.txt'
+            - '%USERPROFILE%/.gpt4all/version'
+            - '%USERPROFILE%/Library/Application Support/GPT4All/version.txt'
+        package_files:
+            - '%LOCALAPPDATA%/GPT4All/package.json'
+            - '%LOCALAPPDATA%/GPT4All/app/package.json'
+            - '%USERPROFILE%/Library/Application Support/GPT4All/package.json'
+        python_package:
+            - 'gpt4all'
+    
+    selection:
+        Image|endswith:
+            - '\\GPT4All.exe'
+            - '\\gpt4all.exe'
+            - '\\gpt4all-app.exe'
+        CommandLine|contains:
+            - 'gpt4all'
+            - 'GPT4All'
+            - 'gpt4all-app'
+    condition: selection
+falsepositives:
+    - Legitimate use of GPT4All for development
+level: medium
+fields:
+    - Image
+    - CommandLine
+    - User
+    - ProcessId

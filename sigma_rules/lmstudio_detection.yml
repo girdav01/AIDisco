@@ -1,0 +1,115 @@
+title: LM Studio LLM Software Detection
+id: lmstudio-detection-001
+status: experimental
+description: Comprehensive detection rule for LM Studio Large Language Model software installation and usage
+author: Security Team
+date: 2024-08-30
+modified: 2024-08-30
+tags:
+    - attack.execution
+    - attack.t1059
+    - llm.lmstudio
+    - llm.detection
+references:
+    - https://lmstudio.ai/
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    # File path detection
+    file_paths:
+        windows:
+            - '%LOCALAPPDATA%\\LMStudio'
+            - '%APPDATA%\\LMStudio'
+            - '%LOCALAPPDATA%\\Programs\\LMStudio'
+            - '%USERPROFILE%\\.cache\\lm-studio'
+            - '%USERPROFILE%\\.lmstudio'
+        macos:
+            - '/Applications/LM Studio.app'
+            - '%USERPROFILE%/.cache/lm-studio'
+            - '%USERPROFILE%/.lmstudio'
+            - '%USERPROFILE%/Library/Application Support/LMStudio'
+        linux:
+            - '%USERPROFILE%/.cache/lm-studio'
+            - '%USERPROFILE%/.lmstudio'
+            - '%USERPROFILE%/LMStudio'
+            - '/opt/lmstudio'
+    
+    # Environment variables
+    environment_variables:
+        - 'LMSTUDIO_MODELS_DIR'
+        - 'LM_STUDIO_HOME'
+    
+    # Process detection
+    process_names:
+        - 'lmstudio.exe'
+        - 'lm-studio.exe'
+        - 'LMStudio.exe'
+        - 'LM Studio'
+    
+    # Network ports
+    network_ports:
+        - 1234  # HTTP API
+    
+    # Registry keys (Windows)
+    registry_keys:
+        - 'HKEY_CURRENT_USER\\Software\\LMStudio'
+        - 'HKEY_LOCAL_MACHINE\\Software\\LMStudio'
+        - 'HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall'
+        - 'HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall'
+    
+    # Command line patterns
+    command_line_patterns:
+        - 'lmstudio'
+        - 'lm-studio'
+        - 'LMStudio'
+    
+    # Log collection paths
+    log_collection_paths:
+        windows:
+            - '%LOCALAPPDATA%\\LMStudio'
+            - '%APPDATA%\\LMStudio'
+            - '%LOCALAPPDATA%\\Programs\\LMStudio'
+            - '%USERPROFILE%\\.cache\\lm-studio'
+            - '%USERPROFILE%\\.lmstudio'
+        macos:
+            - '/Applications/LM Studio.app'
+            - '%USERPROFILE%/.cache/lm-studio'
+            - '%USERPROFILE%/.lmstudio'
+            - '%USERPROFILE%/Library/Application Support/LMStudio'
+            - '%USERPROFILE%/Library/Preferences/LMStudio'
+        linux:
+            - '%USERPROFILE%/.cache/lm-studio'
+            - '%USERPROFILE%/.lmstudio'
+            - '%USERPROFILE%/LMStudio'
+            - '/opt/lmstudio'
+    
+    # Version detection methods
+    version_detection:
+        config_files:
+            - '%LOCALAPPDATA%/LMStudio/version.txt'
+            - '%LOCALAPPDATA%/LMStudio/VERSION'
+            - '%LOCALAPPDATA%/LMStudio/app/version.txt'
+            - '%USERPROFILE%/.lmstudio/version'
+        package_files:
+            - '%LOCALAPPDATA%/LMStudio/package.json'
+            - '%LOCALAPPDATA%/LMStudio/app/package.json'
+    
+    selection:
+        Image|endswith:
+            - '\\LMStudio.exe'
+            - '\\lmstudio.exe'
+            - '\\lm-studio.exe'
+        CommandLine|contains:
+            - 'lmstudio'
+            - 'lm-studio'
+            - 'LMStudio'
+    condition: selection
+falsepositives:
+    - Legitimate use of LM Studio for development
+level: medium
+fields:
+    - Image
+    - CommandLine
+    - User
+    - ProcessId
