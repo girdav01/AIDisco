@@ -1,0 +1,119 @@
+title: Llamafile/llama.cpp LLM Software Detection
+id: 12345678-1234-5678-9abc-123456789055
+status: experimental
+description: Detects Llamafile/llama.cpp installation and usage
+author: AI Discovery Scanner
+date: 2025-01-02
+tags:
+  - attack.execution
+  - attack.t1059
+  - attack.t1071.001
+  - ai.llm
+  - ai.llamafile
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    - Image|endswith:
+        - '\llamafile.exe'
+        - '\llama-cpp.exe'
+        - '\llama.exe'
+        - '\llamafile-server.exe'
+        - '\llama-cpp-server.exe'
+    - CommandLine|contains:
+        - 'llamafile'
+        - 'llama-cpp'
+        - 'llama'
+        - 'llamafile-server'
+        - 'llama-cpp-server'
+  condition: selection
+fields:
+  - Image
+  - CommandLine
+  - ProcessId
+  - User
+  - ParentImage
+  - ParentCommandLine
+falsepositives:
+  - Legitimate Llamafile/llama.cpp usage
+  - Development environments
+level: medium
+---
+title: Llamafile/llama.cpp File Detection
+id: 12345678-1234-5678-9abc-123456789056
+status: experimental
+description: Detects Llamafile/llama.cpp file system activity
+author: AI Discovery Scanner
+date: 2025-01-02
+tags:
+  - attack.persistence
+  - attack.t1547
+  - ai.llm
+  - ai.llamafile
+logsource:
+  category: file_event
+  product: windows
+detection:
+  selection:
+    - TargetFilename|contains:
+        - '\.llamafile'
+        - '\llamafile\'
+        - '\Llamafile\'
+        - '\.llama-cpp'
+        - '\llama-cpp\'
+        - '\llama.cpp\'
+        - '\Llama-CPP\'
+        - '\AppData\Local\Llamafile'
+        - '\AppData\Roaming\Llamafile'
+        - '\AppData\Local\llama-cpp'
+        - '\AppData\Roaming\llama-cpp'
+        - '\Program Files\Llamafile'
+        - '\Program Files\llama-cpp'
+  condition: selection
+fields:
+  - TargetFilename
+  - ProcessName
+  - User
+  - EventType
+falsepositives:
+  - Legitimate Llamafile/llama.cpp installation
+  - Development tool updates
+level: medium
+---
+title: Llamafile/llama.cpp Environment Variables
+id: 12345678-1234-5678-9abc-123456789057
+status: experimental
+description: Detects Llamafile/llama.cpp environment variable configuration
+author: AI Discovery Scanner
+date: 2025-01-02
+tags:
+  - attack.discovery
+  - attack.t1082
+  - ai.llm
+  - ai.llamafile
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    EnvironmentVariables|contains:
+      - 'LLAMAFILE_'
+      - 'LLAMA_CPP_'
+      - 'LLAMA_'
+      - 'LLAMAFILE_TOKEN'
+      - 'LLAMA_CPP_TOKEN'
+      - 'LLAMAFILE_HOST'
+      - 'LLAMA_CPP_HOST'
+      - 'LLAMAFILE_MODEL'
+      - 'LLAMA_CPP_MODEL'
+  condition: selection
+fields:
+  - Image
+  - CommandLine
+  - EnvironmentVariables
+  - User
+falsepositives:
+  - Legitimate Llamafile/llama.cpp configuration
+  - Development environment setup
+level: low

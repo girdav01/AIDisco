@@ -1,0 +1,107 @@
+title: Jan AI LLM Software Detection
+id: 12345678-1234-5678-9abc-123456789046
+status: experimental
+description: Detects Jan AI installation and usage
+author: AI Discovery Scanner
+date: 2025-01-02
+tags:
+  - attack.execution
+  - attack.t1059
+  - attack.t1071.001
+  - ai.llm
+  - ai.jan
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    - Image|endswith:
+        - '\jan.exe'
+        - '\jan-ai.exe'
+        - '\jan-desktop.exe'
+        - '\jan-server.exe'
+    - CommandLine|contains:
+        - 'jan'
+        - 'jan-ai'
+        - 'jan-desktop'
+        - 'jan-server'
+  condition: selection
+fields:
+  - Image
+  - CommandLine
+  - ProcessId
+  - User
+  - ParentImage
+  - ParentCommandLine
+falsepositives:
+  - Legitimate Jan AI usage
+  - Development environments
+level: medium
+---
+title: Jan AI File Detection
+id: 12345678-1234-5678-9abc-123456789047
+status: experimental
+description: Detects Jan AI file system activity
+author: AI Discovery Scanner
+date: 2025-01-02
+tags:
+  - attack.persistence
+  - attack.t1547
+  - ai.llm
+  - ai.jan
+logsource:
+  category: file_event
+  product: windows
+detection:
+  selection:
+    - TargetFilename|contains:
+        - '\.jan'
+        - '\jan\'
+        - '\Jan\'
+        - '\AppData\Local\Jan'
+        - '\AppData\Roaming\Jan'
+        - '\Program Files\Jan'
+        - '\Program Files (x86)\Jan'
+  condition: selection
+fields:
+  - TargetFilename
+  - ProcessName
+  - User
+  - EventType
+falsepositives:
+  - Legitimate Jan AI installation
+  - Development tool updates
+level: medium
+---
+title: Jan AI Environment Variables
+id: 12345678-1234-5678-9abc-123456789048
+status: experimental
+description: Detects Jan AI environment variable configuration
+author: AI Discovery Scanner
+date: 2025-01-02
+tags:
+  - attack.discovery
+  - attack.t1082
+  - ai.llm
+  - ai.jan
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    EnvironmentVariables|contains:
+      - 'JAN_'
+      - 'JAN_AI'
+      - 'JAN_TOKEN'
+      - 'JAN_HOST'
+      - 'JAN_MODEL'
+  condition: selection
+fields:
+  - Image
+  - CommandLine
+  - EnvironmentVariables
+  - User
+falsepositives:
+  - Legitimate Jan AI configuration
+  - Development environment setup
+level: low

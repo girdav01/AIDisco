@@ -90,10 +90,31 @@ python ai_discovery_scan.py -v -o detailed_scan.json --collect-logs --log-format
 ├── example_log_collection.py   # Example script for log collection
 ├── requirements.txt            # Python dependencies
 ├── sigma_rules/               # SIGMA rules directory
-│   ├── ollama_detection.yml      # Comprehensive Ollama detection
-│   ├── lmstudio_detection.yml    # LM Studio detection
-│   ├── gpt4all_detection.yml     # GPT4All desktop app detection
-│   └── vllm_detection.yml        # vLLM inference library detection
+│   ├── ollama_detection.yml              # Comprehensive Ollama detection
+│   ├── lmstudio_detection.yml            # LM Studio detection
+│   ├── gpt4all_detection.yml             # GPT4All desktop app detection
+│   ├── vllm_detection.yml                # vLLM inference library detection
+│   ├── github_copilot_detection.yml      # GitHub Copilot detection
+│   ├── replit_ghostwriter_detection.yml  # Replit Ghostwriter detection
+│   ├── windsurf_detection.yml            # Windsurf AI detection
+│   ├── tabnine_detection.yml             # Tabnine AI detection
+│   ├── zed_detection.yml                 # Zed editor AI detection
+│   ├── continue_detection.yml            # Continue AI detection
+│   ├── chatgpt_detection.yml             # ChatGPT desktop detection
+│   ├── claude_detection.yml              # Claude AI detection
+│   ├── google_gemini_detection.yml       # Google Gemini AI detection
+│   ├── brave_leo_detection.yml           # Brave Leo AI detection
+│   ├── poe_detection.yml                 # Poe AI detection
+│   ├── youchat_detection.yml             # YouChat/You.com AI detection
+│   ├── openwebui_detection.yml           # Open WebUI detection
+│   ├── anythingllm_detection.yml         # AnythingLLM detection
+│   ├── librechat_detection.yml           # LibreChat detection
+│   ├── jan_detection.yml                 # Jan AI detection
+│   ├── text_generation_webui_detection.yml # Text Generation WebUI detection
+│   ├── localai_detection.yml             # LocalAI detection
+│   ├── llamafile_detection.yml           # Llamafile/llama.cpp detection
+│   ├── faraday_detection.yml             # Faraday AI detection
+│   └── nvidia_chat_rtx_detection.yml     # NVIDIA Chat with RTX detection
 └── README.md                  # This file
 ```
 
@@ -204,12 +225,40 @@ python example_log_collection.py
 
 ## SIGMA Rules
 
-The scanner includes 4 comprehensive SIGMA rules for LLM software detection:
+The scanner includes 25 comprehensive SIGMA rules for LLM software detection:
 
+### Core LLM Software
 1. **ollama_detection.yml** - Comprehensive Ollama detection covering processes, files, network activity, and environment variables
 2. **lmstudio_detection.yml** - LM Studio detection for processes, files, and network connections
 3. **gpt4all_detection.yml** - GPT4All desktop application detection across multiple platforms
 4. **vllm_detection.yml** - vLLM inference library detection including Python package analysis
+
+### AI Development Tools
+5. **github_copilot_detection.yml** - GitHub Copilot detection for processes, files, and environment variables
+6. **replit_ghostwriter_detection.yml** - Replit Ghostwriter detection covering installation and usage
+7. **windsurf_detection.yml** - Windsurf AI detection for development environments
+8. **tabnine_detection.yml** - Tabnine AI detection for code completion tools
+9. **zed_detection.yml** - Zed editor with AI features detection
+10. **continue_detection.yml** - Continue AI detection for development assistance
+
+### AI Chat Applications
+11. **chatgpt_detection.yml** - ChatGPT desktop application detection
+12. **claude_detection.yml** - Claude AI applications (Claude Code, Claude Desktop) detection
+13. **google_gemini_detection.yml** - Google Gemini AI detection
+14. **brave_leo_detection.yml** - Brave Leo AI detection
+15. **poe_detection.yml** - Poe AI detection
+16. **youchat_detection.yml** - YouChat/You.com AI detection
+
+### Open Source AI Platforms
+17. **openwebui_detection.yml** - Open WebUI detection
+18. **anythingllm_detection.yml** - AnythingLLM detection
+19. **librechat_detection.yml** - LibreChat detection
+20. **jan_detection.yml** - Jan AI detection
+21. **text_generation_webui_detection.yml** - Text Generation WebUI (Oobabooga) detection
+22. **localai_detection.yml** - LocalAI detection
+23. **llamafile_detection.yml** - Llamafile/llama.cpp detection
+24. **faraday_detection.yml** - Faraday AI detection
+25. **nvidia_chat_rtx_detection.yml** - NVIDIA Chat with RTX detection
 
 ### Rule Coverage
 Each SIGMA rule provides comprehensive detection for:

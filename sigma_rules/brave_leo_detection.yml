@@ -1,0 +1,109 @@
+title: Brave Leo AI LLM Software Detection
+id: 12345678-1234-5678-9abc-123456789028
+status: experimental
+description: Detects Brave Leo AI installation and usage
+author: AI Discovery Scanner
+date: 2025-01-02
+tags:
+  - attack.execution
+  - attack.t1059
+  - attack.t1071.001
+  - ai.llm
+  - ai.leo
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    - Image|endswith:
+        - '\leo.exe'
+        - '\brave-leo.exe'
+        - '\leo-ai.exe'
+        - '\leo-desktop.exe'
+    - CommandLine|contains:
+        - 'leo'
+        - 'brave-leo'
+        - 'leo-ai'
+        - 'leo-desktop'
+  condition: selection
+fields:
+  - Image
+  - CommandLine
+  - ProcessId
+  - User
+  - ParentImage
+  - ParentCommandLine
+falsepositives:
+  - Legitimate Brave Leo AI usage
+  - Development environments
+level: medium
+---
+title: Brave Leo AI File Detection
+id: 12345678-1234-5678-9abc-123456789029
+status: experimental
+description: Detects Brave Leo AI file system activity
+author: AI Discovery Scanner
+date: 2025-01-02
+tags:
+  - attack.persistence
+  - attack.t1547
+  - ai.llm
+  - ai.leo
+logsource:
+  category: file_event
+  product: windows
+detection:
+  selection:
+    - TargetFilename|contains:
+        - '\.leo'
+        - '\leo\'
+        - '\Leo\'
+        - '\AppData\Local\Brave\Leo'
+        - '\AppData\Roaming\Brave\Leo'
+        - '\Program Files\Brave\Leo'
+        - '\Program Files (x86)\Brave\Leo'
+        - '\Brave\Leo'
+  condition: selection
+fields:
+  - TargetFilename
+  - ProcessName
+  - User
+  - EventType
+falsepositives:
+  - Legitimate Brave Leo AI installation
+  - Development tool updates
+level: medium
+---
+title: Brave Leo AI Environment Variables
+id: 12345678-1234-5678-9abc-123456789030
+status: experimental
+description: Detects Brave Leo AI environment variable configuration
+author: AI Discovery Scanner
+date: 2025-01-02
+tags:
+  - attack.discovery
+  - attack.t1082
+  - ai.llm
+  - ai.leo
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    EnvironmentVariables|contains:
+      - 'LEO_'
+      - 'BRAVE_LEO'
+      - 'LEO_TOKEN'
+      - 'LEO_API_KEY'
+      - 'LEO_HOST'
+      - 'LEO_MODEL'
+  condition: selection
+fields:
+  - Image
+  - CommandLine
+  - EnvironmentVariables
+  - User
+falsepositives:
+  - Legitimate Brave Leo AI configuration
+  - Development environment setup
+level: low
