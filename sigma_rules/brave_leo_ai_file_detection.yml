@@ -1,0 +1,35 @@
+title: Brave Leo AI File Detection
+id: 12345678-1234-5678-9abc-123456789029
+status: experimental
+description: Detects Brave Leo AI file system activity
+author: AI Discovery Scanner
+date: 2025-01-02
+tags:
+  - attack.persistence
+  - attack.t1547
+  - ai.llm
+  - ai.leo
+logsource:
+  category: file_event
+  product: windows
+detection:
+  selection:
+    - TargetFilename|contains:
+        - '\.leo'
+        - '\leo\'
+        - '\Leo\'
+        - '\AppData\Local\Brave\Leo'
+        - '\AppData\Roaming\Brave\Leo'
+        - '\Program Files\Brave\Leo'
+        - '\Program Files (x86)\Brave\Leo'
+        - '\Brave\Leo'
+  condition: selection
+fields:
+  - TargetFilename
+  - ProcessName
+  - User
+  - EventType
+falsepositives:
+  - Legitimate Brave Leo AI installation
+  - Development tool updates
+level: medium

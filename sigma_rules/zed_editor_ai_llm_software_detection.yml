@@ -1,0 +1,37 @@
+title: Zed Editor AI LLM Software Detection
+id: 12345678-1234-5678-9abc-123456789013
+status: experimental
+description: Detects Zed editor with AI features installation and usage
+author: AI Discovery Scanner
+date: 2025-01-02
+tags:
+  - attack.execution
+  - attack.t1059
+  - attack.t1071.001
+  - ai.llm
+  - ai.zed
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    - Image|endswith:
+        - '\zed.exe'
+        - '\zed-editor.exe'
+        - '\zed-ai.exe'
+    - CommandLine|contains:
+        - 'zed'
+        - 'zed-editor'
+        - 'zed-ai'
+  condition: selection
+fields:
+  - Image
+  - CommandLine
+  - ProcessId
+  - User
+  - ParentImage
+  - ParentCommandLine
+falsepositives:
+  - Legitimate Zed editor usage
+  - Development environments
+level: medium

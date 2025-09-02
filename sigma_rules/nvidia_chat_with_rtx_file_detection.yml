@@ -1,0 +1,37 @@
+title: NVIDIA Chat with RTX File Detection
+id: 12345678-1234-5678-9abc-123456789062
+status: experimental
+description: Detects NVIDIA Chat with RTX file system activity
+author: AI Discovery Scanner
+date: 2025-01-02
+tags:
+  - attack.persistence
+  - attack.t1547
+  - ai.llm
+  - ai.nvidia-chat-rtx
+logsource:
+  category: file_event
+  product: windows
+detection:
+  selection:
+    - TargetFilename|contains:
+        - '\.nvidia-chat-rtx'
+        - '\nvidia-chat-rtx\'
+        - '\NVIDIA-Chat-RTX\'
+        - '\.chat-rtx'
+        - '\chat-rtx\'
+        - '\Chat-RTX\'
+        - '\AppData\Local\NVIDIA\Chat-RTX'
+        - '\AppData\Roaming\NVIDIA\Chat-RTX'
+        - '\Program Files\NVIDIA\Chat-RTX'
+        - '\Program Files (x86)\NVIDIA\Chat-RTX'
+  condition: selection
+fields:
+  - TargetFilename
+  - ProcessName
+  - User
+  - EventType
+falsepositives:
+  - Legitimate NVIDIA Chat with RTX installation
+  - Development tool updates
+level: medium

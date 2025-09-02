@@ -1,0 +1,33 @@
+title: Replit Ghostwriter File Detection
+id: 12345678-1234-5678-9abc-123456789005
+status: experimental
+description: Detects Replit Ghostwriter file system activity
+author: AI Discovery Scanner
+date: 2025-01-02
+tags:
+  - attack.persistence
+  - attack.t1547
+  - ai.llm
+  - ai.ghostwriter
+logsource:
+  category: file_event
+  product: windows
+detection:
+  selection:
+    - TargetFilename|contains:
+        - '\.ghostwriter'
+        - '\ghostwriter\'
+        - '\Replit\Ghostwriter'
+        - '\AppData\Local\Replit\Ghostwriter'
+        - '\AppData\Roaming\Replit\Ghostwriter'
+        - '\Program Files\Replit\Ghostwriter'
+  condition: selection
+fields:
+  - TargetFilename
+  - ProcessName
+  - User
+  - EventType
+falsepositives:
+  - Legitimate Replit Ghostwriter installation
+  - Development tool updates
+level: medium

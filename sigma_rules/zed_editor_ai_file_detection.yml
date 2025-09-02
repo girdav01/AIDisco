@@ -1,0 +1,34 @@
+title: Zed Editor AI File Detection
+id: 12345678-1234-5678-9abc-123456789014
+status: experimental
+description: Detects Zed editor AI file system activity
+author: AI Discovery Scanner
+date: 2025-01-02
+tags:
+  - attack.persistence
+  - attack.t1547
+  - ai.llm
+  - ai.zed
+logsource:
+  category: file_event
+  product: windows
+detection:
+  selection:
+    - TargetFilename|contains:
+        - '\.zed'
+        - '\zed\'
+        - '\Zed\'
+        - '\AppData\Local\Zed'
+        - '\AppData\Roaming\Zed'
+        - '\Program Files\Zed'
+        - '\Program Files (x86)\Zed'
+  condition: selection
+fields:
+  - TargetFilename
+  - ProcessName
+  - User
+  - EventType
+falsepositives:
+  - Legitimate Zed editor installation
+  - Development tool updates
+level: medium

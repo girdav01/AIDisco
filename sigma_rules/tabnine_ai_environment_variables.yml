@@ -1,0 +1,32 @@
+title: Tabnine AI Environment Variables
+id: 12345678-1234-5678-9abc-123456789012
+status: experimental
+description: Detects Tabnine AI environment variable configuration
+author: AI Discovery Scanner
+date: 2025-01-02
+tags:
+  - attack.discovery
+  - attack.t1082
+  - ai.llm
+  - ai.tabnine
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    EnvironmentVariables|contains:
+      - 'TABNINE_'
+      - 'TABNINE_AI'
+      - 'TABNINE_TOKEN'
+      - 'TABNINE_HOST'
+      - 'TABNINE_MODEL'
+  condition: selection
+fields:
+  - Image
+  - CommandLine
+  - EnvironmentVariables
+  - User
+falsepositives:
+  - Legitimate Tabnine AI configuration
+  - Development environment setup
+level: low

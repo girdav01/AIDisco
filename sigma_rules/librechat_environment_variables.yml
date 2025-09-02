@@ -1,0 +1,32 @@
+title: LibreChat Environment Variables
+id: 12345678-1234-5678-9abc-123456789045
+status: experimental
+description: Detects LibreChat environment variable configuration
+author: AI Discovery Scanner
+date: 2025-01-02
+tags:
+  - attack.discovery
+  - attack.t1082
+  - ai.llm
+  - ai.libreachat
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    EnvironmentVariables|contains:
+      - 'LIBRECHAT_'
+      - 'LIBRE_CHAT_'
+      - 'LIBRECHAT_TOKEN'
+      - 'LIBRECHAT_HOST'
+      - 'LIBRECHAT_MODEL'
+  condition: selection
+fields:
+  - Image
+  - CommandLine
+  - EnvironmentVariables
+  - User
+falsepositives:
+  - Legitimate LibreChat configuration
+  - Development environment setup
+level: low

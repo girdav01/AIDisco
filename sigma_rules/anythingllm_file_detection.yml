@@ -1,0 +1,37 @@
+title: AnythingLLM File Detection
+id: 12345678-1234-5678-9abc-123456789041
+status: experimental
+description: Detects AnythingLLM file system activity
+author: AI Discovery Scanner
+date: 2025-01-02
+tags:
+  - attack.persistence
+  - attack.t1547
+  - ai.llm
+  - ai.anythingllm
+logsource:
+  category: file_event
+  product: windows
+detection:
+  selection:
+    - TargetFilename|contains:
+        - '\.anything-llm'
+        - '\anything-llm\'
+        - '\Anything-LLM\'
+        - '\.anythingllm'
+        - '\anythingllm\'
+        - '\AnythingLLM\'
+        - '\AppData\Local\Anything-LLM'
+        - '\AppData\Roaming\Anything-LLM'
+        - '\Program Files\Anything-LLM'
+        - '\Program Files (x86)\Anything-LLM'
+  condition: selection
+fields:
+  - TargetFilename
+  - ProcessName
+  - User
+  - EventType
+falsepositives:
+  - Legitimate AnythingLLM installation
+  - Development tool updates
+level: medium

@@ -1,0 +1,39 @@
+title: Text Generation WebUI (Oobabooga) File Detection
+id: 12345678-1234-5678-9abc-123456789050
+status: experimental
+description: Detects text-generation-webui (Oobabooga) file system activity
+author: AI Discovery Scanner
+date: 2025-01-02
+tags:
+  - attack.persistence
+  - attack.t1547
+  - ai.llm
+  - ai.oobabooga
+logsource:
+  category: file_event
+  product: windows
+detection:
+  selection:
+    - TargetFilename|contains:
+        - '\.text-generation-webui'
+        - '\text-generation-webui\'
+        - '\Text-Generation-WebUI\'
+        - '\.oobabooga'
+        - '\oobabooga\'
+        - '\Oobabooga\'
+        - '\AppData\Local\text-generation-webui'
+        - '\AppData\Roaming\text-generation-webui'
+        - '\AppData\Local\oobabooga'
+        - '\AppData\Roaming\oobabooga'
+        - '\Program Files\text-generation-webui'
+        - '\Program Files\oobabooga'
+  condition: selection
+fields:
+  - TargetFilename
+  - ProcessName
+  - User
+  - EventType
+falsepositives:
+  - Legitimate text-generation-webui installation
+  - Development tool updates
+level: medium

@@ -1,1 +1,222 @@
 
+2025-09-02 19:05:35,048 - ERROR - Error loading SIGMA rule sigma_rules\anythingllm_detection.yml: expected a single document in the stream
+  in "sigma_rules\anythingllm_detection.yml", line 1, column 1
+but found another document
+  in "sigma_rules\anythingllm_detection.yml", line 40, column 1
+2025-09-02 19:05:35,049 - ERROR - Error loading SIGMA rule sigma_rules\brave_leo_detection.yml: expected a single document in the stream
+  in "sigma_rules\brave_leo_detection.yml", line 1, column 1
+but found another document
+  in "sigma_rules\brave_leo_detection.yml", line 40, column 1
+2025-09-02 19:05:35,060 - ERROR - Error loading SIGMA rule sigma_rules\chatgpt_detection.yml: expected a single document in the stream
+  in "sigma_rules\chatgpt_detection.yml", line 1, column 1
+but found another document
+  in "sigma_rules\chatgpt_detection.yml", line 38, column 1
+2025-09-02 19:05:35,061 - ERROR - Error loading SIGMA rule sigma_rules\claude_detection.yml: expected a single document in the stream
+  in "sigma_rules\claude_detection.yml", line 1, column 1
+but found another document
+  in "sigma_rules\claude_detection.yml", line 40, column 1
+2025-09-02 19:05:35,062 - ERROR - Error loading SIGMA rule sigma_rules\continue_detection.yml: expected a single document in the stream
+  in "sigma_rules\continue_detection.yml", line 1, column 1
+but found another document
+  in "sigma_rules\continue_detection.yml", line 38, column 1
+2025-09-02 19:05:35,063 - ERROR - Error loading SIGMA rule sigma_rules\faraday_detection.yml: expected a single document in the stream
+  in "sigma_rules\faraday_detection.yml", line 1, column 1
+but found another document
+  in "sigma_rules\faraday_detection.yml", line 40, column 1
+2025-09-02 19:05:35,064 - ERROR - Error loading SIGMA rule sigma_rules\github_copilot_detection.yml: expected a single document in the stream
+  in "sigma_rules\github_copilot_detection.yml", line 1, column 1
+but found another document
+  in "sigma_rules\github_copilot_detection.yml", line 38, column 1
+2025-09-02 19:05:35,065 - ERROR - Error loading SIGMA rule sigma_rules\google_gemini_detection.yml: expected a single document in the stream
+  in "sigma_rules\google_gemini_detection.yml", line 1, column 1
+but found another document
+  in "sigma_rules\google_gemini_detection.yml", line 40, column 1
+2025-09-02 19:05:35,069 - ERROR - Error loading SIGMA rule sigma_rules\jan_detection.yml: expected a single document in the stream
+  in "sigma_rules\jan_detection.yml", line 1, column 1
+but found another document
+  in "sigma_rules\jan_detection.yml", line 40, column 1
+2025-09-02 19:05:35,070 - ERROR - Error loading SIGMA rule sigma_rules\librechat_detection.yml: expected a single document in the stream
+  in "sigma_rules\librechat_detection.yml", line 1, column 1
+but found another document
+  in "sigma_rules\librechat_detection.yml", line 40, column 1
+2025-09-02 19:05:35,071 - ERROR - Error loading SIGMA rule sigma_rules\llamafile_detection.yml: expected a single document in the stream
+  in "sigma_rules\llamafile_detection.yml", line 1, column 1
+but found another document
+  in "sigma_rules\llamafile_detection.yml", line 42, column 1
+2025-09-02 19:05:35,074 - ERROR - Error loading SIGMA rule sigma_rules\localai_detection.yml: expected a single document in the stream
+  in "sigma_rules\localai_detection.yml", line 1, column 1
+but found another document
+  in "sigma_rules\localai_detection.yml", line 40, column 1
+2025-09-02 19:05:35,075 - ERROR - Error loading SIGMA rule sigma_rules\nvidia_chat_rtx_detection.yml: expected a single document in the stream
+  in "sigma_rules\nvidia_chat_rtx_detection.yml", line 1, column 1
+but found another document
+  in "sigma_rules\nvidia_chat_rtx_detection.yml", line 40, column 1
+2025-09-02 19:05:35,079 - ERROR - Error loading SIGMA rule sigma_rules\openwebui_detection.yml: expected a single document in the stream
+  in "sigma_rules\openwebui_detection.yml", line 1, column 1
+but found another document
+  in "sigma_rules\openwebui_detection.yml", line 40, column 1
+2025-09-02 19:05:35,080 - ERROR - Error loading SIGMA rule sigma_rules\poe_detection.yml: expected a single document in the stream
+  in "sigma_rules\poe_detection.yml", line 1, column 1
+but found another document
+  in "sigma_rules\poe_detection.yml", line 40, column 1
+2025-09-02 19:05:35,081 - ERROR - Error loading SIGMA rule sigma_rules\replit_ghostwriter_detection.yml: expected a single document in the stream
+  in "sigma_rules\replit_ghostwriter_detection.yml", line 1, column 1
+but found another document
+  in "sigma_rules\replit_ghostwriter_detection.yml", line 38, column 1
+2025-09-02 19:05:35,082 - ERROR - Error loading SIGMA rule sigma_rules\tabnine_detection.yml: expected a single document in the stream
+  in "sigma_rules\tabnine_detection.yml", line 1, column 1
+but found another document
+  in "sigma_rules\tabnine_detection.yml", line 40, column 1
+2025-09-02 19:05:35,083 - ERROR - Error loading SIGMA rule sigma_rules\text_generation_webui_detection.yml: expected a single document in the stream
+  in "sigma_rules\text_generation_webui_detection.yml", line 1, column 1
+but found another document
+  in "sigma_rules\text_generation_webui_detection.yml", line 42, column 1
+2025-09-02 19:05:35,087 - ERROR - Error loading SIGMA rule sigma_rules\windsurf_detection.yml: expected a single document in the stream
+  in "sigma_rules\windsurf_detection.yml", line 1, column 1
+but found another document
+  in "sigma_rules\windsurf_detection.yml", line 38, column 1
+2025-09-02 19:05:35,088 - ERROR - Error loading SIGMA rule sigma_rules\youchat_detection.yml: expected a single document in the stream
+  in "sigma_rules\youchat_detection.yml", line 1, column 1
+but found another document
+  in "sigma_rules\youchat_detection.yml", line 40, column 1
+2025-09-02 19:05:35,089 - ERROR - Error loading SIGMA rule sigma_rules\zed_detection.yml: expected a single document in the stream
+  in "sigma_rules\zed_detection.yml", line 1, column 1
+but found another document
+  in "sigma_rules\zed_detection.yml", line 38, column 1
+2025-09-02 19:05:35,089 - INFO - Loaded 4 SIGMA rules
+2025-09-02 19:05:35,089 - INFO - LLM Software Detector initialized with max_file_size_mb=100
+2025-09-02 19:05:35,091 - ERROR - Error loading SIGMA rule sigma_rules\anythingllm_detection.yml: expected a single document in the stream
+  in "sigma_rules\anythingllm_detection.yml", line 1, column 1
+but found another document
+  in "sigma_rules\anythingllm_detection.yml", line 40, column 1
+2025-09-02 19:05:35,092 - ERROR - Error loading SIGMA rule sigma_rules\brave_leo_detection.yml: expected a single document in the stream
+  in "sigma_rules\brave_leo_detection.yml", line 1, column 1
+but found another document
+  in "sigma_rules\brave_leo_detection.yml", line 40, column 1
+2025-09-02 19:05:35,093 - ERROR - Error loading SIGMA rule sigma_rules\chatgpt_detection.yml: expected a single document in the stream
+  in "sigma_rules\chatgpt_detection.yml", line 1, column 1
+but found another document
+  in "sigma_rules\chatgpt_detection.yml", line 38, column 1
+2025-09-02 19:05:35,094 - ERROR - Error loading SIGMA rule sigma_rules\claude_detection.yml: expected a single document in the stream
+  in "sigma_rules\claude_detection.yml", line 1, column 1
+but found another document
+  in "sigma_rules\claude_detection.yml", line 40, column 1
+2025-09-02 19:05:35,094 - ERROR - Error loading SIGMA rule sigma_rules\continue_detection.yml: expected a single document in the stream
+  in "sigma_rules\continue_detection.yml", line 1, column 1
+but found another document
+  in "sigma_rules\continue_detection.yml", line 38, column 1
+2025-09-02 19:05:35,095 - ERROR - Error loading SIGMA rule sigma_rules\faraday_detection.yml: expected a single document in the stream
+  in "sigma_rules\faraday_detection.yml", line 1, column 1
+but found another document
+  in "sigma_rules\faraday_detection.yml", line 40, column 1
+2025-09-02 19:05:35,096 - ERROR - Error loading SIGMA rule sigma_rules\github_copilot_detection.yml: expected a single document in the stream
+  in "sigma_rules\github_copilot_detection.yml", line 1, column 1
+but found another document
+  in "sigma_rules\github_copilot_detection.yml", line 38, column 1
+2025-09-02 19:05:35,097 - ERROR - Error loading SIGMA rule sigma_rules\google_gemini_detection.yml: expected a single document in the stream
+  in "sigma_rules\google_gemini_detection.yml", line 1, column 1
+but found another document
+  in "sigma_rules\google_gemini_detection.yml", line 40, column 1
+2025-09-02 19:05:35,101 - ERROR - Error loading SIGMA rule sigma_rules\jan_detection.yml: expected a single document in the stream
+  in "sigma_rules\jan_detection.yml", line 1, column 1
+but found another document
+  in "sigma_rules\jan_detection.yml", line 40, column 1
+2025-09-02 19:05:35,102 - ERROR - Error loading SIGMA rule sigma_rules\librechat_detection.yml: expected a single document in the stream
+  in "sigma_rules\librechat_detection.yml", line 1, column 1
+but found another document
+  in "sigma_rules\librechat_detection.yml", line 40, column 1
+2025-09-02 19:05:35,103 - ERROR - Error loading SIGMA rule sigma_rules\llamafile_detection.yml: expected a single document in the stream
+  in "sigma_rules\llamafile_detection.yml", line 1, column 1
+but found another document
+  in "sigma_rules\llamafile_detection.yml", line 42, column 1
+2025-09-02 19:05:35,107 - ERROR - Error loading SIGMA rule sigma_rules\localai_detection.yml: expected a single document in the stream
+  in "sigma_rules\localai_detection.yml", line 1, column 1
+but found another document
+  in "sigma_rules\localai_detection.yml", line 40, column 1
+2025-09-02 19:05:35,108 - ERROR - Error loading SIGMA rule sigma_rules\nvidia_chat_rtx_detection.yml: expected a single document in the stream
+  in "sigma_rules\nvidia_chat_rtx_detection.yml", line 1, column 1
+but found another document
+  in "sigma_rules\nvidia_chat_rtx_detection.yml", line 40, column 1
+2025-09-02 19:05:35,111 - ERROR - Error loading SIGMA rule sigma_rules\openwebui_detection.yml: expected a single document in the stream
+  in "sigma_rules\openwebui_detection.yml", line 1, column 1
+but found another document
+  in "sigma_rules\openwebui_detection.yml", line 40, column 1
+2025-09-02 19:05:35,112 - ERROR - Error loading SIGMA rule sigma_rules\poe_detection.yml: expected a single document in the stream
+  in "sigma_rules\poe_detection.yml", line 1, column 1
+but found another document
+  in "sigma_rules\poe_detection.yml", line 40, column 1
+2025-09-02 19:05:35,113 - ERROR - Error loading SIGMA rule sigma_rules\replit_ghostwriter_detection.yml: expected a single document in the stream
+  in "sigma_rules\replit_ghostwriter_detection.yml", line 1, column 1
+but found another document
+  in "sigma_rules\replit_ghostwriter_detection.yml", line 38, column 1
+2025-09-02 19:05:35,114 - ERROR - Error loading SIGMA rule sigma_rules\tabnine_detection.yml: expected a single document in the stream
+  in "sigma_rules\tabnine_detection.yml", line 1, column 1
+but found another document
+  in "sigma_rules\tabnine_detection.yml", line 40, column 1
+2025-09-02 19:05:35,116 - ERROR - Error loading SIGMA rule sigma_rules\text_generation_webui_detection.yml: expected a single document in the stream
+  in "sigma_rules\text_generation_webui_detection.yml", line 1, column 1
+but found another document
+  in "sigma_rules\text_generation_webui_detection.yml", line 42, column 1
+2025-09-02 19:05:35,119 - ERROR - Error loading SIGMA rule sigma_rules\windsurf_detection.yml: expected a single document in the stream
+  in "sigma_rules\windsurf_detection.yml", line 1, column 1
+but found another document
+  in "sigma_rules\windsurf_detection.yml", line 38, column 1
+2025-09-02 19:05:35,120 - ERROR - Error loading SIGMA rule sigma_rules\youchat_detection.yml: expected a single document in the stream
+  in "sigma_rules\youchat_detection.yml", line 1, column 1
+but found another document
+  in "sigma_rules\youchat_detection.yml", line 40, column 1
+2025-09-02 19:05:35,121 - ERROR - Error loading SIGMA rule sigma_rules\zed_detection.yml: expected a single document in the stream
+  in "sigma_rules\zed_detection.yml", line 1, column 1
+but found another document
+  in "sigma_rules\zed_detection.yml", line 38, column 1
+2025-09-02 19:05:35,121 - INFO - Loaded 4 SIGMA rules
+2025-09-02 19:05:35,121 - INFO - Starting LLM software detection scan...
+2025-09-02 19:05:38,257 - INFO - Scan completed successfully
+2025-09-02 19:05:38,258 - INFO - Results saved to output\ai_discovery_results_AIPC6969_20250902_190538.json
+2025-09-02 19:05:38,258 - INFO - Results saved to: output\ai_discovery_results_AIPC6969_20250902_190538.json
+2025-09-02 19:05:38,258 - INFO - Summary saved to: output\ai_discovery_results_AIPC6969_20250902_190538_summary.txt
+2025-09-02 19:07:44,552 - INFO - Loaded 67 SIGMA rules
+2025-09-02 19:07:44,552 - INFO - LLM Software Detector initialized with max_file_size_mb=100
+2025-09-02 19:07:44,618 - INFO - Loaded 67 SIGMA rules
+2025-09-02 19:07:44,618 - INFO - Starting LLM software detection scan...
+2025-09-02 19:07:47,752 - ERROR - Unexpected error during scan: 'list' object has no attribute 'items'
+2025-09-02 19:08:30,738 - INFO - Loaded 67 SIGMA rules
+2025-09-02 19:08:30,738 - INFO - LLM Software Detector initialized with max_file_size_mb=100
+2025-09-02 19:08:30,802 - INFO - Loaded 67 SIGMA rules
+2025-09-02 19:08:30,803 - INFO - Starting LLM software detection scan...
+2025-09-02 19:08:33,922 - INFO - Scan completed successfully
+2025-09-02 19:08:33,923 - INFO - Results saved to output\ai_discovery_results_AIPC6969_20250902_190833.json
+2025-09-02 19:08:33,923 - INFO - Results saved to: output\ai_discovery_results_AIPC6969_20250902_190833.json
+2025-09-02 19:08:33,924 - INFO - Summary saved to: output\ai_discovery_results_AIPC6969_20250902_190833_summary.txt
+2025-09-02 19:10:16,783 - INFO - Loaded 67 SIGMA rules
+2025-09-02 19:10:16,783 - INFO - LLM Software Detector initialized with max_file_size_mb=100
+2025-09-02 19:10:16,848 - INFO - Loaded 67 SIGMA rules
+2025-09-02 19:10:16,849 - INFO - Starting LLM software detection scan...
+2025-09-02 19:10:19,974 - INFO - Scan completed successfully
+2025-09-02 19:10:19,976 - INFO - Results saved to output\ai_discovery_results_AIPC6969_20250902_191019.json
+2025-09-02 19:10:19,976 - INFO - Results saved to: output\ai_discovery_results_AIPC6969_20250902_191019.json
+2025-09-02 19:10:19,977 - INFO - Summary saved to: output\ai_discovery_results_AIPC6969_20250902_191019_summary.txt
+2025-09-02 19:13:28,690 - INFO - Loaded 67 SIGMA rules
+2025-09-02 19:13:28,691 - INFO - LLM Software Detector initialized with max_file_size_mb=100
+2025-09-02 19:13:28,755 - INFO - Loaded 67 SIGMA rules
+2025-09-02 19:13:28,755 - INFO - Starting LLM software detection scan...
+2025-09-02 19:13:31,908 - INFO - Scan completed successfully
+2025-09-02 19:13:31,909 - INFO - Results saved to output\ai_discovery_results_AIPC6969_20250902_191331.json
+2025-09-02 19:13:31,909 - INFO - Results saved to: output\ai_discovery_results_AIPC6969_20250902_191331.json
+2025-09-02 19:13:31,909 - INFO - Summary saved to: output\ai_discovery_results_AIPC6969_20250902_191331_summary.txt
+2025-09-02 19:22:18,744 - INFO - Loaded 73 SIGMA rules
+2025-09-02 19:22:18,744 - INFO - LLM Software Detector initialized with max_file_size_mb=100
+2025-09-02 19:22:18,815 - INFO - Loaded 73 SIGMA rules
+2025-09-02 19:22:18,815 - INFO - Starting LLM software detection scan...
+2025-09-02 19:22:21,964 - INFO - Scan completed successfully
+2025-09-02 19:22:21,966 - INFO - Results saved to output\ai_discovery_results_AIPC6969_20250902_192221.json
+2025-09-02 19:22:21,966 - INFO - Results saved to: output\ai_discovery_results_AIPC6969_20250902_192221.json
+2025-09-02 19:22:21,966 - INFO - Summary saved to: output\ai_discovery_results_AIPC6969_20250902_192221_summary.txt
+2025-09-02 19:24:57,844 - INFO - Loaded 73 SIGMA rules
+2025-09-02 19:24:57,844 - INFO - LLM Software Detector initialized with max_file_size_mb=100
+2025-09-02 19:24:57,914 - INFO - Loaded 73 SIGMA rules
+2025-09-02 19:24:57,914 - INFO - Starting LLM software detection scan...
+2025-09-02 19:25:01,384 - INFO - Scan completed successfully
+2025-09-02 19:25:01,397 - INFO - Results saved to output\ai_discovery_results_AIPC6969_20250902_192501.json
+2025-09-02 19:25:01,398 - INFO - Results saved to: output\ai_discovery_results_AIPC6969_20250902_192501.json
+2025-09-02 19:25:01,398 - INFO - Summary saved to: output\ai_discovery_results_AIPC6969_20250902_192501_summary.txt

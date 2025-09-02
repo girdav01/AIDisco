@@ -1,0 +1,33 @@
+title: Brave Leo AI Environment Variables
+id: 12345678-1234-5678-9abc-123456789030
+status: experimental
+description: Detects Brave Leo AI environment variable configuration
+author: AI Discovery Scanner
+date: 2025-01-02
+tags:
+  - attack.discovery
+  - attack.t1082
+  - ai.llm
+  - ai.leo
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    EnvironmentVariables|contains:
+      - 'LEO_'
+      - 'BRAVE_LEO'
+      - 'LEO_TOKEN'
+      - 'LEO_API_KEY'
+      - 'LEO_HOST'
+      - 'LEO_MODEL'
+  condition: selection
+fields:
+  - Image
+  - CommandLine
+  - EnvironmentVariables
+  - User
+falsepositives:
+  - Legitimate Brave Leo AI configuration
+  - Development environment setup
+level: low

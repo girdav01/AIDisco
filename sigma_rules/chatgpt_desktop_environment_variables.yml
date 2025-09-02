@@ -1,0 +1,32 @@
+title: ChatGPT Desktop Environment Variables
+id: 12345678-1234-5678-9abc-123456789021
+status: experimental
+description: Detects ChatGPT desktop environment variable configuration
+author: AI Discovery Scanner
+date: 2025-01-02
+tags:
+  - attack.discovery
+  - attack.t1082
+  - ai.llm
+  - ai.chatgpt
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    EnvironmentVariables|contains:
+      - 'CHATGPT_'
+      - 'OPENAI_'
+      - 'CHATGPT_TOKEN'
+      - 'OPENAI_API_KEY'
+      - 'CHATGPT_HOST'
+  condition: selection
+fields:
+  - Image
+  - CommandLine
+  - EnvironmentVariables
+  - User
+falsepositives:
+  - Legitimate ChatGPT desktop configuration
+  - Development environment setup
+level: low

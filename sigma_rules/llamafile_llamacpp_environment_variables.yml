@@ -1,0 +1,36 @@
+title: Llamafile/llama.cpp Environment Variables
+id: 12345678-1234-5678-9abc-123456789057
+status: experimental
+description: Detects Llamafile/llama.cpp environment variable configuration
+author: AI Discovery Scanner
+date: 2025-01-02
+tags:
+  - attack.discovery
+  - attack.t1082
+  - ai.llm
+  - ai.llamafile
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    EnvironmentVariables|contains:
+      - 'LLAMAFILE_'
+      - 'LLAMA_CPP_'
+      - 'LLAMA_'
+      - 'LLAMAFILE_TOKEN'
+      - 'LLAMA_CPP_TOKEN'
+      - 'LLAMAFILE_HOST'
+      - 'LLAMA_CPP_HOST'
+      - 'LLAMAFILE_MODEL'
+      - 'LLAMA_CPP_MODEL'
+  condition: selection
+fields:
+  - Image
+  - CommandLine
+  - EnvironmentVariables
+  - User
+falsepositives:
+  - Legitimate Llamafile/llama.cpp configuration
+  - Development environment setup
+level: low

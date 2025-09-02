@@ -1,0 +1,33 @@
+title: YouChat/You.com AI Environment Variables
+id: 12345678-1234-5678-9abc-123456789036
+status: experimental
+description: Detects YouChat/You.com AI environment variable configuration
+author: AI Discovery Scanner
+date: 2025-01-02
+tags:
+  - attack.discovery
+  - attack.t1082
+  - ai.llm
+  - ai.youchat
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    EnvironmentVariables|contains:
+      - 'YOUCHAT_'
+      - 'YOU_COM'
+      - 'YOUCHAT_TOKEN'
+      - 'YOU_API_KEY'
+      - 'YOUCHAT_HOST'
+      - 'YOUCHAT_MODEL'
+  condition: selection
+fields:
+  - Image
+  - CommandLine
+  - EnvironmentVariables
+  - User
+falsepositives:
+  - Legitimate YouChat/You.com AI configuration
+  - Development environment setup
+level: low

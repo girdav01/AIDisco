@@ -1,0 +1,45 @@
+title: Cursor AI Code Editor Process Detection
+id: 12345678-1234-5678-9abc-123456789004
+status: experimental
+description: Detects Cursor AI-powered code editor process execution across multiple platforms
+author: AI Discovery Scanner
+date: 2025-01-02
+tags:
+  - attack.execution
+  - attack.t1059
+  - attack.t1071.001
+  - ai.llm
+  - ai.cursor
+  - ai.code_editor
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    - Image|endswith:
+        - '\cursor.exe'
+        - '\Cursor.exe'
+        - '\cursor-app.exe'
+        - '\Cursor.app.exe'
+    - CommandLine|contains:
+        - 'cursor'
+        - 'cursor-app'
+        - 'cursor.exe'
+        - 'Cursor.exe'
+    - ProcessName|contains:
+        - 'cursor'
+        - 'Cursor'
+        - 'cursor-app'
+  condition: selection
+fields:
+  - Image
+  - CommandLine
+  - ProcessId
+  - User
+  - ParentImage
+  - ParentCommandLine
+falsepositives:
+  - Legitimate Cursor code editor usage
+  - Development environments
+  - AI-assisted coding sessions
+level: medium

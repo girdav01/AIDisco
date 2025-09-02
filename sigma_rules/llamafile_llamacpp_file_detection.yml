@@ -1,0 +1,40 @@
+title: Llamafile/llama.cpp File Detection
+id: 12345678-1234-5678-9abc-123456789056
+status: experimental
+description: Detects Llamafile/llama.cpp file system activity
+author: AI Discovery Scanner
+date: 2025-01-02
+tags:
+  - attack.persistence
+  - attack.t1547
+  - ai.llm
+  - ai.llamafile
+logsource:
+  category: file_event
+  product: windows
+detection:
+  selection:
+    - TargetFilename|contains:
+        - '\.llamafile'
+        - '\llamafile\'
+        - '\Llamafile\'
+        - '\.llama-cpp'
+        - '\llama-cpp\'
+        - '\llama.cpp\'
+        - '\Llama-CPP\'
+        - '\AppData\Local\Llamafile'
+        - '\AppData\Roaming\Llamafile'
+        - '\AppData\Local\llama-cpp'
+        - '\AppData\Roaming\llama-cpp'
+        - '\Program Files\Llamafile'
+        - '\Program Files\llama-cpp'
+  condition: selection
+fields:
+  - TargetFilename
+  - ProcessName
+  - User
+  - EventType
+falsepositives:
+  - Legitimate Llamafile/llama.cpp installation
+  - Development tool updates
+level: medium

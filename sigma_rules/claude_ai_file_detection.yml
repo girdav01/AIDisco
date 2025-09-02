@@ -1,0 +1,35 @@
+title: Claude AI File Detection
+id: 12345678-1234-5678-9abc-123456789023
+status: experimental
+description: Detects Claude AI file system activity
+author: AI Discovery Scanner
+date: 2025-01-02
+tags:
+  - attack.persistence
+  - attack.t1547
+  - ai.llm
+  - ai.claude
+logsource:
+  category: file_event
+  product: windows
+detection:
+  selection:
+    - TargetFilename|contains:
+        - '\.claude'
+        - '\claude\'
+        - '\Claude\'
+        - '\AppData\Local\Claude'
+        - '\AppData\Roaming\Claude'
+        - '\Program Files\Claude'
+        - '\Program Files (x86)\Claude'
+        - '\Anthropic\Claude'
+  condition: selection
+fields:
+  - TargetFilename
+  - ProcessName
+  - User
+  - EventType
+falsepositives:
+  - Legitimate Claude AI installation
+  - Development tool updates
+level: medium

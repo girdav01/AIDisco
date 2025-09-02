@@ -1,0 +1,34 @@
+title: Jan AI File Detection
+id: 12345678-1234-5678-9abc-123456789047
+status: experimental
+description: Detects Jan AI file system activity
+author: AI Discovery Scanner
+date: 2025-01-02
+tags:
+  - attack.persistence
+  - attack.t1547
+  - ai.llm
+  - ai.jan
+logsource:
+  category: file_event
+  product: windows
+detection:
+  selection:
+    - TargetFilename|contains:
+        - '\.jan'
+        - '\jan\'
+        - '\Jan\'
+        - '\AppData\Local\Jan'
+        - '\AppData\Roaming\Jan'
+        - '\Program Files\Jan'
+        - '\Program Files (x86)\Jan'
+  condition: selection
+fields:
+  - TargetFilename
+  - ProcessName
+  - User
+  - EventType
+falsepositives:
+  - Legitimate Jan AI installation
+  - Development tool updates
+level: medium

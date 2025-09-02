@@ -1,0 +1,34 @@
+title: Faraday AI File Detection
+id: 12345678-1234-5678-9abc-123456789059
+status: experimental
+description: Detects Faraday AI file system activity
+author: AI Discovery Scanner
+date: 2025-01-02
+tags:
+  - attack.persistence
+  - attack.t1547
+  - ai.llm
+  - ai.faraday
+logsource:
+  category: file_event
+  product: windows
+detection:
+  selection:
+    - TargetFilename|contains:
+        - '\.faraday'
+        - '\faraday\'
+        - '\Faraday\'
+        - '\AppData\Local\Faraday'
+        - '\AppData\Roaming\Faraday'
+        - '\Program Files\Faraday'
+        - '\Program Files (x86)\Faraday'
+  condition: selection
+fields:
+  - TargetFilename
+  - ProcessName
+  - User
+  - EventType
+falsepositives:
+  - Legitimate Faraday AI installation
+  - Development tool updates
+level: medium

@@ -1,0 +1,33 @@
+title: Poe AI Environment Variables
+id: 12345678-1234-5678-9abc-123456789033
+status: experimental
+description: Detects Poe AI environment variable configuration
+author: AI Discovery Scanner
+date: 2025-01-02
+tags:
+  - attack.discovery
+  - attack.t1082
+  - ai.llm
+  - ai.poe
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    EnvironmentVariables|contains:
+      - 'POE_'
+      - 'QUORA_POE'
+      - 'POE_TOKEN'
+      - 'POE_API_KEY'
+      - 'POE_HOST'
+      - 'POE_MODEL'
+  condition: selection
+fields:
+  - Image
+  - CommandLine
+  - EnvironmentVariables
+  - User
+falsepositives:
+  - Legitimate Poe AI configuration
+  - Development environment setup
+level: low

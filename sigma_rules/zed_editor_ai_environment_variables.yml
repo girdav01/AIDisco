@@ -1,0 +1,32 @@
+title: Zed Editor AI Environment Variables
+id: 12345678-1234-5678-9abc-123456789015
+status: experimental
+description: Detects Zed editor AI environment variable configuration
+author: AI Discovery Scanner
+date: 2025-01-02
+tags:
+  - attack.discovery
+  - attack.t1082
+  - ai.llm
+  - ai.zed
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    EnvironmentVariables|contains:
+      - 'ZED_'
+      - 'ZED_AI'
+      - 'ZED_TOKEN'
+      - 'ZED_HOST'
+      - 'ZED_MODEL'
+  condition: selection
+fields:
+  - Image
+  - CommandLine
+  - EnvironmentVariables
+  - User
+falsepositives:
+  - Legitimate Zed editor configuration
+  - Development environment setup
+level: low

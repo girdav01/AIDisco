@@ -1,0 +1,34 @@
+title: Tabnine AI File Detection
+id: 12345678-1234-5678-9abc-123456789011
+status: experimental
+description: Detects Tabnine AI file system activity
+author: AI Discovery Scanner
+date: 2025-01-02
+tags:
+  - attack.persistence
+  - attack.t1547
+  - ai.llm
+  - ai.tabnine
+logsource:
+  category: file_event
+  product: windows
+detection:
+  selection:
+    - TargetFilename|contains:
+        - '\.tabnine'
+        - '\tabnine\'
+        - '\Tabnine\'
+        - '\AppData\Local\Tabnine'
+        - '\AppData\Roaming\Tabnine'
+        - '\Program Files\Tabnine'
+        - '\Program Files (x86)\Tabnine'
+  condition: selection
+fields:
+  - TargetFilename
+  - ProcessName
+  - User
+  - EventType
+falsepositives:
+  - Legitimate Tabnine AI installation
+  - Development tool updates
+level: medium

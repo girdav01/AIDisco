@@ -1,0 +1,41 @@
+title: Text Generation WebUI (Oobabooga) LLM Software Detection
+id: 12345678-1234-5678-9abc-123456789049
+status: experimental
+description: Detects text-generation-webui (Oobabooga) installation and usage
+author: AI Discovery Scanner
+date: 2025-01-02
+tags:
+  - attack.execution
+  - attack.t1059
+  - attack.t1071.001
+  - ai.llm
+  - ai.oobabooga
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    - Image|endswith:
+        - '\text-generation-webui.exe'
+        - '\oobabooga.exe'
+        - '\webui.exe'
+        - '\text-generation-webui-server.exe'
+        - '\oobabooga-server.exe'
+    - CommandLine|contains:
+        - 'text-generation-webui'
+        - 'oobabooga'
+        - 'webui'
+        - 'text-generation-webui-server'
+        - 'oobabooga-server'
+  condition: selection
+fields:
+  - Image
+  - CommandLine
+  - ProcessId
+  - User
+  - ParentImage
+  - ParentCommandLine
+falsepositives:
+  - Legitimate text-generation-webui usage
+  - Development environments
+level: medium

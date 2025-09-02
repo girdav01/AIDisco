@@ -1,0 +1,35 @@
+title: Google Gemini AI File Detection
+id: 12345678-1234-5678-9abc-123456789026
+status: experimental
+description: Detects Google Gemini AI file system activity
+author: AI Discovery Scanner
+date: 2025-01-02
+tags:
+  - attack.persistence
+  - attack.t1547
+  - ai.llm
+  - ai.gemini
+logsource:
+  category: file_event
+  product: windows
+detection:
+  selection:
+    - TargetFilename|contains:
+        - '\.gemini'
+        - '\gemini\'
+        - '\Gemini\'
+        - '\AppData\Local\Google\Gemini'
+        - '\AppData\Roaming\Google\Gemini'
+        - '\Program Files\Google\Gemini'
+        - '\Program Files (x86)\Google\Gemini'
+        - '\Google\Gemini'
+  condition: selection
+fields:
+  - TargetFilename
+  - ProcessName
+  - User
+  - EventType
+falsepositives:
+  - Legitimate Google Gemini AI installation
+  - Development tool updates
+level: medium

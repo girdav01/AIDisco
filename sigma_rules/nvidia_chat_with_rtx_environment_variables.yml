@@ -1,0 +1,36 @@
+title: NVIDIA Chat with RTX Environment Variables
+id: 12345678-1234-5678-9abc-123456789063
+status: experimental
+description: Detects NVIDIA Chat with RTX environment variable configuration
+author: AI Discovery Scanner
+date: 2025-01-02
+tags:
+  - attack.discovery
+  - attack.t1082
+  - ai.llm
+  - ai.nvidia-chat-rtx
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    EnvironmentVariables|contains:
+      - 'NVIDIA_CHAT_RTX_'
+      - 'CHAT_RTX_'
+      - 'RTX_CHAT_'
+      - 'NVIDIA_CHAT_RTX_TOKEN'
+      - 'CHAT_RTX_TOKEN'
+      - 'NVIDIA_CHAT_RTX_HOST'
+      - 'CHAT_RTX_HOST'
+      - 'NVIDIA_CHAT_RTX_MODEL'
+      - 'CHAT_RTX_MODEL'
+  condition: selection
+fields:
+  - Image
+  - CommandLine
+  - EnvironmentVariables
+  - User
+falsepositives:
+  - Legitimate NVIDIA Chat with RTX configuration
+  - Development environment setup
+level: low

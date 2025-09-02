@@ -1,0 +1,41 @@
+title: Cursor AI Code Editor File Detection
+id: 12345678-1234-5678-9abc-123456789005
+status: experimental
+description: Detects Cursor AI-powered code editor file system activity and configuration
+author: AI Discovery Scanner
+date: 2025-01-02
+tags:
+  - attack.persistence
+  - attack.t1547
+  - ai.llm
+  - ai.cursor
+  - ai.code_editor
+logsource:
+  category: file_event
+  product: windows
+detection:
+  selection:
+    - TargetFilename|contains:
+        - '\cursor\'
+        - '\Cursor\'
+        - '\cursor-app\'
+        - '\Cursor.app\'
+        - '\AppData\Local\Cursor\'
+        - '\AppData\Roaming\Cursor\'
+        - '\AppData\Local\cursor-app\'
+        - '\AppData\Roaming\cursor-app\'
+        - '\Program Files\Cursor\'
+        - '\Program Files (x86)\Cursor\'
+        - '\Users\\.cursor\'
+        - '\Users\\.cursor-app\'
+  condition: selection
+fields:
+  - TargetFilename
+  - ProcessName
+  - User
+  - EventType
+falsepositives:
+  - Legitimate Cursor installation and configuration
+  - Development environment setup
+  - AI coding assistant configuration
+level: medium

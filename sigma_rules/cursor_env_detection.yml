@@ -1,0 +1,37 @@
+title: Cursor AI Code Editor Environment Variables
+id: 12345678-1234-5678-9abc-123456789006
+status: experimental
+description: Detects Cursor AI-powered code editor environment variable configuration
+author: AI Discovery Scanner
+date: 2025-01-02
+tags:
+  - attack.discovery
+  - attack.t1082
+  - ai.llm
+  - ai.cursor
+  - ai.code_editor
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    EnvironmentVariables|contains:
+      - 'CURSOR_'
+      - 'CURSOR_APP_'
+      - 'CURSOR_AI_'
+      - 'CURSOR_OPENAI_'
+      - 'CURSOR_ANTHROPIC_'
+      - 'CURSOR_API_KEY'
+      - 'CURSOR_TOKEN'
+      - 'CURSOR_HOST'
+  condition: selection
+fields:
+  - Image
+  - CommandLine
+  - EnvironmentVariables
+  - User
+falsepositives:
+  - Legitimate Cursor configuration
+  - Development environment setup
+  - AI coding assistant configuration
+level: low

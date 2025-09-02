@@ -1,0 +1,37 @@
+title: LibreChat File Detection
+id: 12345678-1234-5678-9abc-123456789044
+status: experimental
+description: Detects LibreChat file system activity
+author: AI Discovery Scanner
+date: 2025-01-02
+tags:
+  - attack.persistence
+  - attack.t1547
+  - ai.llm
+  - ai.libreachat
+logsource:
+  category: file_event
+  product: windows
+detection:
+  selection:
+    - TargetFilename|contains:
+        - '\.librechat'
+        - '\librechat\'
+        - '\LibreChat\'
+        - '\.libre-chat'
+        - '\libre-chat\'
+        - '\Libre-Chat\'
+        - '\AppData\Local\LibreChat'
+        - '\AppData\Roaming\LibreChat'
+        - '\Program Files\LibreChat'
+        - '\Program Files (x86)\LibreChat'
+  condition: selection
+fields:
+  - TargetFilename
+  - ProcessName
+  - User
+  - EventType
+falsepositives:
+  - Legitimate LibreChat installation
+  - Development tool updates
+level: medium

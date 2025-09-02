@@ -1172,17 +1172,26 @@ class LLMSoftwareDetector:
 
         all_results = []
 
-        # Load and apply SIGMA rules for detection
-        detection_rules = self.load_detection_rules()
+        # First, run the old hardcoded detection methods for backward compatibility
+        print("Running legacy detection methods...")
+        ollama_results = self.detect_ollama()
+        all_results.extend(ollama_results)
         
-        for rule in detection_rules:
-            software_name = self.get_software_name_from_rule(rule)
-            print(f"Scanning for {software_name}...")
-            
-            results = self.detect_software_from_rule(rule)
-            all_results.extend(results)
+        lmstudio_results = self.detect_lmstudio()
+        all_results.extend(lmstudio_results)
+        
+        gpt4all_results = self.detect_gpt4all()
+        all_results.extend(gpt4all_results)
+        
+        vllm_results = self.detect_vllm()
+        all_results.extend(vllm_results)
 
-        # Apply SIGMA rules if available
+        # Now run comprehensive SIGMA rule-based detection
+        print("Running SIGMA rule-based detection...")
+        sigma_results = self.detect_from_all_sigma_rules()
+        all_results.extend(sigma_results)
+
+        # Apply SIGMA rules for matching
         sigma_detections = self.apply_sigma_rules(all_results)
 
         return {
@@ -1232,21 +1241,263 @@ class LLMSoftwareDetector:
                     })
         return matches
 
+    def detect_from_all_sigma_rules(self) -> List[DetectionResult]:
+        """Detect AI software using all loaded SIGMA rules"""
+        results = []
+        
+        for rule in self.sigma_rules:
+            try:
+                # Extract software name from rule title
+                title = rule.get('title', '')
+                software_name = self.extract_software_name_from_title(title)
+                
+                if not software_name:
+                    continue
+                
+                # Detect based on rule type
+                rule_results = self.detect_from_sigma_rule(rule, software_name)
+                results.extend(rule_results)
+                
+            except Exception as e:
+                logger.debug(f"Error processing rule {rule.get('title', 'Unknown')}: {e}")
+                continue
+        
+        return results
+    
+    def extract_software_name_from_title(self, title: str) -> str:
+        """Extract software name from SIGMA rule title"""
+        if not title:
+            return ""
+        
+        # Map common patterns to software names
+        title_lower = title.lower()
+        
+        if 'cursor' in title_lower:
+            return 'Cursor'
+        elif 'chatbox' in title_lower:
+            return 'Chatbox'
+        elif 'github copilot' in title_lower:
+            return 'GitHub Copilot'
+        elif 'replit ghostwriter' in title_lower:
+            return 'Replit Ghostwriter'
+        elif 'windsurf' in title_lower:
+            return 'Windsurf'
+        elif 'tabnine' in title_lower:
+            return 'Tabnine'
+        elif 'zed' in title_lower:
+            return 'Zed'
+        elif 'continue' in title_lower:
+            return 'Continue'
+        elif 'chatgpt' in title_lower:
+            return 'ChatGPT'
+        elif 'claude' in title_lower:
+            return 'Claude'
+        elif 'google gemini' in title_lower:
+            return 'Google Gemini'
+        elif 'brave leo' in title_lower:
+            return 'Brave Leo'
+        elif 'poe' in title_lower:
+            return 'Poe'
+        elif 'youchat' in title_lower or 'you.com' in title_lower:
+            return 'YouChat'
+        elif 'open webui' in title_lower:
+            return 'Open WebUI'
+        elif 'anythingllm' in title_lower:
+            return 'AnythingLLM'
+        elif 'librechat' in title_lower:
+            return 'LibreChat'
+        elif 'jan' in title_lower:
+            return 'Jan'
+        elif 'text generation webui' in title_lower or 'oobabooga' in title_lower:
+            return 'Text Generation WebUI'
+        elif 'localai' in title_lower:
+            return 'LocalAI'
+        elif 'llamafile' in title_lower or 'llama.cpp' in title_lower:
+            return 'Llamafile'
+        elif 'faraday' in title_lower:
+            return 'Faraday'
+        elif 'nvidia chat' in title_lower or 'rtx' in title_lower:
+            return 'NVIDIA Chat with RTX'
+        elif 'ollama' in title_lower:
+            return 'Ollama'
+        elif 'lm studio' in title_lower:
+            return 'LM Studio'
+        elif 'gpt4all' in title_lower:
+            return 'GPT4All'
+        elif 'vllm' in title_lower:
+            return 'vLLM'
+        
+        return ""
+    
+    def detect_from_sigma_rule(self, rule: Dict, software_name: str) -> List[DetectionResult]:
+        """Detect software based on a specific SIGMA rule"""
+        results = []
+        detection = rule.get('detection', {})
+        
+        # Process detection
+        if 'selection' in detection:
+            selection = detection.get('selection', [])
+            
+            # Handle list-based selection (our new format)
+            if isinstance(selection, list):
+                for item in selection:
+                    if isinstance(item, dict):
+                        for key, value in item.items():
+                            if key == 'Image|endswith':
+                                # Process detection
+                                results.extend(self.detect_processes_by_name(software_name, value))
+                            elif key == 'CommandLine|contains':
+                                # Process detection by command line
+                                results.extend(self.detect_processes_by_command_line(software_name, value))
+                            elif key == 'TargetFilename|contains':
+                                # File detection
+                                results.extend(self.detect_files_by_path(software_name, value))
+                            elif key == 'EnvironmentVariables|contains':
+                                # Environment variable detection
+                                results.extend(self.detect_environment_variables(software_name, value))
+            
+            # Handle dict-based selection (alternative format)
+            elif isinstance(selection, dict):
+                for key, value in selection.items():
+                    if key == 'Image|endswith':
+                        results.extend(self.detect_processes_by_name(software_name, value))
+                    elif key == 'CommandLine|contains':
+                        results.extend(self.detect_processes_by_command_line(software_name, value))
+                    elif key == 'TargetFilename|contains':
+                        results.extend(self.detect_files_by_path(software_name, value))
+                    elif key == 'EnvironmentVariables|contains':
+                        results.extend(self.detect_environment_variables(software_name, value))
+        
+        return results
+    
+    def detect_processes_by_name(self, software_name: str, process_names: List[str]) -> List[DetectionResult]:
+        """Detect processes by name patterns"""
+        results = []
+        
+        for proc in psutil.process_iter(['pid', 'name', 'exe', 'cmdline']):
+            try:
+                if proc.info['name']:
+                    proc_name = proc.info['name'].lower()
+                    for pattern in process_names:
+                        if pattern.lower().replace('\\', '').replace('.exe', '') in proc_name:
+                            results.append(DetectionResult(
+                                software=software_name,
+                                detection_type="process",
+                                value=f"PID: {proc.info['pid']}, Name: {proc.info['name']}",
+                                path=proc.info.get('exe'),
+                                confidence="high"
+                            ))
+                            break
+            except (psutil.NoSuchProcess, psutil.AccessDenied):
+                continue
+        
+        return results
+    
+    def detect_processes_by_command_line(self, software_name: str, command_patterns: List[str]) -> List[DetectionResult]:
+        """Detect processes by command line patterns"""
+        results = []
+        
+        for proc in psutil.process_iter(['pid', 'name', 'exe', 'cmdline']):
+            try:
+                if proc.info['cmdline']:
+                    cmdline = ' '.join(proc.info['cmdline']).lower()
+                    for pattern in command_patterns:
+                        if pattern.lower() in cmdline:
+                            results.append(DetectionResult(
+                                software=software_name,
+                                detection_type="process",
+                                value=f"PID: {proc.info['pid']}, Name: {proc.info['name']}, Cmd: {' '.join(proc.info['cmdline'][:3])}",
+                                path=proc.info.get('exe'),
+                                confidence="high"
+                            ))
+                            break
+            except (psutil.NoSuchProcess, psutil.AccessDenied):
+                continue
+        
+        return results
+    
+    def detect_files_by_path(self, software_name: str, path_patterns: List[str]) -> List[DetectionResult]:
+        """Detect files by path patterns"""
+        results = []
+        
+        for pattern in path_patterns:
+            # Clean up the pattern
+            clean_pattern = pattern.replace('\\', '').replace('/', '')
+            
+            # Check common installation paths
+            common_paths = [
+                os.path.expanduser(f"~/{clean_pattern}"),
+                os.path.expanduser(f"~/AppData/Local/{clean_pattern}"),
+                os.path.expanduser(f"~/AppData/Roaming/{clean_pattern}"),
+                f"C:\\Program Files\\{clean_pattern}",
+                f"C:\\Program Files (x86)\\{clean_pattern}"
+            ]
+            
+            for path in common_paths:
+                if os.path.exists(path):
+                    results.append(DetectionResult(
+                        software=software_name,
+                        detection_type="file_path",
+                        value=path,
+                        path=path,
+                        confidence="high"
+                    ))
+        
+        return results
+    
+    def detect_environment_variables(self, software_name: str, env_patterns: List[str]) -> List[DetectionResult]:
+        """Detect environment variables by patterns"""
+        results = []
+        
+        for key, value in os.environ.items():
+            for pattern in env_patterns:
+                if pattern.lower() in key.lower():
+                    results.append(DetectionResult(
+                        software=software_name,
+                        detection_type="environment_variable",
+                        value=f"{key}={value}",
+                        confidence="high"
+                    ))
+                    break
+        
+        return results
+
     def rule_matches_result(self, rule: Dict, result: DetectionResult) -> bool:
         """Check if a SIGMA rule matches a detection result"""
         # This is a simplified matching logic
         detection = rule.get("detection", {})
-        selection = detection.get("selection", {})
-
-        # Check if any selection criteria matches the result
-        for key, value in selection.items():
-            if isinstance(value, str):
-                if value.lower() in result.value.lower():
-                    return True
-            elif isinstance(value, list):
-                for v in value:
-                    if str(v).lower() in result.value.lower():
-                        return True
+        
+        # Handle standard SIGMA format with selection/condition
+        if "selection" in detection:
+            selection = detection.get("selection", {})
+            
+            # Check if selection is a dictionary (standard SIGMA format)
+            if isinstance(selection, dict):
+                for key, value in selection.items():
+                    if isinstance(value, str):
+                        if value.lower() in result.value.lower():
+                            return True
+                    elif isinstance(value, list):
+                        for v in value:
+                            if str(v).lower() in result.value.lower():
+                                return True
+            # Check if selection is a list (alternative SIGMA format)
+            elif isinstance(selection, list):
+                for item in selection:
+                    if isinstance(item, dict):
+                        for key, value in item.items():
+                            if isinstance(value, str):
+                                if value.lower() in result.value.lower():
+                                    return True
+                            elif isinstance(value, list):
+                                for v in value:
+                                    if str(v).lower() in result.value.lower():
+                                        return True
+        
+        # Handle custom format with file_paths, environment_variables, etc.
+        elif any(key in detection for key in ['file_paths', 'environment_variables', 'process_names', 'network_ports']):
+            # This is the custom format, use existing detection logic
+            return True
 
         return False
 

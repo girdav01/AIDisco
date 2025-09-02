@@ -1,0 +1,33 @@
+title: Claude AI Environment Variables
+id: 12345678-1234-5678-9abc-123456789024
+status: experimental
+description: Detects Claude AI environment variable configuration
+author: AI Discovery Scanner
+date: 2025-01-02
+tags:
+  - attack.discovery
+  - attack.t1082
+  - ai.llm
+  - ai.claude
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    EnvironmentVariables|contains:
+      - 'CLAUDE_'
+      - 'ANTHROPIC_'
+      - 'CLAUDE_TOKEN'
+      - 'ANTHROPIC_API_KEY'
+      - 'CLAUDE_HOST'
+      - 'CLAUDE_MODEL'
+  condition: selection
+fields:
+  - Image
+  - CommandLine
+  - EnvironmentVariables
+  - User
+falsepositives:
+  - Legitimate Claude AI configuration
+  - Development environment setup
+level: low

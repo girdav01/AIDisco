@@ -1,0 +1,37 @@
+title: LocalAI File Detection
+id: 12345678-1234-5678-9abc-123456789053
+status: experimental
+description: Detects LocalAI file system activity
+author: AI Discovery Scanner
+date: 2025-01-02
+tags:
+  - attack.persistence
+  - attack.t1547
+  - ai.llm
+  - ai.localai
+logsource:
+  category: file_event
+  product: windows
+detection:
+  selection:
+    - TargetFilename|contains:
+        - '\.localai'
+        - '\localai\'
+        - '\LocalAI\'
+        - '\.local-ai'
+        - '\local-ai\'
+        - '\Local-AI\'
+        - '\AppData\Local\LocalAI'
+        - '\AppData\Roaming\LocalAI'
+        - '\Program Files\LocalAI'
+        - '\Program Files (x86)\LocalAI'
+  condition: selection
+fields:
+  - TargetFilename
+  - ProcessName
+  - User
+  - EventType
+falsepositives:
+  - Legitimate LocalAI installation
+  - Development tool updates
+level: medium

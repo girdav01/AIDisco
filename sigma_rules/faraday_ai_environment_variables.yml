@@ -1,0 +1,32 @@
+title: Faraday AI Environment Variables
+id: 12345678-1234-5678-9abc-123456789060
+status: experimental
+description: Detects Faraday AI environment variable configuration
+author: AI Discovery Scanner
+date: 2025-01-02
+tags:
+  - attack.discovery
+  - attack.t1082
+  - ai.llm
+  - ai.faraday
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    EnvironmentVariables|contains:
+      - 'FARADAY_'
+      - 'FARADAY_AI'
+      - 'FARADAY_TOKEN'
+      - 'FARADAY_HOST'
+      - 'FARADAY_MODEL'
+  condition: selection
+fields:
+  - Image
+  - CommandLine
+  - EnvironmentVariables
+  - User
+falsepositives:
+  - Legitimate Faraday AI configuration
+  - Development environment setup
+level: low

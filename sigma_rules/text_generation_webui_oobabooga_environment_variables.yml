@@ -1,0 +1,34 @@
+title: Text Generation WebUI (Oobabooga) Environment Variables
+id: 12345678-1234-5678-9abc-123456789051
+status: experimental
+description: Detects text-generation-webui (Oobabooga) environment variable configuration
+author: AI Discovery Scanner
+date: 2025-01-02
+tags:
+  - attack.discovery
+  - attack.t1082
+  - ai.llm
+  - ai.oobabooga
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    EnvironmentVariables|contains:
+      - 'TEXT_GENERATION_WEBUI_'
+      - 'OOBABOOGA_'
+      - 'WEBUI_'
+      - 'TEXT_GENERATION_WEBUI_TOKEN'
+      - 'OOBABOOGA_TOKEN'
+      - 'WEBUI_HOST'
+      - 'WEBUI_MODEL'
+  condition: selection
+fields:
+  - Image
+  - CommandLine
+  - EnvironmentVariables
+  - User
+falsepositives:
+  - Legitimate text-generation-webui configuration
+  - Development environment setup
+level: low
