@@ -18,15 +18,13 @@ detection:
     - Image|endswith:
         - '\llamafile.exe'
         - '\llama-cpp.exe'
-        - '\llama.exe'
         - '\llamafile-server.exe'
         - '\llama-cpp-server.exe'
     - CommandLine|contains:
-        - 'llamafile'
-        - 'llama-cpp'
-        - 'llama'
-        - 'llamafile-server'
-        - 'llama-cpp-server'
+        - 'llamafile.exe'
+        - 'llama-cpp.exe'
+        - 'llamafile-server.exe'
+        - 'llama-cpp-server.exe'
   condition: selection
 fields:
   - Image

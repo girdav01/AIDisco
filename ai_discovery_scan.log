@@ -220,3 +220,108 @@ but found another document
 2025-09-02 19:25:01,397 - INFO - Results saved to output\ai_discovery_results_AIPC6969_20250902_192501.json
 2025-09-02 19:25:01,398 - INFO - Results saved to: output\ai_discovery_results_AIPC6969_20250902_192501.json
 2025-09-02 19:25:01,398 - INFO - Summary saved to: output\ai_discovery_results_AIPC6969_20250902_192501_summary.txt
+2025-09-03 09:07:20,583 - INFO - Loaded 73 SIGMA rules
+2025-09-03 09:07:20,583 - INFO - LLM Software Detector initialized with max_file_size_mb=100
+2025-09-03 09:07:20,657 - INFO - Loaded 73 SIGMA rules
+2025-09-03 09:07:20,657 - INFO - Starting LLM software detection scan...
+2025-09-03 09:07:24,151 - INFO - Scan completed successfully
+2025-09-03 09:07:24,157 - INFO - Results saved to output\ai_discovery_results_AIPC6969_20250903_090724.json
+2025-09-03 09:07:24,157 - INFO - Results saved to: output\ai_discovery_results_AIPC6969_20250903_090724.json
+2025-09-03 09:07:24,157 - INFO - Summary saved to: output\ai_discovery_results_AIPC6969_20250903_090724_summary.txt
+2025-09-03 09:08:25,894 - INFO - Loaded 73 SIGMA rules
+2025-09-03 09:08:25,895 - INFO - LLM Software Detector initialized with max_file_size_mb=100
+2025-09-03 09:08:25,973 - INFO - Loaded 73 SIGMA rules
+2025-09-03 09:08:25,974 - INFO - Starting LLM software detection scan...
+2025-09-03 09:08:29,453 - INFO - Scan completed successfully
+2025-09-03 09:08:29,457 - INFO - Results saved to output\ai_discovery_results_AIPC6969_20250903_090829.json
+2025-09-03 09:08:29,458 - INFO - Results saved to: output\ai_discovery_results_AIPC6969_20250903_090829.json
+2025-09-03 09:08:29,458 - INFO - Summary saved to: output\ai_discovery_results_AIPC6969_20250903_090829_summary.txt
+2025-09-03 09:26:55,260 - INFO - Loaded 73 SIGMA rules
+2025-09-03 09:26:55,260 - INFO - LLM Software Detector initialized with max_file_size_mb=100
+2025-09-03 09:26:55,329 - INFO - Loaded 73 SIGMA rules
+2025-09-03 09:26:55,330 - INFO - Starting LLM software detection scan...
+2025-09-03 09:26:58,828 - INFO - Scan completed successfully
+2025-09-03 09:26:58,834 - INFO - Results saved to output\ai_discovery_results_AIPC6969_20250903_092658.json
+2025-09-03 09:26:58,834 - INFO - Results saved to: output\ai_discovery_results_AIPC6969_20250903_092658.json
+2025-09-03 09:26:58,834 - INFO - Summary saved to: output\ai_discovery_results_AIPC6969_20250903_092658_summary.txt
+2025-09-03 15:09:00,649 - INFO - Loaded 73 SIGMA rules
+2025-09-03 15:09:00,649 - INFO - LLM Software Detector initialized with max_file_size_mb=100
+2025-09-03 15:09:00,719 - INFO - Loaded 73 SIGMA rules
+2025-09-03 15:09:00,719 - INFO - Starting LLM software detection scan...
+2025-09-03 15:09:04,198 - INFO - Scan completed successfully
+2025-09-03 15:09:04,204 - INFO - Results saved to output\ai_discovery_results_AIPC6969_20250903_150904.json
+2025-09-03 15:09:04,204 - INFO - Results saved to: output\ai_discovery_results_AIPC6969_20250903_150904.json
+2025-09-03 15:09:04,205 - INFO - Summary saved to: output\ai_discovery_results_AIPC6969_20250903_150904_summary.txt
+2025-09-03 15:12:18,930 - INFO - Loaded 73 SIGMA rules
+2025-09-03 15:12:18,930 - INFO - LLM Software Detector initialized with max_file_size_mb=100
+2025-09-03 15:12:18,999 - INFO - Loaded 73 SIGMA rules
+2025-09-03 15:12:18,999 - INFO - Starting LLM software detection scan...
+2025-09-03 15:12:22,457 - INFO - Scan completed successfully
+2025-09-03 15:12:22,461 - INFO - Results saved to output\ai_discovery_results_AIPC6969_20250903_151222.json
+2025-09-03 15:12:22,461 - INFO - Results saved to: output\ai_discovery_results_AIPC6969_20250903_151222.json
+2025-09-03 15:12:22,470 - INFO - Summary saved to: output\ai_discovery_results_AIPC6969_20250903_151222_summary.txt
+2025-09-03 15:24:05,264 - INFO - Loaded 73 SIGMA rules
+2025-09-03 15:24:05,264 - INFO - LLM Software Detector initialized with max_file_size_mb=100
+2025-09-03 15:24:05,333 - INFO - Loaded 73 SIGMA rules
+2025-09-03 15:24:05,333 - INFO - Starting LLM software detection scan...
+2025-09-03 15:24:08,821 - INFO - Scan completed successfully
+2025-09-03 15:24:08,825 - INFO - Results saved to output\ai_discovery_results_AIPC6969_20250903_152408.json
+2025-09-03 15:24:08,825 - INFO - Results saved to: output\ai_discovery_results_AIPC6969_20250903_152408.json
+2025-09-03 15:24:08,825 - INFO - Summary saved to: output\ai_discovery_results_AIPC6969_20250903_152408_summary.txt
+2025-09-03 15:32:08,212 - INFO - Loaded 72 SIGMA rules
+2025-09-03 15:32:08,212 - INFO - LLM Software Detector initialized with max_file_size_mb=100
+2025-09-03 15:32:08,282 - INFO - Loaded 72 SIGMA rules
+2025-09-03 15:32:08,282 - INFO - Starting LLM software detection scan...
+2025-09-03 15:32:11,745 - INFO - Scan completed successfully
+2025-09-03 15:32:11,745 - ERROR - Failed to generate summary: 'software_found'
+2025-09-03 15:32:11,747 - INFO - Results saved to output\ai_discovery_results_AIPC6969_20250903_153211.json
+2025-09-03 15:32:11,747 - INFO - Results saved to: output\ai_discovery_results_AIPC6969_20250903_153211.json
+2025-09-03 15:32:11,747 - ERROR - Unexpected error saving summary: cannot access local variable 'summary' where it is not associated with a value
+2025-09-03 15:32:36,861 - INFO - Loaded 72 SIGMA rules
+2025-09-03 15:32:36,862 - INFO - LLM Software Detector initialized with max_file_size_mb=100
+2025-09-03 15:32:36,931 - INFO - Loaded 72 SIGMA rules
+2025-09-03 15:32:36,931 - INFO - Starting LLM software detection scan...
+2025-09-03 15:32:40,373 - INFO - Scan completed successfully
+2025-09-03 15:32:40,377 - INFO - Results saved to output\ai_discovery_results_AIPC6969_20250903_153240.json
+2025-09-03 15:32:40,377 - INFO - Results saved to: output\ai_discovery_results_AIPC6969_20250903_153240.json
+2025-09-03 15:32:40,377 - INFO - Summary saved to: output\ai_discovery_results_AIPC6969_20250903_153240_summary.txt
+2025-09-03 15:43:02,984 - INFO - Loaded 72 SIGMA rules
+2025-09-03 15:43:02,984 - INFO - LLM Software Detector initialized with max_file_size_mb=100
+2025-09-03 15:43:03,055 - INFO - Loaded 72 SIGMA rules
+2025-09-03 15:43:03,055 - INFO - Starting LLM software detection scan...
+2025-09-03 15:43:06,756 - INFO - Scan completed successfully
+2025-09-03 15:43:06,760 - INFO - Results saved to output\ai_discovery_results_AIPC6969_20250903_154306.json
+2025-09-03 15:43:06,760 - INFO - Results saved to: output\ai_discovery_results_AIPC6969_20250903_154306.json
+2025-09-03 15:43:06,761 - INFO - Summary saved to: output\ai_discovery_results_AIPC6969_20250903_154306_summary.txt
+2025-09-03 15:43:44,116 - INFO - Loaded 72 SIGMA rules
+2025-09-03 15:43:44,116 - INFO - LLM Software Detector initialized with max_file_size_mb=100
+2025-09-03 15:43:44,185 - INFO - Loaded 72 SIGMA rules
+2025-09-03 15:43:44,185 - INFO - Starting LLM software detection scan...
+2025-09-03 15:43:47,666 - INFO - Scan completed successfully
+2025-09-03 15:43:47,670 - INFO - Results saved to output\ai_discovery_results_AIPC6969_20250903_154347.json
+2025-09-03 15:43:47,670 - INFO - Results saved to: output\ai_discovery_results_AIPC6969_20250903_154347.json
+2025-09-03 15:43:47,670 - INFO - Summary saved to: output\ai_discovery_results_AIPC6969_20250903_154347_summary.txt
+2025-09-03 15:44:10,599 - INFO - Loaded 72 SIGMA rules
+2025-09-03 15:44:10,599 - INFO - LLM Software Detector initialized with max_file_size_mb=100
+2025-09-03 15:44:10,667 - INFO - Loaded 72 SIGMA rules
+2025-09-03 15:44:10,667 - INFO - Starting LLM software detection scan...
+2025-09-03 15:44:14,153 - INFO - Scan completed successfully
+2025-09-03 15:44:14,165 - INFO - Results saved to output\ai_discovery_results_AIPC6969_20250903_154414.json
+2025-09-03 15:44:14,166 - INFO - Results saved to: output\ai_discovery_results_AIPC6969_20250903_154414.json
+2025-09-03 15:44:14,166 - INFO - Summary saved to: output\ai_discovery_results_AIPC6969_20250903_154414_summary.txt
+2025-09-03 15:56:45,262 - INFO - Loaded 72 SIGMA rules
+2025-09-03 15:56:45,262 - INFO - LLM Software Detector initialized with max_file_size_mb=100
+2025-09-03 15:56:45,331 - INFO - Loaded 72 SIGMA rules
+2025-09-03 15:56:45,331 - INFO - Starting LLM software detection scan...
+2025-09-03 15:56:48,795 - INFO - Scan completed successfully
+2025-09-03 15:56:48,799 - INFO - Results saved to output\ai_discovery_results_AIPC6969_20250903_155648.json
+2025-09-03 15:56:48,799 - INFO - Results saved to: output\ai_discovery_results_AIPC6969_20250903_155648.json
+2025-09-03 15:56:48,800 - INFO - Summary saved to: output\ai_discovery_results_AIPC6969_20250903_155648_summary.txt
+2025-09-03 15:58:05,973 - INFO - Loaded 72 SIGMA rules
+2025-09-03 15:58:05,974 - INFO - LLM Software Detector initialized with max_file_size_mb=100
+2025-09-03 15:58:06,043 - INFO - Loaded 72 SIGMA rules
+2025-09-03 15:58:06,043 - INFO - Starting LLM software detection scan...
+2025-09-03 15:58:09,517 - INFO - Scan completed successfully
+2025-09-03 15:58:09,521 - INFO - Results saved to output\ai_discovery_results_AIPC6969_20250903_155809.json
+2025-09-03 15:58:09,521 - INFO - Results saved to: output\ai_discovery_results_AIPC6969_20250903_155809.json
+2025-09-03 15:58:09,522 - INFO - Summary saved to: output\ai_discovery_results_AIPC6969_20250903_155809_summary.txt

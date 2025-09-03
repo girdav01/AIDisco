@@ -9,6 +9,9 @@ A comprehensive Python-based scanner designed to detect common Local Large Langu
 - **LM Studio**: Desktop application for running LLMs with GUI
 - **GPT4All**: Cross-platform desktop application for running local LLMs
 - **vLLM**: High-performance inference library for LLMs
+- **AI Development Tools**: GitHub Copilot, Replit Ghostwriter, Windsurf, Tabnine, Zed, Continue, Cursor
+- **AI Chat Applications**: ChatGPT, Claude, Google Gemini, Brave Leo, Poe, YouChat, Chatbox
+- **Open Source AI Platforms**: Open WebUI, AnythingLLM, LibreChat, Jan, Text Generation WebUI, LocalAI, Llamafile, Faraday, NVIDIA Chat with RTX
 - Extensible architecture for adding more LLM software detection
 
 ### Detection Methods
@@ -21,6 +24,8 @@ A comprehensive Python-based scanner designed to detect common Local Large Langu
   - LM Studio: Port 1234 (HTTP API)
   - GPT4All: Port 4891 (HTTP API)
   - vLLM: Port 8000 (HTTP API)
+- **Comprehensive SIGMA Rules**: 73 detection rules covering process creation, file events, network activity, and environment variables
+- **Cross-Platform Detection**: Optimized detection methods for Windows, macOS, and Linux systems
 
 ### Log Collection
 - **Text-Only Log Gathering**: Collects only text-based logs, configuration files, and metadata
@@ -89,7 +94,7 @@ python ai_discovery_scan.py -v -o detailed_scan.json --collect-logs --log-format
 ├── ai_discovery_scan.py        # Main scanner script
 ├── example_log_collection.py   # Example script for log collection
 ├── requirements.txt            # Python dependencies
-├── sigma_rules/               # SIGMA rules directory
+├── sigma_rules/               # SIGMA rules directory (73 rules total)
 │   ├── ollama_detection.yml              # Comprehensive Ollama detection
 │   ├── lmstudio_detection.yml            # LM Studio detection
 │   ├── gpt4all_detection.yml             # GPT4All desktop app detection
@@ -100,12 +105,14 @@ python ai_discovery_scan.py -v -o detailed_scan.json --collect-logs --log-format
 │   ├── tabnine_detection.yml             # Tabnine AI detection
 │   ├── zed_detection.yml                 # Zed editor AI detection
 │   ├── continue_detection.yml            # Continue AI detection
+│   ├── cursor_ai_code_editor_detection.yml # Cursor AI code editor detection
 │   ├── chatgpt_detection.yml             # ChatGPT desktop detection
 │   ├── claude_detection.yml              # Claude AI detection
 │   ├── google_gemini_detection.yml       # Google Gemini AI detection
 │   ├── brave_leo_detection.yml           # Brave Leo AI detection
 │   ├── poe_detection.yml                 # Poe AI detection
 │   ├── youchat_detection.yml             # YouChat/You.com AI detection
+│   ├── chatbox_ai_chat_application_detection.yml # Chatbox AI chat application detection
 │   ├── openwebui_detection.yml           # Open WebUI detection
 │   ├── anythingllm_detection.yml         # AnythingLLM detection
 │   ├── librechat_detection.yml           # LibreChat detection
@@ -225,7 +232,7 @@ python example_log_collection.py
 
 ## SIGMA Rules
 
-The scanner includes 25 comprehensive SIGMA rules for LLM software detection:
+The scanner includes 73 comprehensive SIGMA rules for LLM software detection:
 
 ### Core LLM Software
 1. **ollama_detection.yml** - Comprehensive Ollama detection covering processes, files, network activity, and environment variables
@@ -240,25 +247,27 @@ The scanner includes 25 comprehensive SIGMA rules for LLM software detection:
 8. **tabnine_detection.yml** - Tabnine AI detection for code completion tools
 9. **zed_detection.yml** - Zed editor with AI features detection
 10. **continue_detection.yml** - Continue AI detection for development assistance
+11. **cursor_ai_code_editor_detection.yml** - Cursor AI code editor detection for processes, files, and environment variables
 
 ### AI Chat Applications
-11. **chatgpt_detection.yml** - ChatGPT desktop application detection
-12. **claude_detection.yml** - Claude AI applications (Claude Code, Claude Desktop) detection
-13. **google_gemini_detection.yml** - Google Gemini AI detection
-14. **brave_leo_detection.yml** - Brave Leo AI detection
-15. **poe_detection.yml** - Poe AI detection
-16. **youchat_detection.yml** - YouChat/You.com AI detection
+12. **chatgpt_detection.yml** - ChatGPT desktop application detection
+13. **claude_detection.yml** - Claude AI applications (Claude Code, Claude Desktop) detection
+14. **google_gemini_detection.yml** - Google Gemini AI detection
+15. **brave_leo_detection.yml** - Brave Leo AI detection
+16. **poe_detection.yml** - Poe AI detection
+17. **youchat_detection.yml** - YouChat/You.com AI detection
+18. **chatbox_ai_chat_application_detection.yml** - Chatbox AI chat application detection
 
 ### Open Source AI Platforms
-17. **openwebui_detection.yml** - Open WebUI detection
-18. **anythingllm_detection.yml** - AnythingLLM detection
-19. **librechat_detection.yml** - LibreChat detection
-20. **jan_detection.yml** - Jan AI detection
-21. **text_generation_webui_detection.yml** - Text Generation WebUI (Oobabooga) detection
-22. **localai_detection.yml** - LocalAI detection
-23. **llamafile_detection.yml** - Llamafile/llama.cpp detection
-24. **faraday_detection.yml** - Faraday AI detection
-25. **nvidia_chat_rtx_detection.yml** - NVIDIA Chat with RTX detection
+19. **openwebui_detection.yml** - Open WebUI detection
+20. **anythingllm_detection.yml** - AnythingLLM detection
+21. **librechat_detection.yml** - LibreChat detection
+22. **jan_detection.yml** - Jan AI detection
+23. **text_generation_webui_detection.yml** - Text Generation WebUI (Oobabooga) detection
+24. **localai_detection.yml** - LocalAI detection
+25. **llamafile_detection.yml** - Llamafile/llama.cpp detection
+26. **faraday_detection.yml** - Faraday AI detection
+27. **nvidia_chat_rtx_detection.yml** - NVIDIA Chat with RTX detection
 
 ### Rule Coverage
 Each SIGMA rule provides comprehensive detection for:
@@ -274,6 +283,13 @@ Each SIGMA rule provides comprehensive detection for:
 - **File Events**: Tracks installation and model storage
 - **Registry Events**: Windows-specific registry monitoring
 - **Environment Variables**: Configuration detection
+
+### Rule Structure
+Each SIGMA rule follows the standard SIGMA format with:
+- **Detection**: Selection criteria for processes, files, and environment variables
+- **Condition**: Logical operators to combine detection criteria
+- **Metadata**: Rule information, tags, and MITRE ATT&CK mappings
+- **Cross-Platform Support**: Detection methods optimized for Windows, macOS, and Linux
 
 ### MITRE ATT&CK Mapping
 - **T1059**: Command and Scripting Interpreter
@@ -404,6 +420,15 @@ To contribute:
 4. Enhance detection accuracy
 
 ## Changelog
+
+- **v1.3**: Comprehensive AI Application Detection Expansion
+  - Added 21 new AI applications with comprehensive SIGMA rules
+  - Enhanced detection for GitHub Copilot, Replit Ghostwriter, Windsurf, Tabnine, Zed, Continue, ChatGPT, Claude, Google Gemini, Brave Leo, Poe, YouChat, Open WebUI, AnythingLLM, LibreChat, Jan, Text Generation WebUI, LocalAI, Llamafile, Faraday, and NVIDIA Chat with RTX
+  - Added Cursor AI code editor and Chatbox AI chat application detection
+  - Implemented comprehensive SIGMA rule-based detection system
+  - Enhanced scanner to utilize all 73 SIGMA rules for active detection
+  - Fixed compatibility issues between custom and standard SIGMA rule formats
+  - Improved process, file, and environment variable detection methods
 
 - **v1.2**: Added GPT4All and vLLM support
   - Comprehensive detection for GPT4All desktop application

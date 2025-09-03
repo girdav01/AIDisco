@@ -20,9 +20,9 @@ detection:
         - '\zed-editor.exe'
         - '\zed-ai.exe'
     - CommandLine|contains:
-        - 'zed'
-        - 'zed-editor'
-        - 'zed-ai'
+        - 'zed.exe'
+        - 'zed-editor.exe'
+        - 'zed-ai.exe'
   condition: selection
 fields:
   - Image
@@ -34,4 +34,6 @@ fields:
 falsepositives:
   - Legitimate Zed editor usage
   - Development environments
+  - Microsoft Edge WebView processes
+  - Generic Windows processes
 level: medium

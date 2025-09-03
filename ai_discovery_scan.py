@@ -1194,13 +1194,40 @@ class LLMSoftwareDetector:
         # Apply SIGMA rules for matching
         sigma_detections = self.apply_sigma_rules(all_results)
 
+        # Create detailed software_found summary
+        software_summary = {}
+        for result in all_results:
+            software = result.software
+            if software not in software_summary:
+                software_summary[software] = {
+                    "detection_count": 0,
+                    "sanction_status": self.get_sanction_status(software),
+                    "version": None,
+                    "detection_types": set()
+                }
+            
+            software_summary[software]["detection_count"] += 1
+            software_summary[software]["detection_types"].add(result.detection_type)
+            
+            # Get version from first detection that has one
+            if not software_summary[software]["version"]:
+                version = self.get_software_version(software, result.detection_type, result.value)
+                if version:
+                    software_summary[software]["version"] = version
+
+        # Convert sets to lists for JSON serialization
+        for software in software_summary:
+            software_summary[software]["detection_types"] = list(software_summary[software]["detection_types"])
+
         return {
             "scan_timestamp": self.get_timestamp(),
             "system_info": {
+                "computer_name": platform.node(),
                 "os": platform.system(),
                 "release": platform.release(),
                 "architecture": platform.machine(),
-                "python_version": platform.python_version()
+                "python_version": platform.python_version(),
+                "ip_addresses": self.get_system_ip_addresses()
             },
             "detections": [
                 {
@@ -1208,14 +1235,17 @@ class LLMSoftwareDetector:
                     "detection_type": result.detection_type,
                     "value": result.value,
                     "path": result.path,
-                    "confidence": result.confidence
+                    "confidence": result.confidence,
+                    "sanction_status": self.get_sanction_status(result.software),
+                    "version": self.get_software_version(result.software, result.detection_type, result.value)
                 }
                 for result in all_results
             ],
             "sigma_matches": sigma_detections,
+            "software_found": software_summary,
             "summary": {
                 "total_detections": len(all_results),
-                "software_found": list(set([r.software for r in all_results])),
+                "unique_software_count": len(software_summary),
                 "high_confidence": len([r for r in all_results if r.confidence == "high"]),
                 "medium_confidence": len([r for r in all_results if r.confidence == "medium"])
             }
@@ -2667,22 +2697,47 @@ class LLMSoftwareDetector:
         summary.append("SCAN SUMMARY:")
         summary.append("-" * 40)
         summary.append(f"Total Detections: {results['summary'].get('total_detections', 0)}")
-        summary.append(f"Software Found: {', '.join(results['summary'].get('software_found', [])) if results['summary'].get('software_found') else 'None'}")
+        summary.append(f"Unique Software Count: {results['summary'].get('unique_software_count', 0)}")
         summary.append(f"High Confidence Detections: {results['summary'].get('high_confidence', 0)}")
         summary.append(f"Medium Confidence Detections: {results['summary'].get('medium_confidence', 0)}")
         summary.append(f"Low Confidence Detections: {results['summary'].get('low_confidence', 0)}")
         summary.append("")
         
-        # Detailed detections
+        # Group detections by application
         if results['detections']:
-            summary.append("DETAILED DETECTIONS:")
+            summary.append("APPLICATIONS DETECTED:")
             summary.append("-" * 40)
+            
+            # Group detections by software
+            grouped_detections = {}
             for detection in results['detections']:
-                confidence = detection.get('confidence', 'unknown')
-                summary.append(f"• {detection['software'].upper()}")
-                summary.append(f"  - Type: {detection['detection_type']}")
-                summary.append(f"  - Value: {detection['value']}")
-                summary.append(f"  - Confidence: {confidence}")
+                software = detection['software']
+                if software not in grouped_detections:
+                    grouped_detections[software] = []
+                grouped_detections[software].append(detection)
+            
+            # Display grouped results
+            for software, detections in grouped_detections.items():
+                # Get sanction status and version from software_found summary
+                software_info = results.get('software_found', {}).get(software, {})
+                sanction_status = software_info.get('sanction_status', 'unknown')
+                version = software_info.get('version', None)
+                sanction_flag = "Y" if sanction_status == "sanctioned" else "N"
+                
+                summary.append(f"• {software.upper()}")
+                summary.append(f"  - Detection Count: {len(detections)}")
+                summary.append(f"  - Sanctioned: {sanction_flag}")
+                if version:
+                    summary.append(f"  - Version: {version}")
+                else:
+                    summary.append(f"  - Version: Not available")
+                summary.append(f"  - Detections:")
+                
+                for detection in detections:
+                    confidence = detection.get('confidence', 'unknown')
+                    summary.append(f"    * Type: {detection['detection_type']}")
+                    summary.append(f"      Value: {detection['value']}")
+                    summary.append(f"      Confidence: {confidence}")
                 summary.append("")
         
         # SIGMA rule matches
@@ -2698,7 +2753,7 @@ class LLMSoftwareDetector:
         # Recommendations
         summary.append("RECOMMENDATIONS:")
         summary.append("-" * 40)
-        if results['summary']['software_found']:
+        if results.get('software_found'):
             summary.append("• LLM software detected on this system")
             summary.append("• Review security policies for LLM software usage")
             summary.append("• Consider implementing access controls and monitoring")
@@ -2714,6 +2769,175 @@ class LLMSoftwareDetector:
         summary.append("=" * 80)
         
         return "\n".join(summary)
+
+    def get_system_ip_addresses(self) -> Dict[str, List[str]]:
+        """Get system IP addresses"""
+        ip_addresses = {}
+        try:
+            interfaces = psutil.net_if_addrs()
+            for interface_name, interface_addresses in interfaces.items():
+                ip_addresses[interface_name] = []
+                for addr in interface_addresses:
+                    if addr.family == socket.AF_INET:  # IPv4
+                        ip_addresses[interface_name].append(addr.address)
+        except Exception as e:
+            logger.debug(f"Error getting IP addresses: {e}")
+            ip_addresses = {"error": [f"Failed to get IP addresses: {e}"]}
+        return ip_addresses
+
+    def get_sanction_status(self, software_name: str) -> str:
+        """Determine sanction status"""
+        sanctioned_apps = {"Ollama", "LM Studio", "GPT4All", "vLLM", "GitHub Copilot", "Cursor", "Chatbox"}
+        unsanctioned_apps = {"Replit Ghostwriter", "Windsurf", "Tabnine", "Zed", "Continue", "ChatGPT", "Claude", 
+                           "Google Gemini", "Brave Leo", "Poe", "YouChat", "Open WebUI", "AnythingLLM",
+                           "LibreChat", "Jan", "Text Generation WebUI", "LocalAI", "Llamafile", "Faraday", "NVIDIA Chat with RTX"}
+
+        for app in sanctioned_apps:
+            if app.lower() in software_name.lower():
+                return "sanctioned"
+        for app in unsanctioned_apps:
+            if app.lower() in software_name.lower():
+                return "unsanctioned"
+        return "unknown"
+
+    def get_software_version(self, software_name: str, detection_type: str, value: str) -> Optional[str]:
+        """Get software version if available"""
+        try:
+            # Try to get version from process detection with PID
+            if detection_type == "process" and "pid:" in value.lower():
+                pid_match = re.search(r'pid:\s*(\d+)', value, re.IGNORECASE)
+                if pid_match:
+                    pid = int(pid_match.group(1))
+                    try:
+                        process = psutil.Process(pid)
+                        exe_path = process.exe()
+                        if exe_path and os.path.exists(exe_path):
+                            return self._get_cached_or_extract_version(exe_path)
+                    except (psutil.NoSuchProcess, psutil.AccessDenied):
+                        pass
+            
+            # Try to get version from file path detection that points to an executable
+            elif detection_type == "file_path" and value:
+                # Check if the path points to an executable
+                if value.lower().endswith(('.exe', '.app', '.bin')):
+                    if os.path.exists(value):
+                        return self._get_cached_or_extract_version(value)
+                # Check if it's a directory containing executables
+                elif os.path.isdir(value):
+                    # Look for common executable names in the directory
+                    common_exes = [software_name.lower() + '.exe', software_name.lower() + '.app']
+                    for exe_name in common_exes:
+                        exe_path = os.path.join(value, exe_name)
+                        if os.path.exists(exe_path):
+                            return self._get_cached_or_extract_version(exe_path)
+            
+            # Try to get version from path in detection value (e.g., from command line)
+            elif detection_type == "process" and "path:" in value.lower():
+                path_match = re.search(r'path:\s*([^\s,]+)', value, re.IGNORECASE)
+                if path_match:
+                    exe_path = path_match.group(1)
+                    if os.path.exists(exe_path):
+                        return self._get_cached_or_extract_version(exe_path)
+            
+            return None
+        except Exception as e:
+            logger.debug(f"Error getting version for {software_name}: {e}")
+            return None
+
+    def _get_cached_or_extract_version(self, exe_path: str) -> Optional[str]:
+        """Get cached version or extract new version from executable"""
+        # Check cache first
+        if exe_path in self.file_version_cache:
+            return self.file_version_cache[exe_path]
+        
+        # Try to get actual file version
+        version = self._extract_file_version(exe_path)
+        if version:
+            self.file_version_cache[exe_path] = version
+            return version
+        
+        # If no version info available, return None instead of fallback
+        return None
+
+    def _extract_file_version(self, file_path: str) -> Optional[str]:
+        """Extract actual file version from executable"""
+        try:
+            if platform.system() == "Windows":
+                # Try to get Windows file version info using win32api
+                try:
+                    import win32api
+                    info = win32api.GetFileVersionInfo(file_path, "\\")
+                    ms = info['FileVersionMS']
+                    ls = info['FileVersionLS']
+                    version = f"{win32api.HIWORD(ms)}.{win32api.LOWORD(ms)}.{win32api.HIWORD(ls)}.{win32api.LOWORD(ls)}"
+                    if version and version != "0.0.0.0":
+                        return version
+                except (ImportError, Exception):
+                    # win32api not available or failed, try alternative methods
+                    pass
+                
+                # Try PowerShell Get-ItemProperty method
+                try:
+                    result = subprocess.run(
+                        ['powershell', '-Command', f"Get-ItemProperty '{file_path}' | Select-Object -ExpandProperty VersionInfo | ConvertTo-Json"],
+                        capture_output=True, text=True, timeout=15
+                    )
+                    if result.returncode == 0 and result.stdout.strip():
+                        try:
+                            import json
+                            version_info = json.loads(result.stdout.strip())
+                            if 'FileVersion' in version_info and version_info['FileVersion']:
+                                version = version_info['FileVersion'].strip()
+                                if version and version != "0.0.0.0":
+                                    return version
+                        except (json.JSONDecodeError, KeyError):
+                            pass
+                except (subprocess.TimeoutExpired, subprocess.SubprocessError, FileNotFoundError):
+                    pass
+                
+                # Try alternative method using subprocess to get file version (legacy wmic)
+                try:
+                    result = subprocess.run(
+                        ['wmic', 'datafile', 'where', f'name="{file_path.replace("/", "\\")}"', 'get', 'version', '/value'],
+                        capture_output=True, text=True, timeout=10
+                    )
+                    if result.returncode == 0:
+                        for line in result.stdout.split('\n'):
+                            if line.startswith('Version='):
+                                version = line.split('=', 1)[1].strip()
+                                if version and version != '' and version != '0.0.0.0':
+                                    return version
+                except (subprocess.TimeoutExpired, subprocess.SubprocessError, FileNotFoundError):
+                    pass
+            
+            # For non-Windows or fallback, try to get version from file properties
+            try:
+                # Try to extract version from file content (common for some executables)
+                with open(file_path, 'rb') as f:
+                    content = f.read(2048)  # Read first 2KB for better pattern matching
+                    # Look for version patterns in binary content
+                    version_patterns = [
+                        rb'(\d+\.\d+\.\d+\.\d+)',  # x.x.x.x format
+                        rb'(\d+\.\d+\.\d+)',       # x.x.x format
+                        rb'version[:\s]+([\d\.]+)', # version: x.x.x format
+                        rb'v(\d+\.\d+\.\d+)',      # vx.x.x format
+                        rb'(\d+\.\d+)',            # x.x format
+                    ]
+                    
+                    for pattern in version_patterns:
+                        match = re.search(pattern, content, re.IGNORECASE)
+                        if match:
+                            version = match.group(1).decode('utf-8', errors='ignore')
+                            # Validate that it looks like a version number
+                            if re.match(r'^\d+(\.\d+)*$', version):
+                                return version
+            except (IOError, OSError):
+                pass
+                
+            return None
+        except Exception as e:
+            logger.debug(f"Error extracting file version from {file_path}: {e}")
+            return None
 
 def main():
     """

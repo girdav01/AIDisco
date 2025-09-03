@@ -22,11 +22,11 @@ detection:
         - '\text-generation-webui-server.exe'
         - '\oobabooga-server.exe'
     - CommandLine|contains:
-        - 'text-generation-webui'
-        - 'oobabooga'
-        - 'webui'
-        - 'text-generation-webui-server'
-        - 'oobabooga-server'
+        - 'text-generation-webui.exe'
+        - 'oobabooga.exe'
+        - 'webui.exe'
+        - 'text-generation-webui-server.exe'
+        - 'oobabooga-server.exe'
   condition: selection
 fields:
   - Image
@@ -38,4 +38,5 @@ fields:
 falsepositives:
   - Legitimate text-generation-webui usage
   - Development environments
+  - Microsoft Edge WebView processes
 level: medium

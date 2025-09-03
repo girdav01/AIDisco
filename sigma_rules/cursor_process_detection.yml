@@ -22,14 +22,14 @@ detection:
         - '\cursor-app.exe'
         - '\Cursor.app.exe'
     - CommandLine|contains:
-        - 'cursor'
-        - 'cursor-app'
         - 'cursor.exe'
         - 'Cursor.exe'
+        - 'cursor-app.exe'
+        - 'Cursor.app.exe'
     - ProcessName|contains:
-        - 'cursor'
-        - 'Cursor'
-        - 'cursor-app'
+        - 'cursor.exe'
+        - 'Cursor.exe'
+        - 'cursor-app.exe'
   condition: selection
 fields:
   - Image

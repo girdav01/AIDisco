@@ -21,10 +21,10 @@ detection:
         - '\webui.exe'
         - '\open-webui-server.exe'
     - CommandLine|contains:
-        - 'open-webui'
-        - 'openwebui'
-        - 'webui'
-        - 'open-webui-server'
+        - 'open-webui.exe'
+        - 'openwebui.exe'
+        - 'webui.exe'
+        - 'open-webui-server.exe'
   condition: selection
 fields:
   - Image
@@ -36,4 +36,5 @@ fields:
 falsepositives:
   - Legitimate Open WebUI usage
   - Development environments
+  - Microsoft Edge WebView processes
 level: medium
