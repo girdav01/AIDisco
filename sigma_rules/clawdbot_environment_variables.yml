@@ -1,0 +1,40 @@
+title: ClawdBot AI Discord Bot Environment Variables
+id: 12345678-1234-5678-9abc-123456789072
+status: experimental
+description: Detects ClawdBot AI Discord bot environment variable configuration
+author: AI Discovery Scanner
+date: 2025-01-27
+tags:
+  - attack.discovery
+  - attack.t1082
+  - ai.llm
+  - ai.clawdbot
+  - ai.discord
+  - ai.claude
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    EnvironmentVariables|contains:
+      - 'CLAWDBOT_'
+      - 'CLAWDBOT_TOKEN'
+      - 'CLAWDBOT_API_KEY'
+      - 'CLAWDBOT_DISCORD_TOKEN'
+      - 'CLAWDBOT_ANTHROPIC_KEY'
+      - 'CLAWDBOT_CLAUDE_KEY'
+      - 'CLAWDBOT_CONFIG'
+      - 'CLAWDBOT_HOME'
+      - 'CLAWDBOT_DATA_DIR'
+      - 'CLAWDBOT_LOG_LEVEL'
+  condition: selection
+fields:
+  - Image
+  - CommandLine
+  - EnvironmentVariables
+  - User
+falsepositives:
+  - Legitimate ClawdBot AI Discord bot configuration
+  - Development environment setup
+  - Discord bot testing
+level: low
