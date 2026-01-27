@@ -1320,6 +1320,8 @@ class LLMSoftwareDetector:
             return 'Continue'
         elif 'chatgpt' in title_lower:
             return 'ChatGPT'
+        elif 'clawdbot' in title_lower:
+            return 'ClawdBot'
         elif 'claude' in title_lower:
             return 'Claude'
         elif 'google gemini' in title_lower:
@@ -2788,8 +2790,8 @@ class LLMSoftwareDetector:
     def get_sanction_status(self, software_name: str) -> str:
         """Determine sanction status"""
         sanctioned_apps = {"Ollama", "LM Studio", "GPT4All", "vLLM", "GitHub Copilot", "Cursor", "Chatbox"}
-        unsanctioned_apps = {"Replit Ghostwriter", "Windsurf", "Tabnine", "Zed", "Continue", "ChatGPT", "Claude", 
-                           "Google Gemini", "Brave Leo", "Poe", "YouChat", "Open WebUI", "AnythingLLM",
+        unsanctioned_apps = {"Replit Ghostwriter", "Windsurf", "Tabnine", "Zed", "Continue", "ChatGPT", "Claude",
+                           "ClawdBot", "Google Gemini", "Brave Leo", "Poe", "YouChat", "Open WebUI", "AnythingLLM",
                            "LibreChat", "Jan", "Text Generation WebUI", "LocalAI", "Llamafile", "Faraday", "NVIDIA Chat with RTX"}
 
         for app in sanctioned_apps:

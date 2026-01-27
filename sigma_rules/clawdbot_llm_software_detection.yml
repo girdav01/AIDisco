@@ -1,0 +1,44 @@
+title: ClawdBot AI Discord Bot LLM Software Detection
+id: 12345678-1234-5678-9abc-123456789073
+status: experimental
+description: Detects ClawdBot AI Discord bot installation and usage across multiple platforms
+author: AI Discovery Scanner
+date: 2025-01-27
+tags:
+  - attack.execution
+  - attack.t1059
+  - attack.t1071.001
+  - ai.llm
+  - ai.clawdbot
+  - ai.discord
+  - ai.claude
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    - Image|endswith:
+        - '\clawdbot.exe'
+        - '\ClawdBot.exe'
+        - '\clawdbot-bot.exe'
+        - '\clawdbot-discord.exe'
+    - CommandLine|contains:
+        - 'clawdbot'
+        - 'ClawdBot'
+        - 'clawdbot-bot'
+        - 'clawdbot-discord'
+        - 'clawdbot start'
+        - 'clawdbot run'
+  condition: selection
+fields:
+  - Image
+  - CommandLine
+  - ProcessId
+  - User
+  - ParentImage
+  - ParentCommandLine
+falsepositives:
+  - Legitimate ClawdBot AI Discord bot usage
+  - Development environments
+  - Discord bot testing and development
+level: medium
