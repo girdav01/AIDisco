@@ -1,3 +1,4 @@
 *.json
+!config_example.json
 *.log
 *.txt
