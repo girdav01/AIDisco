@@ -1,0 +1,254 @@
+{
+  "scanner": {
+    "name": "AI Discovery Scanner",
+    "version": "2.0.0",
+    "description": "Comprehensive AI/LLM software detection configuration"
+  },
+  "settings": {
+    "max_file_size_mb": 100,
+    "verbose": false,
+    "log_level": "INFO",
+    "output_format": "json",
+    "collect_logs": true,
+    "scan_timeout_seconds": 300
+  },
+  "clawdbot": {
+    "enabled": true,
+    "description": "ClawdBot AI Discord Bot detection configuration",
+    "headers": {
+      "fingerprint_patterns": [
+        "x-clawdbot-key",
+        "x-clawdbot-api-key",
+        "clawdbot-api-key",
+        "x-clawdbot-token",
+        "clawdbot-token",
+        "x-clawdbot-auth",
+        "clawdbot-authorization",
+        "x-clawdbot-session",
+        "x-clawdbot-client",
+        "x-clawdbot-version",
+        "x-clawdbot-request-id"
+      ]
+    },
+    "bearer_token": {
+      "patterns": [
+        "Bearer cb-",
+        "Bearer cb_"
+      ],
+      "regex": "Bearer\\s+cb[-_][A-Za-z0-9]{32,}"
+    },
+    "api_key": {
+      "pattern": "cb[-_][A-Za-z0-9]{32,}",
+      "description": "ClawdBot API key format: cb- or cb_ prefix followed by 32+ alphanumeric characters"
+    },
+    "models": {
+      "names": [
+        "clawdbot-1",
+        "clawdbot-2",
+        "clawdbot-3",
+        "clawdbot-pro",
+        "clawdbot-mini",
+        "clawdbot-lite",
+        "clawd-mini",
+        "clawd-pro",
+        "clawd-1",
+        "clawd-2",
+        "clawd-3",
+        "clawdbot-instant",
+        "clawdbot-turbo",
+        "clawdbot-opus",
+        "clawdbot-sonnet",
+        "clawdbot-haiku"
+      ]
+    },
+    "user_agents": {
+      "sdk_patterns": [
+        "ClawdBot-SDK",
+        "clawdbot-sdk",
+        "ClawdBot/",
+        "clawdbot/",
+        "ClawdBot-Python",
+        "clawdbot-python",
+        "ClawdBot-Node",
+        "clawdbot-node",
+        "ClawdBot-JS",
+        "clawdbot-js",
+        "ClawdBot-Discord",
+        "clawdbot-discord",
+        "ClawdBot-Bot",
+        "clawdbot-bot",
+        "ClawdBotClient",
+        "clawdbotclient"
+      ]
+    },
+    "domains": {
+      "primary": [
+        "clawdbot.ai",
+        "clawdbot.com",
+        "clawdbot.io",
+        "clawdbot.dev",
+        "clawdbot.app",
+        "clawdbot.net",
+        "clawdbot.org"
+      ],
+      "api": [
+        "api.clawdbot.ai",
+        "api.clawdbot.com",
+        "api.clawdbot.io",
+        "v1.api.clawdbot.ai",
+        "v2.api.clawdbot.ai"
+      ],
+      "cdn": [
+        "cdn.clawdbot.ai",
+        "cdn.clawdbot.com",
+        "static.clawdbot.ai",
+        "static.clawdbot.com",
+        "assets.clawdbot.ai",
+        "assets.clawdbot.com"
+      ],
+      "websocket": [
+        "ws.clawdbot.ai",
+        "ws.clawdbot.com",
+        "wss.clawdbot.ai",
+        "wss.clawdbot.com",
+        "gateway.clawdbot.ai",
+        "gateway.clawdbot.com",
+        "realtime.clawdbot.ai",
+        "realtime.clawdbot.com",
+        "stream.clawdbot.ai",
+        "stream.clawdbot.com"
+      ],
+      "discord": [
+        "discord.clawdbot.ai",
+        "discord.clawdbot.com",
+        "bot.clawdbot.ai",
+        "bot.clawdbot.com",
+        "bots.clawdbot.ai",
+        "bots.clawdbot.com",
+        "webhook.clawdbot.ai",
+        "webhook.clawdbot.com"
+      ],
+      "auth": [
+        "auth.clawdbot.ai",
+        "auth.clawdbot.com",
+        "login.clawdbot.ai",
+        "login.clawdbot.com",
+        "accounts.clawdbot.ai",
+        "accounts.clawdbot.com",
+        "oauth.clawdbot.ai",
+        "oauth.clawdbot.com"
+      ],
+      "ml": [
+        "models.clawdbot.ai",
+        "models.clawdbot.com",
+        "ml.clawdbot.ai",
+        "ml.clawdbot.com",
+        "inference.clawdbot.ai",
+        "inference.clawdbot.com",
+        "chat.clawdbot.ai",
+        "chat.clawdbot.com"
+      ],
+      "dev": [
+        "docs.clawdbot.ai",
+        "docs.clawdbot.com",
+        "developer.clawdbot.ai",
+        "developer.clawdbot.com",
+        "dev.clawdbot.ai",
+        "dev.clawdbot.com",
+        "sandbox.clawdbot.ai",
+        "sandbox.clawdbot.com"
+      ]
+    },
+    "api_endpoints": [
+      "/v1/clawdbot/",
+      "/api/clawdbot/",
+      "/clawdbot/api/",
+      "/clawdbot/v1/",
+      "/clawdbot/v2/",
+      "/clawdbot/chat",
+      "/clawdbot/completions",
+      "/clawdbot/messages",
+      "/clawdbot/models"
+    ],
+    "environment_variables": [
+      "CLAWDBOT_API_KEY",
+      "CLAWDBOT_TOKEN",
+      "CLAWDBOT_SECRET",
+      "CLAWDBOT_DISCORD_TOKEN",
+      "CLAWDBOT_BOT_TOKEN",
+      "CLAWDBOT_CLIENT_ID",
+      "CLAWDBOT_CLIENT_SECRET",
+      "CLAWDBOT_WEBHOOK_URL",
+      "CLAWDBOT_MODEL",
+      "CLAWDBOT_ENDPOINT"
+    ],
+    "file_paths": {
+      "windows": [
+        "%APPDATA%\\ClawdBot",
+        "%LOCALAPPDATA%\\ClawdBot",
+        "%PROGRAMFILES%\\ClawdBot",
+        "%PROGRAMFILES(X86)%\\ClawdBot",
+        "%USERPROFILE%\\.clawdbot"
+      ],
+      "linux": [
+        "~/.clawdbot",
+        "~/.config/clawdbot",
+        "/opt/clawdbot",
+        "/usr/local/clawdbot"
+      ],
+      "macos": [
+        "~/Library/Application Support/ClawdBot",
+        "~/.clawdbot",
+        "/Applications/ClawdBot.app"
+      ]
+    },
+    "process_names": [
+      "clawdbot",
+      "clawdbot.exe",
+      "clawdbot-bot",
+      "clawdbot-discord",
+      "ClawdBot",
+      "ClawdBot.exe"
+    ],
+    "sanction_status": "unsanctioned"
+  },
+  "ai_domains": {
+    "description": "List of known AI service domains for network detection",
+    "domains": [
+      "api.openai.com",
+      "api.anthropic.com",
+      "api.cohere.ai",
+      "api.ai21.com",
+      "generativelanguage.googleapis.com",
+      "api.mistral.ai",
+      "api.together.xyz",
+      "api.replicate.com",
+      "api.huggingface.co",
+      "clawdbot.ai",
+      "clawdbot.com",
+      "api.clawdbot.ai",
+      "api.clawdbot.com"
+    ]
+  },
+  "api_key_patterns": {
+    "description": "Regular expressions for detecting AI API keys",
+    "patterns": {
+      "openai": "sk-[A-Za-z0-9]{48}",
+      "anthropic": "sk-ant-[A-Za-z0-9-]{95}",
+      "cohere": "co-[A-Za-z0-9]{40}",
+      "clawdbot": "cb[-_][A-Za-z0-9]{32,}",
+      "huggingface": "hf_[A-Za-z0-9]{34}"
+    }
+  },
+  "detection_rules": {
+    "enabled": true,
+    "rules_directory": "sigma_rules",
+    "auto_load": true
+  },
+  "output": {
+    "directory": "scan_results",
+    "formats": ["json", "txt"],
+    "include_logs": true,
+    "include_evidence": true
+  }
+}

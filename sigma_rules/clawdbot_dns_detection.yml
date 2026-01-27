@@ -1,0 +1,140 @@
+title: ClawdBot AI Discord Bot DNS Detection
+id: 12345678-1234-5678-9abc-123456789075
+status: experimental
+description: Detects DNS queries to ClawdBot AI Discord bot related domains
+author: AI Discovery Scanner
+date: 2025-01-27
+tags:
+  - attack.command_and_control
+  - attack.t1071.004
+  - attack.discovery
+  - attack.t1018
+  - ai.llm
+  - ai.clawdbot
+  - ai.discord
+  - ai.claude
+  - ai.dns
+logsource:
+  category: dns
+  product: any
+detection:
+  # Primary ClawdBot Domains
+  selection_primary_domains:
+    - QueryName|endswith:
+        - '.clawdbot.ai'
+        - '.clawdbot.com'
+        - '.clawdbot.io'
+        - '.clawdbot.dev'
+        - '.clawdbot.app'
+        - '.clawdbot.net'
+        - '.clawdbot.org'
+    - QueryName:
+        - 'clawdbot.ai'
+        - 'clawdbot.com'
+        - 'clawdbot.io'
+        - 'clawdbot.dev'
+        - 'clawdbot.app'
+        - 'clawdbot.net'
+        - 'clawdbot.org'
+
+  # ClawdBot API and Service Subdomains
+  selection_api_subdomains:
+    - QueryName:
+        - 'api.clawdbot.ai'
+        - 'api.clawdbot.com'
+        - 'api.clawdbot.io'
+        - 'v1.api.clawdbot.ai'
+        - 'v2.api.clawdbot.ai'
+        - 'cdn.clawdbot.ai'
+        - 'cdn.clawdbot.com'
+        - 'static.clawdbot.ai'
+        - 'static.clawdbot.com'
+        - 'assets.clawdbot.ai'
+        - 'assets.clawdbot.com'
+
+  # ClawdBot WebSocket and Gateway Domains
+  selection_websocket_domains:
+    - QueryName:
+        - 'ws.clawdbot.ai'
+        - 'ws.clawdbot.com'
+        - 'wss.clawdbot.ai'
+        - 'wss.clawdbot.com'
+        - 'gateway.clawdbot.ai'
+        - 'gateway.clawdbot.com'
+        - 'realtime.clawdbot.ai'
+        - 'realtime.clawdbot.com'
+        - 'stream.clawdbot.ai'
+        - 'stream.clawdbot.com'
+
+  # ClawdBot Discord Integration Domains
+  selection_discord_domains:
+    - QueryName:
+        - 'discord.clawdbot.ai'
+        - 'discord.clawdbot.com'
+        - 'bot.clawdbot.ai'
+        - 'bot.clawdbot.com'
+        - 'bots.clawdbot.ai'
+        - 'bots.clawdbot.com'
+        - 'webhook.clawdbot.ai'
+        - 'webhook.clawdbot.com'
+        - 'webhooks.clawdbot.ai'
+        - 'webhooks.clawdbot.com'
+
+  # ClawdBot Authentication and Account Domains
+  selection_auth_domains:
+    - QueryName:
+        - 'auth.clawdbot.ai'
+        - 'auth.clawdbot.com'
+        - 'login.clawdbot.ai'
+        - 'login.clawdbot.com'
+        - 'accounts.clawdbot.ai'
+        - 'accounts.clawdbot.com'
+        - 'oauth.clawdbot.ai'
+        - 'oauth.clawdbot.com'
+        - 'sso.clawdbot.ai'
+        - 'sso.clawdbot.com'
+
+  # ClawdBot Model and ML Service Domains
+  selection_ml_domains:
+    - QueryName:
+        - 'models.clawdbot.ai'
+        - 'models.clawdbot.com'
+        - 'ml.clawdbot.ai'
+        - 'ml.clawdbot.com'
+        - 'inference.clawdbot.ai'
+        - 'inference.clawdbot.com'
+        - 'chat.clawdbot.ai'
+        - 'chat.clawdbot.com'
+        - 'completions.clawdbot.ai'
+        - 'completions.clawdbot.com'
+
+  # ClawdBot Development and Documentation Domains
+  selection_dev_domains:
+    - QueryName:
+        - 'docs.clawdbot.ai'
+        - 'docs.clawdbot.com'
+        - 'developer.clawdbot.ai'
+        - 'developer.clawdbot.com'
+        - 'developers.clawdbot.ai'
+        - 'developers.clawdbot.com'
+        - 'dev.clawdbot.ai'
+        - 'dev.clawdbot.com'
+        - 'sandbox.clawdbot.ai'
+        - 'sandbox.clawdbot.com'
+        - 'staging.clawdbot.ai'
+        - 'staging.clawdbot.com'
+
+  condition: selection_primary_domains or selection_api_subdomains or selection_websocket_domains or selection_discord_domains or selection_auth_domains or selection_ml_domains or selection_dev_domains
+fields:
+  - QueryName
+  - QueryType
+  - SourceIP
+  - DestinationIP
+  - Answer
+  - ProcessName
+  - ProcessId
+falsepositives:
+  - Legitimate ClawdBot AI Discord bot usage
+  - Authorized API integrations
+  - Development and testing environments
+level: medium

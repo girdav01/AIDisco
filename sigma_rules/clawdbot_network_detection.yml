@@ -1,0 +1,152 @@
+title: ClawdBot AI Discord Bot Network and API Detection
+id: 12345678-1234-5678-9abc-123456789074
+status: experimental
+description: Detects ClawdBot AI Discord bot network traffic, API calls, headers, tokens, and domain communications
+author: AI Discovery Scanner
+date: 2025-01-27
+tags:
+  - attack.command_and_control
+  - attack.t1071.001
+  - attack.exfiltration
+  - attack.t1041
+  - ai.llm
+  - ai.clawdbot
+  - ai.discord
+  - ai.claude
+  - ai.api
+logsource:
+  category: proxy
+  product: any
+detection:
+  # ClawdBot Header Fingerprinting
+  selection_headers:
+    - HttpHeader|contains:
+        - 'x-clawdbot-key'
+        - 'x-clawdbot-api-key'
+        - 'clawdbot-api-key'
+        - 'x-clawdbot-token'
+        - 'clawdbot-token'
+        - 'x-clawdbot-auth'
+        - 'clawdbot-authorization'
+        - 'x-clawdbot-session'
+        - 'x-clawdbot-client'
+        - 'x-clawdbot-version'
+        - 'x-clawdbot-request-id'
+
+  # ClawdBot Bearer Token Pattern (cb- prefix)
+  selection_bearer_token:
+    - Authorization|contains:
+        - 'Bearer cb-'
+        - 'Bearer cb_'
+        - 'bearer cb-'
+        - 'bearer cb_'
+    - HttpHeader|re: 'Bearer\s+cb[-_][A-Za-z0-9]{32,}'
+
+  # ClawdBot API Key Pattern
+  selection_api_key:
+    - RequestBody|re: 'cb[-_][A-Za-z0-9]{32,}'
+    - QueryString|re: 'api_key=cb[-_][A-Za-z0-9]{32,}'
+    - QueryString|re: 'apikey=cb[-_][A-Za-z0-9]{32,}'
+    - QueryString|re: 'key=cb[-_][A-Za-z0-9]{32,}'
+    - HttpHeader|re: '[Aa]pi[-_]?[Kk]ey:\s*cb[-_][A-Za-z0-9]{32,}'
+
+  # ClawdBot Model Names
+  selection_model_names:
+    - RequestBody|contains:
+        - 'clawdbot-1'
+        - 'clawdbot-2'
+        - 'clawdbot-3'
+        - 'clawdbot-pro'
+        - 'clawdbot-mini'
+        - 'clawdbot-lite'
+        - 'clawd-mini'
+        - 'clawd-pro'
+        - 'clawd-1'
+        - 'clawd-2'
+        - 'clawd-3'
+        - 'clawdbot-instant'
+        - 'clawdbot-turbo'
+        - 'clawdbot-opus'
+        - 'clawdbot-sonnet'
+        - 'clawdbot-haiku'
+    - QueryString|contains:
+        - 'model=clawdbot'
+        - 'model=clawd'
+
+  # ClawdBot SDK User-Agent Detection
+  selection_user_agent:
+    - UserAgent|contains:
+        - 'ClawdBot-SDK'
+        - 'clawdbot-sdk'
+        - 'ClawdBot/'
+        - 'clawdbot/'
+        - 'ClawdBot-Python'
+        - 'clawdbot-python'
+        - 'ClawdBot-Node'
+        - 'clawdbot-node'
+        - 'ClawdBot-JS'
+        - 'clawdbot-js'
+        - 'ClawdBot-Discord'
+        - 'clawdbot-discord'
+        - 'ClawdBot-Bot'
+        - 'clawdbot-bot'
+        - 'ClawdBotClient'
+        - 'clawdbotclient'
+
+  # ClawdBot Domain Communications
+  selection_domains:
+    - DestinationHostname|endswith:
+        - '.clawdbot.ai'
+        - '.clawdbot.com'
+        - '.clawdbot.io'
+        - '.clawdbot.dev'
+        - '.clawdbot.app'
+    - DestinationHostname:
+        - 'clawdbot.ai'
+        - 'clawdbot.com'
+        - 'clawdbot.io'
+        - 'clawdbot.dev'
+        - 'clawdbot.app'
+        - 'api.clawdbot.ai'
+        - 'api.clawdbot.com'
+        - 'cdn.clawdbot.ai'
+        - 'cdn.clawdbot.com'
+        - 'ws.clawdbot.ai'
+        - 'ws.clawdbot.com'
+        - 'gateway.clawdbot.ai'
+        - 'gateway.clawdbot.com'
+        - 'bot.clawdbot.ai'
+        - 'bot.clawdbot.com'
+        - 'discord.clawdbot.ai'
+        - 'discord.clawdbot.com'
+
+  # ClawdBot API Endpoints
+  selection_api_endpoints:
+    - RequestUrl|contains:
+        - '/v1/clawdbot/'
+        - '/api/clawdbot/'
+        - '/clawdbot/api/'
+        - '/clawdbot/v1/'
+        - '/clawdbot/v2/'
+        - '/clawdbot/chat'
+        - '/clawdbot/completions'
+        - '/clawdbot/messages'
+        - '/clawdbot/models'
+
+  condition: selection_headers or selection_bearer_token or selection_api_key or selection_model_names or selection_user_agent or selection_domains or selection_api_endpoints
+fields:
+  - SourceIP
+  - DestinationHostname
+  - DestinationIP
+  - DestinationPort
+  - RequestUrl
+  - HttpMethod
+  - UserAgent
+  - HttpHeader
+  - RequestBody
+  - ResponseCode
+falsepositives:
+  - Legitimate ClawdBot API usage for authorized Discord bots
+  - ClawdBot SDK development and testing
+  - Authorized AI Discord bot deployments
+level: medium

@@ -72,6 +72,61 @@ BLOCKED_EXTENSIONS = {'.exe', '.dll', '.so', '.dylib', '.bat', '.cmd', '.ps1', '
 SUBPROCESS_TIMEOUT = 30  # seconds
 MAX_PROCESS_COUNT = 1000  # Prevent infinite loops
 
+# ClawdBot AI Discord Bot Detection Patterns
+CLAWDBOT_HEADERS = [
+    'x-clawdbot-key', 'x-clawdbot-api-key', 'clawdbot-api-key',
+    'x-clawdbot-token', 'clawdbot-token', 'x-clawdbot-auth',
+    'clawdbot-authorization', 'x-clawdbot-session', 'x-clawdbot-client',
+    'x-clawdbot-version', 'x-clawdbot-request-id'
+]
+
+CLAWDBOT_BEARER_PATTERNS = ['Bearer cb-', 'Bearer cb_', 'bearer cb-', 'bearer cb_']
+CLAWDBOT_API_KEY_REGEX = r'cb[-_][A-Za-z0-9]{32,}'
+
+CLAWDBOT_MODELS = [
+    'clawdbot-1', 'clawdbot-2', 'clawdbot-3', 'clawdbot-pro', 'clawdbot-mini',
+    'clawdbot-lite', 'clawd-mini', 'clawd-pro', 'clawd-1', 'clawd-2', 'clawd-3',
+    'clawdbot-instant', 'clawdbot-turbo', 'clawdbot-opus', 'clawdbot-sonnet', 'clawdbot-haiku'
+]
+
+CLAWDBOT_USER_AGENTS = [
+    'ClawdBot-SDK', 'clawdbot-sdk', 'ClawdBot/', 'clawdbot/',
+    'ClawdBot-Python', 'clawdbot-python', 'ClawdBot-Node', 'clawdbot-node',
+    'ClawdBot-JS', 'clawdbot-js', 'ClawdBot-Discord', 'clawdbot-discord',
+    'ClawdBot-Bot', 'clawdbot-bot', 'ClawdBotClient', 'clawdbotclient'
+]
+
+CLAWDBOT_DOMAINS = [
+    'clawdbot.ai', 'clawdbot.com', 'clawdbot.io', 'clawdbot.dev', 'clawdbot.app',
+    'api.clawdbot.ai', 'api.clawdbot.com', 'cdn.clawdbot.ai', 'cdn.clawdbot.com',
+    'ws.clawdbot.ai', 'ws.clawdbot.com', 'gateway.clawdbot.ai', 'gateway.clawdbot.com',
+    'bot.clawdbot.ai', 'bot.clawdbot.com', 'discord.clawdbot.ai', 'discord.clawdbot.com',
+    'auth.clawdbot.ai', 'auth.clawdbot.com', 'models.clawdbot.ai', 'models.clawdbot.com'
+]
+
+CLAWDBOT_ENV_VARS = [
+    'CLAWDBOT_API_KEY', 'CLAWDBOT_TOKEN', 'CLAWDBOT_SECRET',
+    'CLAWDBOT_DISCORD_TOKEN', 'CLAWDBOT_BOT_TOKEN', 'CLAWDBOT_CLIENT_ID',
+    'CLAWDBOT_CLIENT_SECRET', 'CLAWDBOT_WEBHOOK_URL', 'CLAWDBOT_MODEL', 'CLAWDBOT_ENDPOINT'
+]
+
+# AI Domain Detection List (includes ClawdBot)
+AI_DOMAINS = [
+    'api.openai.com', 'api.anthropic.com', 'api.cohere.ai', 'api.ai21.com',
+    'generativelanguage.googleapis.com', 'api.mistral.ai', 'api.together.xyz',
+    'api.replicate.com', 'api.huggingface.co',
+    'clawdbot.ai', 'clawdbot.com', 'api.clawdbot.ai', 'api.clawdbot.com'
+]
+
+# API Key Patterns (includes ClawdBot)
+API_KEY_PATTERNS = {
+    'openai': r'sk-[A-Za-z0-9]{48}',
+    'anthropic': r'sk-ant-[A-Za-z0-9\-]{95}',
+    'cohere': r'co-[A-Za-z0-9]{40}',
+    'clawdbot': r'cb[-_][A-Za-z0-9]{32,}',
+    'huggingface': r'hf_[A-Za-z0-9]{34}'
+}
+
 class SecurityError(Exception):
     """Custom exception for security-related errors"""
     pass

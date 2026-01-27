@@ -20,13 +20,22 @@ detection:
       - 'CLAWDBOT_'
       - 'CLAWDBOT_TOKEN'
       - 'CLAWDBOT_API_KEY'
+      - 'CLAWDBOT_SECRET'
       - 'CLAWDBOT_DISCORD_TOKEN'
+      - 'CLAWDBOT_BOT_TOKEN'
+      - 'CLAWDBOT_CLIENT_ID'
+      - 'CLAWDBOT_CLIENT_SECRET'
+      - 'CLAWDBOT_WEBHOOK_URL'
+      - 'CLAWDBOT_MODEL'
+      - 'CLAWDBOT_ENDPOINT'
       - 'CLAWDBOT_ANTHROPIC_KEY'
       - 'CLAWDBOT_CLAUDE_KEY'
       - 'CLAWDBOT_CONFIG'
       - 'CLAWDBOT_HOME'
       - 'CLAWDBOT_DATA_DIR'
       - 'CLAWDBOT_LOG_LEVEL'
+      - 'CLAWDBOT_DEBUG'
+      - 'CLAWDBOT_BASE_URL'
   condition: selection
 fields:
   - Image
