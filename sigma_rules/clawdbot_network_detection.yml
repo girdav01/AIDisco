@@ -1,9 +1,10 @@
-title: ClawdBot AI Discord Bot Network and API Detection
+title: ClawdBot/OpenClaw AI Discord Bot Network and API Detection
 id: 12345678-1234-5678-9abc-123456789074
 status: experimental
-description: Detects ClawdBot AI Discord bot network traffic, API calls, headers, tokens, and domain communications
+description: Detects ClawdBot and OpenClaw (newer version) AI Discord bot network traffic, API calls, headers, tokens, and domain communications
 author: AI Discovery Scanner
 date: 2025-01-27
+modified: 2026-02-08
 tags:
   - attack.command_and_control
   - attack.t1071.001
@@ -11,6 +12,7 @@ tags:
   - attack.t1041
   - ai.llm
   - ai.clawdbot
+  - ai.openclaw
   - ai.discord
   - ai.claude
   - ai.api
@@ -133,7 +135,131 @@ detection:
         - '/clawdbot/messages'
         - '/clawdbot/models'
 
-  condition: selection_headers or selection_bearer_token or selection_api_key or selection_model_names or selection_user_agent or selection_domains or selection_api_endpoints
+  # OpenClaw Header Fingerprinting
+  selection_openclaw_headers:
+    - HttpHeader|contains:
+        - 'x-openclaw-key'
+        - 'x-openclaw-api-key'
+        - 'openclaw-api-key'
+        - 'x-openclaw-token'
+        - 'openclaw-token'
+        - 'x-openclaw-auth'
+        - 'openclaw-authorization'
+        - 'x-openclaw-session'
+        - 'x-openclaw-client'
+        - 'x-openclaw-version'
+        - 'x-openclaw-request-id'
+        - 'x-openclaw-trace-id'
+
+  # OpenClaw Bearer Token Pattern (oc- prefix)
+  selection_openclaw_bearer:
+    - Authorization|contains:
+        - 'Bearer oc-'
+        - 'Bearer oc_'
+        - 'bearer oc-'
+        - 'bearer oc_'
+        - 'Bearer ocl-'
+        - 'Bearer ocl_'
+    - HttpHeader|re: 'Bearer\s+oc[l]?[-_][A-Za-z0-9]{32,}'
+
+  # OpenClaw API Key Pattern
+  selection_openclaw_api_key:
+    - RequestBody|re: 'oc[l]?[-_][A-Za-z0-9]{32,}'
+    - QueryString|re: 'api_key=oc[l]?[-_][A-Za-z0-9]{32,}'
+    - QueryString|re: 'apikey=oc[l]?[-_][A-Za-z0-9]{32,}'
+    - QueryString|re: 'key=oc[l]?[-_][A-Za-z0-9]{32,}'
+    - HttpHeader|re: '[Aa]pi[-_]?[Kk]ey:\s*oc[l]?[-_][A-Za-z0-9]{32,}'
+
+  # OpenClaw Model Names
+  selection_openclaw_models:
+    - RequestBody|contains:
+        - 'openclaw-1'
+        - 'openclaw-2'
+        - 'openclaw-3'
+        - 'openclaw-4'
+        - 'openclaw-pro'
+        - 'openclaw-mini'
+        - 'openclaw-lite'
+        - 'openclaw-instant'
+        - 'openclaw-turbo'
+        - 'openclaw-opus'
+        - 'openclaw-sonnet'
+        - 'openclaw-haiku'
+        - 'openclaw-flash'
+        - 'openclaw-ultra'
+    - QueryString|contains:
+        - 'model=openclaw'
+
+  # OpenClaw SDK User-Agent Detection
+  selection_openclaw_user_agent:
+    - UserAgent|contains:
+        - 'OpenClaw-SDK'
+        - 'openclaw-sdk'
+        - 'OpenClaw/'
+        - 'openclaw/'
+        - 'OpenClaw-Python'
+        - 'openclaw-python'
+        - 'OpenClaw-Node'
+        - 'openclaw-node'
+        - 'OpenClaw-JS'
+        - 'openclaw-js'
+        - 'OpenClaw-Discord'
+        - 'openclaw-discord'
+        - 'OpenClaw-Bot'
+        - 'openclaw-bot'
+        - 'OpenClawClient'
+        - 'openclawclient'
+        - 'OpenClaw-Go'
+        - 'openclaw-go'
+        - 'OpenClaw-Rust'
+        - 'openclaw-rust'
+
+  # OpenClaw Domain Communications
+  selection_openclaw_domains:
+    - DestinationHostname|endswith:
+        - '.openclaw.ai'
+        - '.openclaw.com'
+        - '.openclaw.io'
+        - '.openclaw.dev'
+        - '.openclaw.app'
+    - DestinationHostname:
+        - 'openclaw.ai'
+        - 'openclaw.com'
+        - 'openclaw.io'
+        - 'openclaw.dev'
+        - 'openclaw.app'
+        - 'api.openclaw.ai'
+        - 'api.openclaw.com'
+        - 'cdn.openclaw.ai'
+        - 'cdn.openclaw.com'
+        - 'ws.openclaw.ai'
+        - 'ws.openclaw.com'
+        - 'gateway.openclaw.ai'
+        - 'gateway.openclaw.com'
+        - 'bot.openclaw.ai'
+        - 'bot.openclaw.com'
+        - 'discord.openclaw.ai'
+        - 'discord.openclaw.com'
+
+  # OpenClaw API Endpoints
+  selection_openclaw_api_endpoints:
+    - RequestUrl|contains:
+        - '/v1/openclaw/'
+        - '/v2/openclaw/'
+        - '/v3/openclaw/'
+        - '/api/openclaw/'
+        - '/openclaw/api/'
+        - '/openclaw/v1/'
+        - '/openclaw/v2/'
+        - '/openclaw/v3/'
+        - '/openclaw/chat'
+        - '/openclaw/completions'
+        - '/openclaw/messages'
+        - '/openclaw/models'
+        - '/openclaw/embeddings'
+        - '/openclaw/agents'
+
+  condition: selection_headers or selection_bearer_token or selection_api_key or selection_model_names or selection_user_agent or selection_domains or selection_api_endpoints or selection_openclaw_headers or selection_openclaw_bearer or selection_openclaw_api_key or selection_openclaw_models or selection_openclaw_user_agent or selection_openclaw_domains or selection_openclaw_api_endpoints
 fields:
   - SourceIP
   - DestinationHostname
@@ -146,7 +272,7 @@ fields:
   - RequestBody
   - ResponseCode
 falsepositives:
-  - Legitimate ClawdBot API usage for authorized Discord bots
-  - ClawdBot SDK development and testing
+  - Legitimate ClawdBot or OpenClaw API usage for authorized Discord bots
+  - ClawdBot or OpenClaw SDK development and testing
   - Authorized AI Discord bot deployments
 level: medium

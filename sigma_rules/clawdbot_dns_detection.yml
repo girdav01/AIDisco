@@ -1,9 +1,10 @@
-title: ClawdBot AI Discord Bot DNS Detection
+title: ClawdBot/OpenClaw AI Discord Bot DNS Detection
 id: 12345678-1234-5678-9abc-123456789075
 status: experimental
-description: Detects DNS queries to ClawdBot AI Discord bot related domains
+description: Detects DNS queries to ClawdBot and OpenClaw (newer version) AI Discord bot related domains
 author: AI Discovery Scanner
 date: 2025-01-27
+modified: 2026-02-08
 tags:
   - attack.command_and_control
   - attack.t1071.004
@@ -11,6 +12,7 @@ tags:
   - attack.t1018
   - ai.llm
   - ai.clawdbot
+  - ai.openclaw
   - ai.discord
   - ai.claude
   - ai.dns
@@ -124,7 +126,114 @@ detection:
         - 'staging.clawdbot.ai'
         - 'staging.clawdbot.com'
 
-  condition: selection_primary_domains or selection_api_subdomains or selection_websocket_domains or selection_discord_domains or selection_auth_domains or selection_ml_domains or selection_dev_domains
+  # Primary OpenClaw Domains
+  selection_openclaw_primary:
+    - QueryName|endswith:
+        - '.openclaw.ai'
+        - '.openclaw.com'
+        - '.openclaw.io'
+        - '.openclaw.dev'
+        - '.openclaw.app'
+        - '.openclaw.net'
+        - '.openclaw.org'
+    - QueryName:
+        - 'openclaw.ai'
+        - 'openclaw.com'
+        - 'openclaw.io'
+        - 'openclaw.dev'
+        - 'openclaw.app'
+        - 'openclaw.net'
+        - 'openclaw.org'
+
+  # OpenClaw API and Service Subdomains
+  selection_openclaw_api:
+    - QueryName:
+        - 'api.openclaw.ai'
+        - 'api.openclaw.com'
+        - 'api.openclaw.io'
+        - 'v1.api.openclaw.ai'
+        - 'v2.api.openclaw.ai'
+        - 'v3.api.openclaw.ai'
+        - 'cdn.openclaw.ai'
+        - 'cdn.openclaw.com'
+        - 'static.openclaw.ai'
+        - 'static.openclaw.com'
+        - 'assets.openclaw.ai'
+        - 'assets.openclaw.com'
+
+  # OpenClaw WebSocket and Gateway Domains
+  selection_openclaw_websocket:
+    - QueryName:
+        - 'ws.openclaw.ai'
+        - 'ws.openclaw.com'
+        - 'wss.openclaw.ai'
+        - 'wss.openclaw.com'
+        - 'gateway.openclaw.ai'
+        - 'gateway.openclaw.com'
+        - 'realtime.openclaw.ai'
+        - 'realtime.openclaw.com'
+        - 'stream.openclaw.ai'
+        - 'stream.openclaw.com'
+
+  # OpenClaw Discord Integration Domains
+  selection_openclaw_discord:
+    - QueryName:
+        - 'discord.openclaw.ai'
+        - 'discord.openclaw.com'
+        - 'bot.openclaw.ai'
+        - 'bot.openclaw.com'
+        - 'bots.openclaw.ai'
+        - 'bots.openclaw.com'
+        - 'webhook.openclaw.ai'
+        - 'webhook.openclaw.com'
+        - 'webhooks.openclaw.ai'
+        - 'webhooks.openclaw.com'
+
+  # OpenClaw Authentication and Account Domains
+  selection_openclaw_auth:
+    - QueryName:
+        - 'auth.openclaw.ai'
+        - 'auth.openclaw.com'
+        - 'login.openclaw.ai'
+        - 'login.openclaw.com'
+        - 'accounts.openclaw.ai'
+        - 'accounts.openclaw.com'
+        - 'oauth.openclaw.ai'
+        - 'oauth.openclaw.com'
+        - 'sso.openclaw.ai'
+        - 'sso.openclaw.com'
+
+  # OpenClaw Model and ML Service Domains
+  selection_openclaw_ml:
+    - QueryName:
+        - 'models.openclaw.ai'
+        - 'models.openclaw.com'
+        - 'ml.openclaw.ai'
+        - 'ml.openclaw.com'
+        - 'inference.openclaw.ai'
+        - 'inference.openclaw.com'
+        - 'chat.openclaw.ai'
+        - 'chat.openclaw.com'
+        - 'completions.openclaw.ai'
+        - 'completions.openclaw.com'
+
+  # OpenClaw Development and Documentation Domains
+  selection_openclaw_dev:
+    - QueryName:
+        - 'docs.openclaw.ai'
+        - 'docs.openclaw.com'
+        - 'developer.openclaw.ai'
+        - 'developer.openclaw.com'
+        - 'developers.openclaw.ai'
+        - 'developers.openclaw.com'
+        - 'dev.openclaw.ai'
+        - 'dev.openclaw.com'
+        - 'sandbox.openclaw.ai'
+        - 'sandbox.openclaw.com'
+        - 'staging.openclaw.ai'
+        - 'staging.openclaw.com'
+
+  condition: selection_primary_domains or selection_api_subdomains or selection_websocket_domains or selection_discord_domains or selection_auth_domains or selection_ml_domains or selection_dev_domains or selection_openclaw_primary or selection_openclaw_api or selection_openclaw_websocket or selection_openclaw_discord or selection_openclaw_auth or selection_openclaw_ml or selection_openclaw_dev
 fields:
   - QueryName
   - QueryType
@@ -134,7 +243,7 @@ fields:
   - ProcessName
   - ProcessId
 falsepositives:
-  - Legitimate ClawdBot AI Discord bot usage
+  - Legitimate ClawdBot or OpenClaw AI Discord bot usage
   - Authorized API integrations
   - Development and testing environments
 level: medium

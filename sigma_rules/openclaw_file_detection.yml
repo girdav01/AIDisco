@@ -1,15 +1,13 @@
-title: ClawdBot/OpenClaw AI Discord Bot File Detection
-id: 12345678-1234-5678-9abc-123456789071
+title: OpenClaw AI Discord Bot File Detection
+id: 12345678-1234-5678-9abc-123456789082
 status: experimental
-description: Detects ClawdBot and OpenClaw (newer version) AI Discord bot file system activity and configuration
+description: Detects OpenClaw AI Discord bot file system activity and configuration. OpenClaw is the newer version of ClawdBot.
 author: AI Discovery Scanner
-date: 2025-01-27
-modified: 2026-02-08
+date: 2026-02-08
 tags:
   - attack.persistence
   - attack.t1547
   - ai.llm
-  - ai.clawdbot
   - ai.openclaw
   - ai.discord
   - ai.claude
@@ -17,29 +15,7 @@ logsource:
   category: file_event
   product: windows
 detection:
-  selection_clawdbot:
-    - TargetFilename|contains:
-        - '\clawdbot\'
-        - '\ClawdBot\'
-        - '\clawdbot-app\'
-        - '\ClawdBot.app\'
-        - '\clawdbot-discord\'
-        - '\ClawdBot Discord\'
-        - '\AppData\Local\ClawdBot\'
-        - '\AppData\Roaming\ClawdBot\'
-        - '\AppData\Local\clawdbot\'
-        - '\AppData\Roaming\clawdbot\'
-        - '\AppData\Local\clawdbot-app\'
-        - '\AppData\Roaming\clawdbot-app\'
-        - '\Program Files\ClawdBot\'
-        - '\Program Files (x86)\ClawdBot\'
-        - '\Users\\.clawdbot\'
-        - '\Users\\.clawdbot-app\'
-        - '/.clawdbot/'
-        - '/clawdbot/'
-        - '/opt/clawdbot/'
-        - '/usr/local/clawdbot/'
-  selection_openclaw:
+  selection:
     - TargetFilename|contains:
         - '\openclaw\'
         - '\OpenClaw\'
@@ -64,14 +40,16 @@ detection:
         - '/opt/openclaw/'
         - '/usr/local/openclaw/'
         - '/Library/Application Support/OpenClaw/'
-  condition: selection_clawdbot or selection_openclaw
+        - '/.config/openclaw/'
+        - '/share/openclaw/'
+  condition: selection
 fields:
   - TargetFilename
   - ProcessName
   - User
   - EventType
 falsepositives:
-  - Legitimate ClawdBot or OpenClaw installation and configuration
+  - Legitimate OpenClaw installation and configuration
   - AI Discord bot application setup
   - Development and testing of Discord bots
 level: medium

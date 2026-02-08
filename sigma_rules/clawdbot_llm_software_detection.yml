@@ -1,22 +1,24 @@
-title: ClawdBot AI Discord Bot LLM Software Detection
+title: ClawdBot/OpenClaw AI Discord Bot LLM Software Detection
 id: 12345678-1234-5678-9abc-123456789073
 status: experimental
-description: Detects ClawdBot AI Discord bot installation and usage across multiple platforms
+description: Detects ClawdBot and OpenClaw (newer version) AI Discord bot installation and usage across multiple platforms
 author: AI Discovery Scanner
 date: 2025-01-27
+modified: 2026-02-08
 tags:
   - attack.execution
   - attack.t1059
   - attack.t1071.001
   - ai.llm
   - ai.clawdbot
+  - ai.openclaw
   - ai.discord
   - ai.claude
 logsource:
   category: process_creation
   product: windows
 detection:
-  selection:
+  selection_clawdbot:
     - Image|endswith:
         - '\clawdbot.exe'
         - '\ClawdBot.exe'
@@ -29,7 +31,23 @@ detection:
         - 'clawdbot-discord'
         - 'clawdbot start'
         - 'clawdbot run'
-  condition: selection
+  selection_openclaw:
+    - Image|endswith:
+        - '\openclaw.exe'
+        - '\OpenClaw.exe'
+        - '\openclaw-bot.exe'
+        - '\openclaw-discord.exe'
+        - '\openclaw-app.exe'
+    - CommandLine|contains:
+        - 'openclaw'
+        - 'OpenClaw'
+        - 'openclaw-bot'
+        - 'openclaw-discord'
+        - 'openclaw start'
+        - 'openclaw run'
+        - 'openclaw serve'
+        - 'openclaw deploy'
+  condition: selection_clawdbot or selection_openclaw
 fields:
   - Image
   - CommandLine
@@ -38,7 +56,7 @@ fields:
   - ParentImage
   - ParentCommandLine
 falsepositives:
-  - Legitimate ClawdBot AI Discord bot usage
+  - Legitimate ClawdBot or OpenClaw AI Discord bot usage
   - Development environments
   - Discord bot testing and development
 level: medium
