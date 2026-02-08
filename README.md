@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/aidisco-logo.png" alt="AI Discovery - Shadow AI Logo" width="700">
+  <img src="assets/AIDisco-logo.png" alt="AI Discovery - Shadow AI Logo" width="700">
 </p>
 
 # AI Discovery Scanner
