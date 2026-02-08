@@ -1,22 +1,24 @@
-title: ClawdBot AI Discord Bot Process Detection
+title: ClawdBot/OpenClaw AI Discord Bot Process Detection
 id: 12345678-1234-5678-9abc-123456789070
 status: experimental
-description: Detects ClawdBot AI Discord bot process execution across multiple platforms
+description: Detects ClawdBot and OpenClaw (newer version) AI Discord bot process execution across multiple platforms
 author: AI Discovery Scanner
 date: 2025-01-27
+modified: 2026-02-08
 tags:
   - attack.execution
   - attack.t1059
   - attack.t1071.001
   - ai.llm
   - ai.clawdbot
+  - ai.openclaw
   - ai.discord
   - ai.claude
 logsource:
   category: process_creation
   product: windows
 detection:
-  selection:
+  selection_clawdbot:
     - Image|endswith:
         - '\clawdbot.exe'
         - '\ClawdBot.exe'
@@ -37,7 +39,36 @@ detection:
         - 'ClawdBot'
         - 'clawdbot-app'
         - 'clawdbot-discord'
-  condition: selection
+  selection_openclaw:
+    - Image|endswith:
+        - '\openclaw.exe'
+        - '\OpenClaw.exe'
+        - '\openclaw-app.exe'
+        - '\OpenClaw.app.exe'
+        - '\openclaw-discord.exe'
+        - '\OpenClaw Discord.exe'
+        - '\openclaw-bot.exe'
+        - '\OpenClaw-Bot.exe'
+    - CommandLine|contains:
+        - 'openclaw'
+        - 'OpenClaw'
+        - 'openclaw-app'
+        - 'openclaw-discord'
+        - 'openclaw-bot'
+        - 'python openclaw'
+        - 'python -m openclaw'
+        - 'node openclaw'
+        - 'npx openclaw'
+        - 'openclaw serve'
+        - 'openclaw start'
+        - 'openclaw run'
+    - ProcessName|contains:
+        - 'openclaw'
+        - 'OpenClaw'
+        - 'openclaw-app'
+        - 'openclaw-discord'
+        - 'openclaw-bot'
+  condition: selection_clawdbot or selection_openclaw
 fields:
   - Image
   - CommandLine
@@ -46,7 +77,7 @@ fields:
   - ParentImage
   - ParentCommandLine
 falsepositives:
-  - Legitimate ClawdBot AI Discord bot usage
+  - Legitimate ClawdBot or OpenClaw AI Discord bot usage
   - AI Discord bot sessions
   - Development and testing of Discord bots
 level: medium

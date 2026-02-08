@@ -16,6 +16,7 @@ A comprehensive Python-based scanner designed to detect common Local Large Langu
 - **AI Development Tools**: GitHub Copilot, Replit Ghostwriter, Windsurf, Tabnine, Zed, Continue, Cursor
 - **AI Chat Applications**: ChatGPT, Claude, Google Gemini, Brave Leo, Poe, YouChat, Chatbox
 - **Open Source AI Platforms**: Open WebUI, AnythingLLM, LibreChat, Jan, Text Generation WebUI, LocalAI, Llamafile, Faraday, NVIDIA Chat with RTX
+- **AI Discord Bots**: ClawdBot, OpenClaw (newer version of ClawdBot)
 - Extensible architecture for adding more LLM software detection
 
 ### Detection Methods
@@ -28,7 +29,7 @@ A comprehensive Python-based scanner designed to detect common Local Large Langu
   - LM Studio: Port 1234 (HTTP API)
   - GPT4All: Port 4891 (HTTP API)
   - vLLM: Port 8000 (HTTP API)
-- **Comprehensive SIGMA Rules**: 73 detection rules covering process creation, file events, network activity, and environment variables
+- **Comprehensive SIGMA Rules**: 84 detection rules covering process creation, file events, network activity, and environment variables
 - **Cross-Platform Detection**: Optimized detection methods for Windows, macOS, and Linux systems
 
 ### Log Collection
@@ -98,34 +99,91 @@ python ai_discovery_scan.py -v -o detailed_scan.json --collect-logs --log-format
 ├── ai_discovery_scan.py        # Main scanner script
 ├── example_log_collection.py   # Example script for log collection
 ├── requirements.txt            # Python dependencies
-├── sigma_rules/               # SIGMA rules directory (73 rules total)
+├── sigma_rules/               # SIGMA rules directory (84 rules total)
 │   ├── ollama_detection.yml              # Comprehensive Ollama detection
 │   ├── lmstudio_detection.yml            # LM Studio detection
 │   ├── gpt4all_detection.yml             # GPT4All desktop app detection
 │   ├── vllm_detection.yml                # vLLM inference library detection
-│   ├── github_copilot_detection.yml      # GitHub Copilot detection
-│   ├── replit_ghostwriter_detection.yml  # Replit Ghostwriter detection
-│   ├── windsurf_detection.yml            # Windsurf AI detection
-│   ├── tabnine_detection.yml             # Tabnine AI detection
-│   ├── zed_detection.yml                 # Zed editor AI detection
-│   ├── continue_detection.yml            # Continue AI detection
-│   ├── cursor_ai_code_editor_detection.yml # Cursor AI code editor detection
-│   ├── chatgpt_detection.yml             # ChatGPT desktop detection
-│   ├── claude_detection.yml              # Claude AI detection
-│   ├── google_gemini_detection.yml       # Google Gemini AI detection
-│   ├── brave_leo_detection.yml           # Brave Leo AI detection
-│   ├── poe_detection.yml                 # Poe AI detection
-│   ├── youchat_detection.yml             # YouChat/You.com AI detection
-│   ├── chatbox_ai_chat_application_detection.yml # Chatbox AI chat application detection
-│   ├── openwebui_detection.yml           # Open WebUI detection
-│   ├── anythingllm_detection.yml         # AnythingLLM detection
-│   ├── librechat_detection.yml           # LibreChat detection
-│   ├── jan_detection.yml                 # Jan AI detection
-│   ├── text_generation_webui_detection.yml # Text Generation WebUI detection
-│   ├── localai_detection.yml             # LocalAI detection
-│   ├── llamafile_detection.yml           # Llamafile/llama.cpp detection
-│   ├── faraday_detection.yml             # Faraday AI detection
-│   └── nvidia_chat_rtx_detection.yml     # NVIDIA Chat with RTX detection
+│   ├── github_copilot_process_detection.yml    # GitHub Copilot process detection
+│   ├── github_copilot_file_detection.yml       # GitHub Copilot file detection
+│   ├── github_copilot_env_detection.yml        # GitHub Copilot environment variables
+│   ├── replit_ghostwriter_llm_software_detection.yml  # Replit Ghostwriter detection
+│   ├── replit_ghostwriter_file_detection.yml          # Replit Ghostwriter file detection
+│   ├── replit_ghostwriter_environment_variables.yml   # Replit Ghostwriter environment variables
+│   ├── windsurf_ai_llm_software_detection.yml  # Windsurf AI detection
+│   ├── windsurf_ai_file_detection.yml          # Windsurf AI file detection
+│   ├── windsurf_ai_environment_variables.yml   # Windsurf AI environment variables
+│   ├── tabnine_ai_llm_software_detection.yml   # Tabnine AI detection
+│   ├── tabnine_ai_file_detection.yml           # Tabnine AI file detection
+│   ├── tabnine_ai_environment_variables.yml    # Tabnine AI environment variables
+│   ├── zed_editor_ai_llm_software_detection.yml  # Zed editor AI detection
+│   ├── zed_editor_ai_file_detection.yml          # Zed editor AI file detection
+│   ├── zed_editor_ai_environment_variables.yml   # Zed editor AI environment variables
+│   ├── continue_ai_llm_software_detection.yml  # Continue AI detection
+│   ├── continue_ai_file_detection.yml          # Continue AI file detection
+│   ├── continue_ai_environment_variables.yml   # Continue AI environment variables
+│   ├── cursor_process_detection.yml      # Cursor AI process detection
+│   ├── cursor_file_detection.yml         # Cursor AI file detection
+│   ├── cursor_env_detection.yml          # Cursor AI environment variables
+│   ├── chatgpt_desktop_llm_software_detection.yml  # ChatGPT desktop detection
+│   ├── chatgpt_desktop_file_detection.yml          # ChatGPT desktop file detection
+│   ├── chatgpt_desktop_environment_variables.yml   # ChatGPT desktop environment variables
+│   ├── claude_ai_llm_software_detection.yml  # Claude AI detection
+│   ├── claude_ai_file_detection.yml          # Claude AI file detection
+│   ├── claude_ai_environment_variables.yml   # Claude AI environment variables
+│   ├── google_gemini_ai_llm_software_detection.yml  # Google Gemini AI detection
+│   ├── google_gemini_ai_file_detection.yml          # Google Gemini AI file detection
+│   ├── google_gemini_ai_environment_variables.yml   # Google Gemini AI environment variables
+│   ├── brave_leo_ai_llm_software_detection.yml  # Brave Leo AI detection
+│   ├── brave_leo_ai_file_detection.yml          # Brave Leo AI file detection
+│   ├── brave_leo_ai_environment_variables.yml   # Brave Leo AI environment variables
+│   ├── poe_ai_llm_software_detection.yml  # Poe AI detection
+│   ├── poe_ai_file_detection.yml          # Poe AI file detection
+│   ├── poe_ai_environment_variables.yml   # Poe AI environment variables
+│   ├── youchat_youcom_ai_llm_software_detection.yml  # YouChat/You.com AI detection
+│   ├── youchat_youcom_ai_file_detection.yml          # YouChat/You.com AI file detection
+│   ├── youchat_youcom_ai_environment_variables.yml   # YouChat/You.com AI environment variables
+│   ├── chatbox_process_detection.yml     # Chatbox AI process detection
+│   ├── chatbox_file_detection.yml        # Chatbox AI file detection
+│   ├── chatbox_env_detection.yml         # Chatbox AI environment variables
+│   ├── open_webui_llm_software_detection.yml  # Open WebUI detection
+│   ├── open_webui_file_detection.yml          # Open WebUI file detection
+│   ├── open_webui_environment_variables.yml   # Open WebUI environment variables
+│   ├── anythingllm_llm_software_detection.yml  # AnythingLLM detection
+│   ├── anythingllm_file_detection.yml          # AnythingLLM file detection
+│   ├── anythingllm_environment_variables.yml   # AnythingLLM environment variables
+│   ├── librechat_llm_software_detection.yml  # LibreChat detection
+│   ├── librechat_file_detection.yml          # LibreChat file detection
+│   ├── librechat_environment_variables.yml   # LibreChat environment variables
+│   ├── jan_ai_llm_software_detection.yml  # Jan AI detection
+│   ├── jan_ai_file_detection.yml          # Jan AI file detection
+│   ├── jan_ai_environment_variables.yml   # Jan AI environment variables
+│   ├── text_generation_webui_oobabooga_llm_software_detection.yml  # Text Generation WebUI detection
+│   ├── text_generation_webui_oobabooga_file_detection.yml          # Text Generation WebUI file detection
+│   ├── text_generation_webui_oobabooga_environment_variables.yml   # Text Generation WebUI environment variables
+│   ├── localai_llm_software_detection.yml  # LocalAI detection
+│   ├── localai_file_detection.yml          # LocalAI file detection
+│   ├── localai_environment_variables.yml   # LocalAI environment variables
+│   ├── llamafile_llamacpp_llm_software_detection.yml  # Llamafile/llama.cpp detection
+│   ├── llamafile_llamacpp_file_detection.yml          # Llamafile/llama.cpp file detection
+│   ├── faraday_ai_llm_software_detection.yml  # Faraday AI detection
+│   ├── faraday_ai_file_detection.yml          # Faraday AI file detection
+│   ├── faraday_ai_environment_variables.yml   # Faraday AI environment variables
+│   ├── nvidia_chat_with_rtx_llm_software_detection.yml  # NVIDIA Chat with RTX detection
+│   ├── nvidia_chat_with_rtx_file_detection.yml          # NVIDIA Chat with RTX file detection
+│   ├── nvidia_chat_with_rtx_environment_variables.yml   # NVIDIA Chat with RTX environment variables
+│   ├── clawdbot_process_detection.yml     # ClawdBot/OpenClaw process detection
+│   ├── clawdbot_dns_detection.yml         # ClawdBot/OpenClaw DNS detection
+│   ├── clawdbot_file_detection.yml        # ClawdBot/OpenClaw file detection
+│   ├── clawdbot_environment_variables.yml # ClawdBot/OpenClaw environment variables
+│   ├── clawdbot_llm_software_detection.yml  # ClawdBot/OpenClaw LLM software detection
+│   ├── clawdbot_network_detection.yml     # ClawdBot/OpenClaw network and API detection
+│   ├── openclaw_process_detection.yml     # OpenClaw process detection (standalone)
+│   ├── openclaw_dns_detection.yml         # OpenClaw DNS detection (standalone)
+│   ├── openclaw_file_detection.yml        # OpenClaw file detection (standalone)
+│   ├── openclaw_environment_variables.yml # OpenClaw environment variables (standalone)
+│   ├── openclaw_llm_software_detection.yml  # OpenClaw LLM software detection (standalone)
+│   └── openclaw_network_detection.yml     # OpenClaw network and API detection (standalone)
 └── README.md                  # This file
 ```
 
@@ -236,42 +294,101 @@ python example_log_collection.py
 
 ## SIGMA Rules
 
-The scanner includes 73 comprehensive SIGMA rules for LLM software detection:
+The scanner includes 84 comprehensive SIGMA rules for LLM software detection:
 
-### Core LLM Software
+### Core LLM Software (4 rules)
 1. **ollama_detection.yml** - Comprehensive Ollama detection covering processes, files, network activity, and environment variables
 2. **lmstudio_detection.yml** - LM Studio detection for processes, files, and network connections
 3. **gpt4all_detection.yml** - GPT4All desktop application detection across multiple platforms
 4. **vllm_detection.yml** - vLLM inference library detection including Python package analysis
 
-### AI Development Tools
-5. **github_copilot_detection.yml** - GitHub Copilot detection for processes, files, and environment variables
-6. **replit_ghostwriter_detection.yml** - Replit Ghostwriter detection covering installation and usage
-7. **windsurf_detection.yml** - Windsurf AI detection for development environments
-8. **tabnine_detection.yml** - Tabnine AI detection for code completion tools
-9. **zed_detection.yml** - Zed editor with AI features detection
-10. **continue_detection.yml** - Continue AI detection for development assistance
-11. **cursor_ai_code_editor_detection.yml** - Cursor AI code editor detection for processes, files, and environment variables
+### AI Development Tools (21 rules)
+5. **github_copilot_process_detection.yml** - GitHub Copilot process detection
+6. **github_copilot_file_detection.yml** - GitHub Copilot file detection
+7. **github_copilot_env_detection.yml** - GitHub Copilot environment variables
+8. **replit_ghostwriter_llm_software_detection.yml** - Replit Ghostwriter software detection
+9. **replit_ghostwriter_file_detection.yml** - Replit Ghostwriter file detection
+10. **replit_ghostwriter_environment_variables.yml** - Replit Ghostwriter environment variables
+11. **windsurf_ai_llm_software_detection.yml** - Windsurf AI software detection
+12. **windsurf_ai_file_detection.yml** - Windsurf AI file detection
+13. **windsurf_ai_environment_variables.yml** - Windsurf AI environment variables
+14. **tabnine_ai_llm_software_detection.yml** - Tabnine AI software detection
+15. **tabnine_ai_file_detection.yml** - Tabnine AI file detection
+16. **tabnine_ai_environment_variables.yml** - Tabnine AI environment variables
+17. **zed_editor_ai_llm_software_detection.yml** - Zed editor AI software detection
+18. **zed_editor_ai_file_detection.yml** - Zed editor AI file detection
+19. **zed_editor_ai_environment_variables.yml** - Zed editor AI environment variables
+20. **continue_ai_llm_software_detection.yml** - Continue AI software detection
+21. **continue_ai_file_detection.yml** - Continue AI file detection
+22. **continue_ai_environment_variables.yml** - Continue AI environment variables
+23. **cursor_process_detection.yml** - Cursor AI process detection
+24. **cursor_file_detection.yml** - Cursor AI file detection
+25. **cursor_env_detection.yml** - Cursor AI environment variables
 
-### AI Chat Applications
-12. **chatgpt_detection.yml** - ChatGPT desktop application detection
-13. **claude_detection.yml** - Claude AI applications (Claude Code, Claude Desktop) detection
-14. **google_gemini_detection.yml** - Google Gemini AI detection
-15. **brave_leo_detection.yml** - Brave Leo AI detection
-16. **poe_detection.yml** - Poe AI detection
-17. **youchat_detection.yml** - YouChat/You.com AI detection
-18. **chatbox_ai_chat_application_detection.yml** - Chatbox AI chat application detection
+### AI Chat Applications (21 rules)
+26. **chatgpt_desktop_llm_software_detection.yml** - ChatGPT desktop software detection
+27. **chatgpt_desktop_file_detection.yml** - ChatGPT desktop file detection
+28. **chatgpt_desktop_environment_variables.yml** - ChatGPT desktop environment variables
+29. **claude_ai_llm_software_detection.yml** - Claude AI software detection
+30. **claude_ai_file_detection.yml** - Claude AI file detection
+31. **claude_ai_environment_variables.yml** - Claude AI environment variables
+32. **google_gemini_ai_llm_software_detection.yml** - Google Gemini AI software detection
+33. **google_gemini_ai_file_detection.yml** - Google Gemini AI file detection
+34. **google_gemini_ai_environment_variables.yml** - Google Gemini AI environment variables
+35. **brave_leo_ai_llm_software_detection.yml** - Brave Leo AI software detection
+36. **brave_leo_ai_file_detection.yml** - Brave Leo AI file detection
+37. **brave_leo_ai_environment_variables.yml** - Brave Leo AI environment variables
+38. **poe_ai_llm_software_detection.yml** - Poe AI software detection
+39. **poe_ai_file_detection.yml** - Poe AI file detection
+40. **poe_ai_environment_variables.yml** - Poe AI environment variables
+41. **youchat_youcom_ai_llm_software_detection.yml** - YouChat/You.com AI software detection
+42. **youchat_youcom_ai_file_detection.yml** - YouChat/You.com AI file detection
+43. **youchat_youcom_ai_environment_variables.yml** - YouChat/You.com AI environment variables
+44. **chatbox_process_detection.yml** - Chatbox AI process detection
+45. **chatbox_file_detection.yml** - Chatbox AI file detection
+46. **chatbox_env_detection.yml** - Chatbox AI environment variables
 
-### Open Source AI Platforms
-19. **openwebui_detection.yml** - Open WebUI detection
-20. **anythingllm_detection.yml** - AnythingLLM detection
-21. **librechat_detection.yml** - LibreChat detection
-22. **jan_detection.yml** - Jan AI detection
-23. **text_generation_webui_detection.yml** - Text Generation WebUI (Oobabooga) detection
-24. **localai_detection.yml** - LocalAI detection
-25. **llamafile_detection.yml** - Llamafile/llama.cpp detection
-26. **faraday_detection.yml** - Faraday AI detection
-27. **nvidia_chat_rtx_detection.yml** - NVIDIA Chat with RTX detection
+### Open Source AI Platforms (26 rules)
+47. **open_webui_llm_software_detection.yml** - Open WebUI software detection
+48. **open_webui_file_detection.yml** - Open WebUI file detection
+49. **open_webui_environment_variables.yml** - Open WebUI environment variables
+50. **anythingllm_llm_software_detection.yml** - AnythingLLM software detection
+51. **anythingllm_file_detection.yml** - AnythingLLM file detection
+52. **anythingllm_environment_variables.yml** - AnythingLLM environment variables
+53. **librechat_llm_software_detection.yml** - LibreChat software detection
+54. **librechat_file_detection.yml** - LibreChat file detection
+55. **librechat_environment_variables.yml** - LibreChat environment variables
+56. **jan_ai_llm_software_detection.yml** - Jan AI software detection
+57. **jan_ai_file_detection.yml** - Jan AI file detection
+58. **jan_ai_environment_variables.yml** - Jan AI environment variables
+59. **text_generation_webui_oobabooga_llm_software_detection.yml** - Text Generation WebUI (Oobabooga) software detection
+60. **text_generation_webui_oobabooga_file_detection.yml** - Text Generation WebUI file detection
+61. **text_generation_webui_oobabooga_environment_variables.yml** - Text Generation WebUI environment variables
+62. **localai_llm_software_detection.yml** - LocalAI software detection
+63. **localai_file_detection.yml** - LocalAI file detection
+64. **localai_environment_variables.yml** - LocalAI environment variables
+65. **llamafile_llamacpp_llm_software_detection.yml** - Llamafile/llama.cpp software detection
+66. **llamafile_llamacpp_file_detection.yml** - Llamafile/llama.cpp file detection
+67. **faraday_ai_llm_software_detection.yml** - Faraday AI software detection
+68. **faraday_ai_file_detection.yml** - Faraday AI file detection
+69. **faraday_ai_environment_variables.yml** - Faraday AI environment variables
+70. **nvidia_chat_with_rtx_llm_software_detection.yml** - NVIDIA Chat with RTX software detection
+71. **nvidia_chat_with_rtx_file_detection.yml** - NVIDIA Chat with RTX file detection
+72. **nvidia_chat_with_rtx_environment_variables.yml** - NVIDIA Chat with RTX environment variables
+
+### AI Discord Bots - ClawdBot/OpenClaw (12 rules)
+73. **clawdbot_process_detection.yml** - ClawdBot/OpenClaw process execution detection
+74. **clawdbot_dns_detection.yml** - ClawdBot/OpenClaw DNS query detection
+75. **clawdbot_file_detection.yml** - ClawdBot/OpenClaw file system activity detection
+76. **clawdbot_environment_variables.yml** - ClawdBot/OpenClaw environment variable detection
+77. **clawdbot_llm_software_detection.yml** - ClawdBot/OpenClaw LLM software detection
+78. **clawdbot_network_detection.yml** - ClawdBot/OpenClaw network traffic and API detection
+79. **openclaw_process_detection.yml** - OpenClaw standalone process detection (newer ClawdBot version)
+80. **openclaw_dns_detection.yml** - OpenClaw standalone DNS detection
+81. **openclaw_file_detection.yml** - OpenClaw standalone file detection
+82. **openclaw_environment_variables.yml** - OpenClaw standalone environment variable detection
+83. **openclaw_llm_software_detection.yml** - OpenClaw standalone LLM software detection
+84. **openclaw_network_detection.yml** - OpenClaw standalone network and API detection
 
 ### Rule Coverage
 Each SIGMA rule provides comprehensive detection for:
@@ -298,6 +415,10 @@ Each SIGMA rule follows the standard SIGMA format with:
 ### MITRE ATT&CK Mapping
 - **T1059**: Command and Scripting Interpreter
 - **T1071.001**: Application Layer Protocol (Web Protocols)
+- **T1071.004**: Application Layer Protocol (DNS)
+- **T1041**: Exfiltration Over C2 Channel
+- **T1082**: System Information Discovery
+- **T1018**: Remote System Discovery
 - **T1547**: Boot or Logon Autostart Execution
 - **T1547.001**: Registry Run Keys / Startup Folder
 
@@ -424,6 +545,14 @@ To contribute:
 4. Enhance detection accuracy
 
 ## Changelog
+
+- **v1.4**: OpenClaw Detection and ClawdBot Rule Updates
+  - Added 6 new standalone OpenClaw SIGMA detection rules (process, DNS, file, environment variables, LLM software, network/API)
+  - Updated all 6 existing ClawdBot rules to also detect OpenClaw (newer version of ClawdBot)
+  - OpenClaw detection covers: process execution, DNS domains, file system activity, environment variables, LLM software installation, and network traffic/API patterns
+  - Added OpenClaw-specific indicators: `oc-`/`ocl-` bearer token prefixes, OpenClaw domain infrastructure, SDK user-agent strings, API endpoint patterns, and model names
+  - Updated README to reflect all 84 SIGMA rule files with actual filenames
+  - Total SIGMA rules expanded from 78 to 84
 
 - **v1.3**: Comprehensive AI Application Detection Expansion
   - Added 21 new AI applications with comprehensive SIGMA rules
