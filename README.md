@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/aidisco-logo.png" alt="AI Discovery - Shadow AI Logo" width="700">
+</p>
+
 # AI Discovery Scanner
 
 A comprehensive Python-based scanner designed to detect common Local Large Language Model (LLM) software installations on Windows, macOS, and Linux systems. The scanner includes SIGMA rules for threat detection and monitoring.
