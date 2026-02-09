@@ -4,7 +4,7 @@
 
 # AI Discovery Scanner
 
-A comprehensive Python-based scanner designed to detect common Local Large Language Model (LLM) software installations on Windows, macOS, and Linux systems. The scanner includes SIGMA rules for threat detection and monitoring.
+A comprehensive scanner designed to detect common Local Large Language Model (LLM) software installations on Windows, macOS, and Linux systems. Available in both **Python** and **Go** versions. The Go version compiles to a single static binary with no runtime dependencies, making it ideal for deployment across diverse environments. The scanner includes SIGMA rules for threat detection and monitoring.
 
 ## Features
 
@@ -49,6 +49,8 @@ A comprehensive Python-based scanner designed to detect common Local Large Langu
 
 ## Installation
 
+### Python Version
+
 1. **Clone or download the scanner files**
 2. **Install Python dependencies:**
    ```bash
@@ -59,14 +61,40 @@ A comprehensive Python-based scanner designed to detect common Local Large Langu
    mkdir -p sigma_rules
    ```
 
+### Go Version (Portable Binary)
+
+The Go version compiles to a single binary with no runtime dependencies, making it easy to deploy on any system.
+
+**Prerequisites:** Go 1.21 or later
+
+1. **Build for your current platform:**
+   ```bash
+   cd ai_discovery_scan_go
+   go build -o ai_discovery_scan .
+   ```
+
+2. **Cross-compile for all platforms:**
+   ```bash
+   cd ai_discovery_scan_go
+   make build-all
+   ```
+   This produces binaries in the `build/` directory:
+   - `ai_discovery_scan-linux-amd64` / `ai_discovery_scan-linux-arm64`
+   - `ai_discovery_scan-windows-amd64.exe` / `ai_discovery_scan-windows-arm64.exe`
+   - `ai_discovery_scan-darwin-amd64` / `ai_discovery_scan-darwin-arm64`
+
+3. **Deploy:** Copy the binary and `sigma_rules/` directory to the target system. The scanner will look for rules relative to the current working directory or the executable location.
+
 ## Usage
 
-### Basic Scan
+### Python Version
+
+#### Basic Scan
 ```bash
 python ai_discovery_scan.py
 ```
 
-### Advanced Options
+#### Advanced Options
 ```bash
 # Specify output file
 python ai_discovery_scan.py --output custom_results.json
@@ -93,10 +121,63 @@ python ai_discovery_scan.py --collect-logs --max-file-size 50
 python ai_discovery_scan.py -v -o detailed_scan.json --collect-logs --log-format zip
 ```
 
+### Go Version
+
+#### Basic Scan
+```bash
+./ai_discovery_scan --sigma-dir /path/to/sigma_rules
+```
+
+#### Advanced Options
+```bash
+# Specify output file
+./ai_discovery_scan -o custom_results.json
+
+# Verbose output
+./ai_discovery_scan -v
+
+# Custom SIGMA rules directory
+./ai_discovery_scan --sigma-dir /path/to/custom/rules
+
+# Collect logs from detected LLM software
+./ai_discovery_scan --collect-logs
+
+# Only collect logs without running detection scan
+./ai_discovery_scan --logs-only
+
+# Set custom file size limit (50MB)
+./ai_discovery_scan --collect-logs --max-file-size 50
+```
+
+#### Windows Examples
+```bash
+ai_discovery_scan.exe --sigma-dir sigma_rules
+ai_discovery_scan.exe --collect-logs -v
+```
+
 ## File Structure
 
 ```
-├── ai_discovery_scan.py        # Main scanner script
+├── ai_discovery_scan.py        # Main scanner script (Python version)
+├── ai_discovery_scan_go/       # Go version (portable binary)
+│   ├── go.mod                  # Go module definition
+│   ├── go.sum                  # Go dependency checksums
+│   ├── main.go                 # CLI entrypoint and flag parsing
+│   ├── types.go                # Data types (DetectionResult, ScanResults, etc.)
+│   ├── scanner.go              # Core scanner struct and orchestration
+│   ├── security.go             # Path sanitization and validation
+│   ├── detection.go            # Legacy detection methods (Ollama, LM Studio, GPT4All, vLLM)
+│   ├── sigma.go                # SIGMA rule loading and matching
+│   ├── collector.go            # Log collection and ZIP archiving
+│   ├── report.go               # JSON output and human-readable summary
+│   ├── helpers.go              # Command execution with timeout
+│   ├── process_linux.go        # Process detection via /proc (Linux)
+│   ├── process_darwin.go       # Process detection via ps (macOS)
+│   ├── process_windows.go      # Process detection via tasklist (Windows)
+│   ├── registry_windows.go     # Windows registry detection
+│   ├── registry_other.go       # Registry stubs for non-Windows
+│   ├── Makefile                # Cross-platform build targets
+│   └── .gitignore              # Build artifact exclusions
 ├── example_log_collection.py   # Example script for log collection
 ├── requirements.txt            # Python dependencies
 ├── sigma_rules/               # SIGMA rules directory (78 rules total)
@@ -510,6 +591,7 @@ Create new `.yml` files in the `sigma_rules/` directory following the SIGMA stan
 
 ## Dependencies
 
+### Python Version
 - **psutil**: System and process monitoring
 - **PyYAML**: SIGMA rule parsing
 - **pathlib**: Cross-platform path handling
@@ -517,8 +599,14 @@ Create new `.yml` files in the `sigma_rules/` directory following the SIGMA stan
 - **shutil**: File operations (built-in)
 - **Standard library**: os, sys, json, platform, subprocess, socket
 
-### Optional Dependencies
+#### Optional Dependencies
 - **7zip**: For 7z archive format support (command line tool must be in PATH)
+
+### Go Version
+- **gopkg.in/yaml.v3**: SIGMA rule YAML parsing
+- **golang.org/x/sys**: Windows registry access (Windows builds only)
+- **Standard library**: os, runtime, net, encoding/json, archive/zip, flag, path/filepath
+- No runtime dependencies - compiles to a single static binary
 
 ## License
 
@@ -533,6 +621,18 @@ To contribute:
 4. Enhance detection accuracy
 
 ## Changelog
+
+- **v1.5**: Go Version - Portable Cross-Platform Binary
+  - Added complete Go implementation of the AI Discovery Scanner
+  - Compiles to a single static binary for Windows (amd64/arm64), Linux (amd64/arm64), and macOS (amd64/arm64)
+  - No runtime dependencies required - no Python, no pip, no virtual environments
+  - Cross-platform process detection: reads /proc on Linux, uses ps on macOS, uses tasklist on Windows
+  - Windows registry detection using build tags (golang.org/x/sys/windows/registry)
+  - Full SIGMA rule loading and matching from YAML files
+  - Log collection with ZIP archiving, smart binary file filtering
+  - JSON output and human-readable summary reports
+  - Makefile with cross-compilation targets for all platforms
+  - Feature parity with Python version for core detection capabilities
 
 - **v1.4**: ClawdBot/OpenClaw/MoltBot Consolidated Detection
   - Updated all 6 ClawdBot Sigma rules to detect all three variants (ClawdBot, OpenClaw, MoltBot) in a single consolidated rule set
