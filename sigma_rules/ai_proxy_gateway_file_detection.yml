@@ -1,0 +1,105 @@
+title: AI Proxy and Gateway Configuration File Detection
+id: 12345678-1234-5678-9abc-123456789086
+status: experimental
+description: |
+  Detects configuration files, installation directories, and artifacts associated
+  with AI proxy and gateway services. The presence of these files indicates that
+  AI routing infrastructure has been set up, possibly as Shadow AI middleware.
+  Covers LiteLLM, OpenRouter, Helicone, Portkey, and other AI proxy platforms.
+author: AI Discovery Security Team
+date: 2025/01/15
+modified: 2025/02/09
+tags:
+  - attack.persistence
+  - attack.t1059
+  - attack.t1105
+  - ai.proxy
+  - ai.shadow_ai
+logsource:
+  category: file_event
+  product: any
+detection:
+  selection_litellm:
+    TargetFilename|contains:
+      - 'litellm_config.yaml'
+      - 'litellm_config.yml'
+      - 'litellm.config'
+      - 'litellm_proxy_config'
+      - '.litellm'
+      - '/litellm/'
+      - '\litellm\'
+      - 'litellm_router'
+      - 'litellm.db'
+      - 'litellm_proxy.db'
+      - 'litellm_settings'
+  selection_litellm_pip:
+    TargetFilename|contains:
+      - 'site-packages/litellm'
+      - 'site-packages\litellm'
+      - 'dist-packages/litellm'
+      - 'dist-packages\litellm'
+  selection_openrouter:
+    TargetFilename|contains:
+      - '.openrouter'
+      - 'openrouter.config'
+      - 'openrouter_config'
+  selection_helicone:
+    TargetFilename|contains:
+      - '.helicone'
+      - 'helicone.config'
+      - 'helicone_config'
+      - 'site-packages/helicone'
+      - 'site-packages\helicone'
+  selection_portkey:
+    TargetFilename|contains:
+      - '.portkey'
+      - 'portkey.config'
+      - 'portkey_config'
+      - 'site-packages/portkey'
+      - 'site-packages\portkey'
+      - 'rubeus.config'
+  selection_promptlayer:
+    TargetFilename|contains:
+      - '.promptlayer'
+      - 'promptlayer.config'
+      - 'site-packages/promptlayer'
+      - 'site-packages\promptlayer'
+  selection_langsmith:
+    TargetFilename|contains:
+      - '.langsmith'
+      - 'langsmith.config'
+      - 'site-packages/langsmith'
+      - 'site-packages\langsmith'
+  selection_wandb:
+    TargetFilename|contains:
+      - '.wandb'
+      - 'wandb/'
+      - 'wandb\'
+      - 'wandb-settings'
+      - 'site-packages/wandb'
+      - 'site-packages\wandb'
+  selection_braintrust:
+    TargetFilename|contains:
+      - '.braintrust'
+      - 'braintrust.config'
+      - 'site-packages/braintrust'
+      - 'site-packages\braintrust'
+  selection_mlflow:
+    TargetFilename|contains:
+      - 'mlruns/'
+      - 'mlruns\'
+      - 'mlflow.db'
+      - 'mlflow_artifacts'
+      - '.mlflow'
+      - 'mlflow.config'
+      - 'site-packages/mlflow'
+      - 'site-packages\mlflow'
+  condition: selection_litellm or selection_litellm_pip or selection_openrouter or selection_helicone or selection_portkey or selection_promptlayer or selection_langsmith or selection_wandb or selection_braintrust or selection_mlflow
+fields:
+  - TargetFilename
+  - User
+  - ProcessName
+falsepositives:
+  - Authorized AI infrastructure configuration files
+  - Development environments with approved AI proxy setups
+level: medium

@@ -1,0 +1,252 @@
+title: AI API Provider Network Traffic Detection
+id: 12345678-1234-5678-9abc-123456789081
+status: experimental
+description: |
+  Detects HTTP/HTTPS network traffic to AI API providers by identifying characteristic
+  API endpoints, authorization headers, bearer tokens, model names, SDK user-agents,
+  and API key patterns in proxy/firewall logs. Covers OpenAI, Anthropic, Google AI,
+  Mistral, Groq, Cohere, Together, DeepSeek, xAI, and other major providers.
+author: AI Discovery Security Team
+date: 2025/01/15
+modified: 2025/02/09
+tags:
+  - attack.exfiltration
+  - attack.t1071.001
+  - attack.t1041
+  - ai.api_provider
+  - ai.shadow_ai
+logsource:
+  category: proxy
+  product: any
+detection:
+  selection_openai_endpoints:
+    c-uri|contains:
+      - '/v1/chat/completions'
+      - '/v1/completions'
+      - '/v1/embeddings'
+      - '/v1/images/generations'
+      - '/v1/audio/transcriptions'
+      - '/v1/audio/translations'
+      - '/v1/audio/speech'
+      - '/v1/moderations'
+      - '/v1/models'
+      - '/v1/assistants'
+      - '/v1/threads'
+      - '/v1/files'
+      - '/v1/fine_tuning'
+      - '/v1/batches'
+    cs-host|contains:
+      - 'api.openai.com'
+  selection_openai_keys:
+    cs-header|re: 'Bearer\s+sk-(proj-)?[A-Za-z0-9_\-]{20,}'
+  selection_openai_models:
+    cs-body|contains:
+      - 'gpt-4o'
+      - 'gpt-4-turbo'
+      - 'gpt-4'
+      - 'gpt-3.5-turbo'
+      - 'o1-preview'
+      - 'o1-mini'
+      - 'o3-mini'
+      - 'dall-e-3'
+      - 'whisper-1'
+      - 'tts-1'
+      - 'text-embedding-3'
+      - 'text-embedding-ada'
+  selection_openai_useragent:
+    cs-user-agent|contains:
+      - 'OpenAI-Python'
+      - 'OpenAI-Node'
+      - 'openai/'
+      - 'OpenAI/'
+      - 'OpenAI-DotNet'
+      - 'OpenAI-Java'
+      - 'OpenAI-Go'
+      - 'OpenAI-Rust'
+  selection_anthropic_endpoints:
+    c-uri|contains:
+      - '/v1/messages'
+      - '/v1/complete'
+    cs-host|contains:
+      - 'api.anthropic.com'
+  selection_anthropic_headers:
+    cs-header|contains:
+      - 'x-api-key'
+      - 'anthropic-version'
+      - 'anthropic-beta'
+  selection_anthropic_keys:
+    cs-header|re: 'sk-ant-[A-Za-z0-9\-]{20,}'
+  selection_anthropic_models:
+    cs-body|contains:
+      - 'claude-opus'
+      - 'claude-sonnet'
+      - 'claude-haiku'
+      - 'claude-3'
+      - 'claude-2'
+      - 'claude-instant'
+  selection_anthropic_useragent:
+    cs-user-agent|contains:
+      - 'anthropic-sdk'
+      - 'Anthropic/'
+      - 'anthropic-python'
+      - 'anthropic-typescript'
+  selection_google_endpoints:
+    c-uri|contains:
+      - '/v1/models/'
+      - '/v1beta/models/'
+      - ':generateContent'
+      - ':streamGenerateContent'
+      - ':embedContent'
+    cs-host|contains:
+      - 'generativelanguage.googleapis.com'
+      - 'aiplatform.googleapis.com'
+  selection_google_models:
+    cs-body|contains:
+      - 'gemini-pro'
+      - 'gemini-ultra'
+      - 'gemini-nano'
+      - 'gemini-1.5'
+      - 'gemini-2'
+      - 'text-bison'
+      - 'chat-bison'
+      - 'embedding-gecko'
+  selection_mistral_endpoints:
+    c-uri|contains:
+      - '/v1/chat/completions'
+      - '/v1/embeddings'
+      - '/v1/fim/completions'
+    cs-host|contains:
+      - 'api.mistral.ai'
+  selection_mistral_models:
+    cs-body|contains:
+      - 'mistral-large'
+      - 'mistral-medium'
+      - 'mistral-small'
+      - 'mistral-tiny'
+      - 'open-mistral'
+      - 'open-mixtral'
+      - 'codestral'
+      - 'pixtral'
+      - 'mistral-embed'
+  selection_groq_endpoints:
+    c-uri|contains:
+      - '/openai/v1/chat/completions'
+      - '/openai/v1/models'
+    cs-host|contains:
+      - 'api.groq.com'
+  selection_groq_keys:
+    cs-header|re: 'Bearer\s+gsk_[A-Za-z0-9]{50,}'
+  selection_cohere_endpoints:
+    c-uri|contains:
+      - '/v1/chat'
+      - '/v1/generate'
+      - '/v1/embed'
+      - '/v1/rerank'
+      - '/v1/classify'
+      - '/v2/chat'
+    cs-host|contains:
+      - 'api.cohere.ai'
+      - 'api.cohere.com'
+  selection_together_endpoints:
+    c-uri|contains:
+      - '/v1/chat/completions'
+      - '/v1/completions'
+      - '/v1/embeddings'
+      - '/v1/images/generations'
+    cs-host|contains:
+      - 'api.together.xyz'
+      - 'api.together.ai'
+  selection_deepseek_endpoints:
+    c-uri|contains:
+      - '/v1/chat/completions'
+      - '/chat/completions'
+    cs-host|contains:
+      - 'api.deepseek.com'
+  selection_deepseek_models:
+    cs-body|contains:
+      - 'deepseek-chat'
+      - 'deepseek-coder'
+      - 'deepseek-reasoner'
+      - 'deepseek-v2'
+      - 'deepseek-v3'
+  selection_xai_endpoints:
+    c-uri|contains:
+      - '/v1/chat/completions'
+      - '/v1/completions'
+    cs-host|contains:
+      - 'api.x.ai'
+  selection_xai_models:
+    cs-body|contains:
+      - 'grok-2'
+      - 'grok-beta'
+      - 'grok-vision'
+  selection_replicate_endpoints:
+    c-uri|contains:
+      - '/v1/predictions'
+      - '/v1/models'
+      - '/v1/deployments'
+    cs-host|contains:
+      - 'api.replicate.com'
+  selection_replicate_keys:
+    cs-header|re: 'Bearer\s+r8_[A-Za-z0-9]{30,}'
+  selection_fireworks_endpoints:
+    c-uri|contains:
+      - '/inference/v1/chat/completions'
+      - '/inference/v1/completions'
+      - '/inference/v1/embeddings'
+    cs-host|contains:
+      - 'api.fireworks.ai'
+  selection_perplexity_endpoints:
+    c-uri|contains:
+      - '/chat/completions'
+    cs-host|contains:
+      - 'api.perplexity.ai'
+  selection_perplexity_keys:
+    cs-header|re: 'Bearer\s+pplx-[A-Za-z0-9]{40,}'
+  selection_perplexity_models:
+    cs-body|contains:
+      - 'sonar-small'
+      - 'sonar-medium'
+      - 'sonar-large'
+      - 'sonar-pro'
+      - 'sonar-reasoning'
+  selection_huggingface_endpoints:
+    c-uri|contains:
+      - '/models/'
+      - '/api/models'
+      - '/api/inference'
+    cs-host|contains:
+      - 'api-inference.huggingface.co'
+      - 'huggingface.co'
+  selection_stability_endpoints:
+    c-uri|contains:
+      - '/v1/generation'
+      - '/v2beta/stable-image'
+    cs-host|contains:
+      - 'api.stability.ai'
+  selection_ai21_endpoints:
+    c-uri|contains:
+      - '/v1/chat/completions'
+      - '/v1/complete'
+      - '/studio/v1'
+    cs-host|contains:
+      - 'api.ai21.com'
+  selection_ai21_models:
+    cs-body|contains:
+      - 'jamba-instruct'
+      - 'jamba-1.5'
+      - 'j2-ultra'
+      - 'j2-mid'
+      - 'j2-light'
+  condition: selection_openai_endpoints or selection_openai_keys or selection_openai_models or selection_openai_useragent or selection_anthropic_endpoints or selection_anthropic_headers or selection_anthropic_keys or selection_anthropic_models or selection_anthropic_useragent or selection_google_endpoints or selection_google_models or selection_mistral_endpoints or selection_mistral_models or selection_groq_endpoints or selection_groq_keys or selection_cohere_endpoints or selection_together_endpoints or selection_deepseek_endpoints or selection_deepseek_models or selection_xai_endpoints or selection_xai_models or selection_replicate_endpoints or selection_replicate_keys or selection_fireworks_endpoints or selection_perplexity_endpoints or selection_perplexity_keys or selection_perplexity_models or selection_huggingface_endpoints or selection_stability_endpoints or selection_ai21_endpoints or selection_ai21_models
+fields:
+  - cs-host
+  - c-uri
+  - cs-user-agent
+  - cs-header
+  - SourceIP
+falsepositives:
+  - Authorized AI service integrations
+  - Legitimate development and testing environments
+  - CI/CD pipelines with approved AI integrations
+level: medium

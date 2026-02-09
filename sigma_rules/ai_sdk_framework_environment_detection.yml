@@ -1,0 +1,127 @@
+title: AI SDK and Framework Environment Variable Detection
+id: 12345678-1234-5678-9abc-123456789090
+status: experimental
+description: |
+  Detects environment variables associated with AI development frameworks, SDKs,
+  and vector databases. These variables configure AI orchestration tools and
+  indicate active AI development or Shadow AI activity. Covers LangChain,
+  LlamaIndex, AutoGen, CrewAI, Haystack, Dify, FlowiseAI, Chainlit, Gradio,
+  Semantic Kernel, vector stores (Chroma, Pinecone, Qdrant, Weaviate), and others.
+author: AI Discovery Security Team
+date: 2025/01/15
+modified: 2025/02/09
+tags:
+  - attack.credential_access
+  - attack.t1552.001
+  - attack.t1082
+  - ai.framework
+  - ai.shadow_ai
+logsource:
+  category: process_creation
+  product: any
+detection:
+  selection_langchain:
+    EnvironmentVariables|contains:
+      - 'LANGCHAIN_API_KEY'
+      - 'LANGCHAIN_TRACING_V2'
+      - 'LANGCHAIN_ENDPOINT'
+      - 'LANGCHAIN_PROJECT'
+      - 'LANGCHAIN_VERBOSE'
+      - 'LANGCHAIN_CACHE'
+      - 'LANGCHAIN_HANDLER'
+  selection_llamaindex:
+    EnvironmentVariables|contains:
+      - 'LLAMA_INDEX_CACHE_DIR'
+      - 'LLAMA_INDEX_SHOW_PROGRESS'
+      - 'LLAMA_CLOUD_API_KEY'
+  selection_autogen:
+    EnvironmentVariables|contains:
+      - 'AUTOGEN_USE_DOCKER'
+      - 'OAI_CONFIG_LIST'
+  selection_crewai:
+    EnvironmentVariables|contains:
+      - 'CREWAI_STORAGE_DIR'
+      - 'CREW_VERBOSE'
+  selection_haystack:
+    EnvironmentVariables|contains:
+      - 'HAYSTACK_TELEMETRY_ENABLED'
+      - 'HAYSTACK_CONTENT_TRACING_ENABLED'
+  selection_dify:
+    EnvironmentVariables|contains:
+      - 'DIFY_API_KEY'
+      - 'DIFY_API_BASE'
+      - 'DIFY_APP_ID'
+  selection_flowise:
+    EnvironmentVariables|contains:
+      - 'FLOWISE_USERNAME'
+      - 'FLOWISE_PASSWORD'
+      - 'FLOWISE_SECRETKEY_OVERWRITE'
+      - 'FLOWISE_FILE_SIZE_LIMIT'
+      - 'DATABASE_PATH'
+      - 'APIKEY_PATH'
+  selection_chainlit:
+    EnvironmentVariables|contains:
+      - 'CHAINLIT_AUTH_SECRET'
+      - 'CHAINLIT_URL'
+      - 'CHAINLIT_API_KEY'
+  selection_gradio:
+    EnvironmentVariables|contains:
+      - 'GRADIO_SERVER_PORT'
+      - 'GRADIO_SERVER_NAME'
+      - 'GRADIO_SHARE'
+      - 'GRADIO_ANALYTICS_ENABLED'
+      - 'GRADIO_TEMP_DIR'
+  selection_semantic_kernel:
+    EnvironmentVariables|contains:
+      - 'AZURE_OPENAI_CHAT_DEPLOYMENT_NAME'
+      - 'AZURE_OPENAI_TEXT_DEPLOYMENT_NAME'
+      - 'AZURE_OPENAI_EMBEDDING_DEPLOYMENT_NAME'
+  selection_n8n:
+    EnvironmentVariables|contains:
+      - 'N8N_BASIC_AUTH_USER'
+      - 'N8N_BASIC_AUTH_PASSWORD'
+      - 'N8N_PORT'
+      - 'N8N_PROTOCOL'
+      - 'N8N_HOST'
+      - 'N8N_ENCRYPTION_KEY'
+      - 'N8N_AI_'
+  selection_chroma:
+    EnvironmentVariables|contains:
+      - 'CHROMA_API_IMPL'
+      - 'CHROMA_SERVER_HOST'
+      - 'CHROMA_SERVER_HTTP_PORT'
+      - 'CHROMA_COLLECTION'
+      - 'CHROMA_DB_IMPL'
+  selection_pinecone:
+    EnvironmentVariables|contains:
+      - 'PINECONE_API_KEY'
+      - 'PINECONE_ENVIRONMENT'
+      - 'PINECONE_INDEX_NAME'
+      - 'PINECONE_PROJECT_NAME'
+  selection_qdrant:
+    EnvironmentVariables|contains:
+      - 'QDRANT_API_KEY'
+      - 'QDRANT_URL'
+      - 'QDRANT_HOST'
+      - 'QDRANT_PORT'
+      - 'QDRANT_COLLECTION_NAME'
+  selection_weaviate:
+    EnvironmentVariables|contains:
+      - 'WEAVIATE_API_KEY'
+      - 'WEAVIATE_URL'
+      - 'WEAVIATE_HOST'
+      - 'WEAVIATE_SCHEME'
+  selection_milvus:
+    EnvironmentVariables|contains:
+      - 'MILVUS_HOST'
+      - 'MILVUS_PORT'
+      - 'MILVUS_TOKEN'
+  condition: selection_langchain or selection_llamaindex or selection_autogen or selection_crewai or selection_haystack or selection_dify or selection_flowise or selection_chainlit or selection_gradio or selection_semantic_kernel or selection_n8n or selection_chroma or selection_pinecone or selection_qdrant or selection_weaviate or selection_milvus
+fields:
+  - EnvironmentVariables
+  - User
+  - ProcessName
+falsepositives:
+  - Authorized AI development teams
+  - Managed data science environments
+level: medium

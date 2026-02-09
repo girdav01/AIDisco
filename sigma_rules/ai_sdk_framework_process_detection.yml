@@ -1,0 +1,144 @@
+title: AI SDK and Framework Process Detection
+id: 12345678-1234-5678-9abc-123456789088
+status: experimental
+description: |
+  Detects running processes associated with AI development frameworks and SDKs.
+  These frameworks enable building AI-powered applications and agents, and their
+  presence may indicate Shadow AI development activity. Covers LangChain,
+  LlamaIndex, AutoGen, CrewAI, Haystack, Dify, FlowiseAI, Chainlit, Gradio,
+  Streamlit (AI apps), Semantic Kernel, and other AI orchestration tools.
+author: AI Discovery Security Team
+date: 2025/01/15
+modified: 2025/02/09
+tags:
+  - attack.execution
+  - attack.t1059
+  - attack.t1082
+  - ai.framework
+  - ai.shadow_ai
+logsource:
+  category: process_creation
+  product: any
+detection:
+  selection_langchain:
+    CommandLine|contains:
+      - 'langchain'
+      - 'langchain serve'
+      - 'langchain app'
+      - 'langchain-cli'
+      - 'from langchain'
+      - 'import langchain'
+    ProcessName|contains:
+      - 'langchain'
+  selection_llamaindex:
+    CommandLine|contains:
+      - 'llamaindex'
+      - 'llama-index'
+      - 'llama_index'
+      - 'from llama_index'
+      - 'import llama_index'
+    ProcessName|contains:
+      - 'llamaindex'
+      - 'llama-index'
+  selection_autogen:
+    CommandLine|contains:
+      - 'autogen'
+      - 'pyautogen'
+      - 'from autogen'
+      - 'import autogen'
+      - 'autogen.agentchat'
+    ProcessName|contains:
+      - 'autogen'
+  selection_crewai:
+    CommandLine|contains:
+      - 'crewai'
+      - 'crew-ai'
+      - 'from crewai'
+      - 'import crewai'
+      - 'crewai run'
+      - 'crewai create'
+    ProcessName|contains:
+      - 'crewai'
+  selection_haystack:
+    CommandLine|contains:
+      - 'haystack'
+      - 'from haystack'
+      - 'import haystack'
+      - 'haystack-ai'
+    ProcessName|contains:
+      - 'haystack'
+  selection_dify:
+    CommandLine|contains:
+      - 'dify'
+    ProcessName|contains:
+      - 'dify'
+    Image|endswith:
+      - '\dify'
+      - '\dify.exe'
+      - '/dify'
+  selection_flowise:
+    CommandLine|contains:
+      - 'flowise'
+      - 'npx flowise'
+      - 'flowise start'
+    ProcessName|contains:
+      - 'flowise'
+    Image|endswith:
+      - '\flowise'
+      - '\flowise.exe'
+      - '/flowise'
+  selection_chainlit:
+    CommandLine|contains:
+      - 'chainlit'
+      - 'chainlit run'
+      - 'from chainlit'
+      - 'import chainlit'
+    ProcessName|contains:
+      - 'chainlit'
+  selection_gradio:
+    CommandLine|contains:
+      - 'gradio'
+      - 'import gradio'
+      - 'from gradio'
+      - 'gr.Interface'
+      - 'gr.Blocks'
+    ProcessName|contains:
+      - 'gradio'
+  selection_streamlit_ai:
+    CommandLine|contains:
+      - 'streamlit run'
+      - 'streamlit'
+    ProcessName|contains:
+      - 'streamlit'
+  selection_semantic_kernel:
+    CommandLine|contains:
+      - 'semantic_kernel'
+      - 'semantic-kernel'
+      - 'from semantic_kernel'
+      - 'import semantic_kernel'
+  selection_lmchain:
+    CommandLine|contains:
+      - 'llmchain'
+      - 'lmchain'
+      - 'ai-agent'
+      - 'aiagent'
+  selection_n8n_ai:
+    CommandLine|contains:
+      - 'n8n'
+    ProcessName|contains:
+      - 'n8n'
+    Image|endswith:
+      - '\n8n'
+      - '\n8n.exe'
+      - '/n8n'
+  condition: selection_langchain or selection_llamaindex or selection_autogen or selection_crewai or selection_haystack or selection_dify or selection_flowise or selection_chainlit or selection_gradio or selection_streamlit_ai or selection_semantic_kernel or selection_lmchain or selection_n8n_ai
+fields:
+  - Image
+  - CommandLine
+  - ProcessName
+  - User
+  - ParentImage
+falsepositives:
+  - Authorized AI development teams building approved applications
+  - Data science environments with approved AI tools
+level: medium

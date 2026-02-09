@@ -316,6 +316,7 @@ func extractSoftwareNameFromTitle(title string) string {
 		keyword string
 		name    string
 	}{
+		// Specific software (check first for priority)
 		{"cursor", "Cursor"},
 		{"chatbox", "Chatbox"},
 		{"github copilot", "GitHub Copilot"},
@@ -350,6 +351,39 @@ func extractSoftwareNameFromTitle(title string) string {
 		{"lm studio", "LM Studio"},
 		{"gpt4all", "GPT4All"},
 		{"vllm", "vLLM"},
+		// AI proxy/gateway services
+		{"litellm", "LiteLLM"},
+		{"openrouter", "OpenRouter"},
+		{"helicone", "Helicone"},
+		{"portkey", "Portkey"},
+		{"promptlayer", "PromptLayer"},
+		{"langsmith", "LangSmith"},
+		{"braintrust", "BrainTrust"},
+		{"mlflow", "MLflow"},
+		{"humanloop", "HumanLoop"},
+		{"vellum", "Vellum"},
+		// AI SDK/frameworks
+		{"langchain", "LangChain"},
+		{"llamaindex", "LlamaIndex"},
+		{"llama_index", "LlamaIndex"},
+		{"autogen", "AutoGen"},
+		{"crewai", "CrewAI"},
+		{"haystack", "Haystack"},
+		{"dify", "Dify"},
+		{"flowise", "FlowiseAI"},
+		{"chainlit", "Chainlit"},
+		{"gradio", "Gradio"},
+		{"streamlit", "Streamlit"},
+		{"semantic kernel", "Semantic Kernel"},
+		{"semantic_kernel", "Semantic Kernel"},
+		{"n8n", "n8n"},
+		// Generic API provider rules (check last — dedup prefers specific)
+		{"ai api provider", "AI API Provider"},
+		{"ai api key", "AI API Provider"},
+		{"ai proxy", "AI Proxy"},
+		{"ai gateway", "AI Proxy"},
+		{"ai sdk", "AI Framework"},
+		{"ai framework", "AI Framework"},
 	}
 
 	for _, m := range mapping {

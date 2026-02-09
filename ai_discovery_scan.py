@@ -678,32 +678,67 @@ class LLMSoftwareDetector:
         return detection_rules
 
     def get_software_name_from_rule(self, rule: Dict) -> str:
-        """Extract software name from SIGMA rule"""
-        # Try to get from title
+        """Extract software name from SIGMA rule title or tags"""
         title = rule.get('title', '')
-        if 'Ollama' in title:
-            return 'Ollama'
-        elif 'LM Studio' in title:
-            return 'LM Studio'
-        elif 'GPT4All' in title:
-            return 'GPT4All'
-        elif 'vLLM' in title:
-            return 'vLLM'
-        
+        title_lower = title.lower()
+
+        # Ordered mapping: check specific names first, generic last
+        title_mapping = [
+            # Specific software
+            ('cursor', 'Cursor'), ('chatbox', 'Chatbox'),
+            ('github copilot', 'GitHub Copilot'), ('replit ghostwriter', 'Replit Ghostwriter'),
+            ('windsurf', 'Windsurf'), ('tabnine', 'Tabnine'), ('zed', 'Zed'),
+            ('continue', 'Continue'), ('chatgpt', 'ChatGPT'),
+            ('clawdbot', 'ClawdBot'), ('openclaw', 'OpenClaw'), ('moltbot', 'MoltBot'),
+            ('claude', 'Claude'), ('google gemini', 'Google Gemini'),
+            ('brave leo', 'Brave Leo'), ('poe', 'Poe'),
+            ('youchat', 'YouChat'), ('you.com', 'YouChat'),
+            ('open webui', 'Open WebUI'), ('anythingllm', 'AnythingLLM'),
+            ('librechat', 'LibreChat'), ('jan', 'Jan'),
+            ('text generation webui', 'Text Generation WebUI'), ('oobabooga', 'Text Generation WebUI'),
+            ('localai', 'LocalAI'), ('llamafile', 'Llamafile'), ('llama.cpp', 'Llamafile'),
+            ('faraday', 'Faraday'), ('nvidia chat', 'NVIDIA Chat with RTX'),
+            ('ollama', 'Ollama'), ('lm studio', 'LM Studio'),
+            ('gpt4all', 'GPT4All'), ('vllm', 'vLLM'),
+            # AI proxy/gateway services
+            ('litellm', 'LiteLLM'), ('openrouter', 'OpenRouter'),
+            ('helicone', 'Helicone'), ('portkey', 'Portkey'),
+            ('promptlayer', 'PromptLayer'), ('langsmith', 'LangSmith'),
+            ('braintrust', 'BrainTrust'), ('mlflow', 'MLflow'),
+            ('humanloop', 'HumanLoop'), ('vellum', 'Vellum'),
+            # AI SDK/frameworks
+            ('langchain', 'LangChain'), ('llamaindex', 'LlamaIndex'), ('llama_index', 'LlamaIndex'),
+            ('autogen', 'AutoGen'), ('crewai', 'CrewAI'), ('haystack', 'Haystack'),
+            ('dify', 'Dify'), ('flowise', 'FlowiseAI'), ('chainlit', 'Chainlit'),
+            ('gradio', 'Gradio'), ('streamlit', 'Streamlit'),
+            ('semantic kernel', 'Semantic Kernel'), ('semantic_kernel', 'Semantic Kernel'),
+            ('n8n', 'n8n'),
+            # Generic API provider rules (last — dedup prefers specific)
+            ('ai api provider', 'AI API Provider'), ('ai api key', 'AI API Provider'),
+            ('ai proxy', 'AI Proxy'), ('ai gateway', 'AI Proxy'),
+            ('ai sdk', 'AI Framework'), ('ai framework', 'AI Framework'),
+        ]
+
+        for keyword, name in title_mapping:
+            if keyword in title_lower:
+                return name
+
         # Try to get from tags
         tags = rule.get('tags', [])
         for tag in tags:
-            if tag.startswith('llm.'):
-                software = tag.split('.')[1]
-                if software == 'ollama':
-                    return 'Ollama'
-                elif software == 'lmstudio':
-                    return 'LM Studio'
-                elif software == 'gpt4all':
-                    return 'GPT4All'
-                elif software == 'vllm':
-                    return 'vLLM'
-        
+            prefix = tag.split('.')[0] if '.' in tag else ''
+            if prefix in ('llm', 'ai'):
+                software = tag.split('.', 1)[1] if '.' in tag else ''
+                tag_mapping = {
+                    'ollama': 'Ollama', 'lmstudio': 'LM Studio',
+                    'gpt4all': 'GPT4All', 'vllm': 'vLLM',
+                    'clawdbot': 'ClawdBot', 'openclaw': 'OpenClaw', 'moltbot': 'MoltBot',
+                    'api_provider': 'AI API Provider', 'proxy': 'AI Proxy',
+                    'framework': 'AI Framework', 'shadow_ai': 'Shadow AI',
+                }
+                if software in tag_mapping:
+                    return tag_mapping[software]
+
         return 'Unknown Software'
 
     def detect_software_from_rule(self, rule: Dict) -> List[DetectionResult]:
@@ -1246,6 +1281,10 @@ class LLMSoftwareDetector:
         sigma_results = self.detect_from_all_sigma_rules()
         all_results.extend(sigma_results)
 
+        # De-duplicate results from overlapping detection methods
+        print("De-duplicating detection results...")
+        all_results = self.deduplicate_results(all_results)
+
         # Apply SIGMA rules for matching
         sigma_detections = self.apply_sigma_rules(all_results)
 
@@ -1325,6 +1364,75 @@ class LLMSoftwareDetector:
                         "level": rule.get("level", "medium")
                     })
         return matches
+
+    @staticmethod
+    def deduplicate_results(results: List[DetectionResult]) -> List[DetectionResult]:
+        """
+        De-duplicate detection results to avoid counting the same evidence multiple times.
+
+        When both legacy (hardcoded) detection and SIGMA rule-based detection find the
+        same artifact, or when generic AI API provider rules overlap with specific
+        software rules, this method consolidates duplicates.
+
+        De-duplication strategy:
+        1. Group results by (detection_type, value) — same evidence should not be
+           counted twice regardless of which rule detected it.
+        2. For each group, keep the result with the highest confidence level.
+        3. If confidence is tied, prefer the more specific software name (longer names
+           or non-generic names are considered more specific).
+
+        Args:
+            results: List of detection results, potentially containing duplicates
+
+        Returns:
+            De-duplicated list of detection results
+        """
+        if not results:
+            return results
+
+        # Generic software names from broad detection rules
+        generic_names = {
+            'openai api', 'anthropic api', 'google ai api', 'mistral api',
+            'groq api', 'cohere api', 'ai api provider', 'ai proxy',
+            'ai framework', 'ai sdk', 'unknown software'
+        }
+
+        confidence_rank = {'high': 3, 'medium': 2, 'low': 1}
+
+        # Group by (detection_type, value)
+        seen = {}  # key -> DetectionResult
+        for result in results:
+            key = (result.detection_type, result.value)
+            if key not in seen:
+                seen[key] = result
+            else:
+                existing = seen[key]
+                new_rank = confidence_rank.get(result.confidence, 0)
+                old_rank = confidence_rank.get(existing.confidence, 0)
+
+                if new_rank > old_rank:
+                    # Higher confidence wins
+                    seen[key] = result
+                elif new_rank == old_rank:
+                    # Same confidence: prefer specific over generic
+                    existing_is_generic = existing.software.lower() in generic_names
+                    new_is_generic = result.software.lower() in generic_names
+
+                    if existing_is_generic and not new_is_generic:
+                        seen[key] = result
+                    elif not existing_is_generic and not new_is_generic:
+                        # Both specific: prefer the longer/more descriptive name
+                        if len(result.software) > len(existing.software):
+                            seen[key] = result
+
+        deduped = list(seen.values())
+
+        removed = len(results) - len(deduped)
+        if removed > 0:
+            logger.info(f"De-duplication removed {removed} duplicate detections "
+                       f"({len(results)} -> {len(deduped)})")
+
+        return deduped
 
     def detect_from_all_sigma_rules(self) -> List[DetectionResult]:
         """Detect AI software using all loaded SIGMA rules"""

@@ -29,7 +29,8 @@ A comprehensive scanner designed to detect common Local Large Language Model (LL
   - LM Studio: Port 1234 (HTTP API)
   - GPT4All: Port 4891 (HTTP API)
   - vLLM: Port 8000 (HTTP API)
-- **Comprehensive SIGMA Rules**: 78 detection rules covering process creation, file events, network activity, and environment variables
+- **Comprehensive SIGMA Rules**: 89 detection rules covering process creation, file events, network activity, environment variables, AI API providers, AI proxy/gateways, and AI development frameworks
+- **De-Duplication Engine**: Automatically removes duplicate detections when multiple rules match the same evidence, preferring specific software names over generic ones
 - **Cross-Platform Detection**: Optimized detection methods for Windows, macOS, and Linux systems
 
 ### Log Collection
@@ -180,7 +181,7 @@ ai_discovery_scan.exe --collect-logs -v
 │   └── .gitignore              # Build artifact exclusions
 ├── example_log_collection.py   # Example script for log collection
 ├── requirements.txt            # Python dependencies
-├── sigma_rules/               # SIGMA rules directory (78 rules total)
+├── sigma_rules/               # SIGMA rules directory (89 rules total)
 │   ├── ollama_detection.yml              # Comprehensive Ollama detection
 │   ├── lmstudio_detection.yml            # LM Studio detection
 │   ├── gpt4all_detection.yml             # GPT4All desktop app detection
@@ -258,7 +259,18 @@ ai_discovery_scan.exe --collect-logs -v
 │   ├── clawdbot_file_detection.yml        # ClawdBot/OpenClaw/MoltBot file detection
 │   ├── clawdbot_environment_variables.yml # ClawdBot/OpenClaw/MoltBot environment variables
 │   ├── clawdbot_llm_software_detection.yml  # ClawdBot/OpenClaw/MoltBot LLM software detection
-│   └── clawdbot_network_detection.yml     # ClawdBot/OpenClaw/MoltBot network and API detection
+│   ├── clawdbot_network_detection.yml     # ClawdBot/OpenClaw/MoltBot network and API detection
+│   ├── ai_api_provider_dns_detection.yml            # Generic AI API provider DNS detection (25+ providers)
+│   ├── ai_api_provider_network_detection.yml        # Generic AI API provider HTTP/API traffic detection
+│   ├── ai_api_key_environment_detection.yml         # AI API key environment variable detection (25+ providers)
+│   ├── ai_api_key_pattern_detection.yml             # AI API key pattern detection in network traffic
+│   ├── ai_proxy_gateway_process_detection.yml       # AI proxy/gateway process detection (LiteLLM, OpenRouter, etc.)
+│   ├── ai_proxy_gateway_network_detection.yml       # AI proxy/gateway DNS and network detection
+│   ├── ai_proxy_gateway_file_detection.yml          # AI proxy/gateway configuration file detection
+│   ├── ai_proxy_gateway_environment_detection.yml   # AI proxy/gateway environment variable detection
+│   ├── ai_sdk_framework_process_detection.yml       # AI SDK/framework process detection (LangChain, CrewAI, etc.)
+│   ├── ai_sdk_framework_file_detection.yml          # AI SDK/framework file and installation detection
+│   └── ai_sdk_framework_environment_detection.yml   # AI SDK/framework environment variable detection
 └── README.md                  # This file
 ```
 
@@ -369,7 +381,7 @@ python example_log_collection.py
 
 ## SIGMA Rules
 
-The scanner includes 78 comprehensive SIGMA rules for LLM software detection:
+The scanner includes 89 comprehensive SIGMA rules for LLM software detection:
 
 ### Core LLM Software (4 rules)
 1. **ollama_detection.yml** - Comprehensive Ollama detection covering processes, files, network activity, and environment variables
@@ -458,6 +470,30 @@ The scanner includes 78 comprehensive SIGMA rules for LLM software detection:
 76. **clawdbot_environment_variables.yml** - ClawdBot/OpenClaw/MoltBot environment variable detection (all variants in one rule)
 77. **clawdbot_llm_software_detection.yml** - ClawdBot/OpenClaw/MoltBot LLM software detection (all variants in one rule)
 78. **clawdbot_network_detection.yml** - ClawdBot/OpenClaw/MoltBot network traffic and API detection (all variants in one rule)
+
+### Generic AI API Provider Detection (4 rules)
+79. **ai_api_provider_dns_detection.yml** - DNS query detection for 25+ AI API providers (OpenAI, Anthropic, Google AI, Mistral, Groq, Cohere, Together, Replicate, Fireworks, DeepSeek, xAI, Stability, Perplexity, HuggingFace, AI21, Amazon Bedrock, Azure OpenAI, SambaNova, Cerebras, Reka, Writer, Aleph Alpha, Voyage, Inflection, Databricks, Anyscale)
+80. **ai_api_provider_network_detection.yml** - HTTP/API traffic detection including endpoints, bearer tokens, model names, SDK user-agents, and API key patterns for all major providers
+81. **ai_api_key_environment_detection.yml** - Environment variable detection for API keys/tokens across 25+ providers (OPENAI_API_KEY, ANTHROPIC_API_KEY, MISTRAL_API_KEY, GROQ_API_KEY, etc.)
+82. **ai_api_key_pattern_detection.yml** - Regex-based API key pattern detection in network traffic (sk-, sk-ant-, gsk_, r8_, pplx-, hf_, fw_, sk-or-, cb-, oc-, mb-, etc.)
+
+### AI Proxy and Gateway Detection (4 rules)
+83. **ai_proxy_gateway_process_detection.yml** - Process detection for AI proxy/gateway services (LiteLLM, OpenRouter, Helicone, Portkey, PromptLayer, LangSmith, W&B, BrainTrust, MLflow)
+84. **ai_proxy_gateway_network_detection.yml** - DNS/network detection for AI proxy domains (openrouter.ai, helicone.ai, portkey.ai, promptlayer.com, smith.langchain.com, wandb.ai, braintrustdata.com, humanloop.com, vellum.ai, keywordsai.co, withmartian.com, unify.ai)
+85. **ai_proxy_gateway_file_detection.yml** - Configuration file detection for AI proxy services (litellm_config.yaml, .openrouter, .helicone, .portkey, .wandb, mlruns/, etc.)
+86. **ai_proxy_gateway_environment_detection.yml** - Environment variable detection for AI proxy/gateway services (LITELLM_*, OPENROUTER_*, HELICONE_*, PORTKEY_*, LANGCHAIN_*, WANDB_*, etc.)
+
+### AI SDK and Framework Detection (3 rules)
+87. **ai_sdk_framework_process_detection.yml** - Process detection for AI development frameworks (LangChain, LlamaIndex, AutoGen, CrewAI, Haystack, Dify, FlowiseAI, Chainlit, Gradio, Streamlit, Semantic Kernel, n8n)
+88. **ai_sdk_framework_file_detection.yml** - File/installation detection for AI SDKs, frameworks, and vector databases (ChromaDB, Pinecone, Qdrant, Weaviate, Milvus, FAISS)
+89. **ai_sdk_framework_environment_detection.yml** - Environment variable detection for AI frameworks and vector stores (LANGCHAIN_*, LLAMA_INDEX_*, CREWAI_*, DIFY_*, FLOWISE_*, GRADIO_*, CHROMA_*, PINECONE_*, QDRANT_*, WEAVIATE_*, MILVUS_*)
+
+### De-Duplication
+The scanner includes a built-in de-duplication engine that handles overlapping detections:
+- When both legacy (hardcoded) detection and SIGMA rule-based detection find the same artifact, duplicates are automatically removed
+- When generic AI API provider rules overlap with specific software rules (e.g., `ANTHROPIC_API_KEY` detected by both the Claude rule and the generic AI API key rule), the more specific detection is kept
+- De-duplication groups by `(detection_type, value)` and keeps the highest confidence result
+- On confidence ties, specific software names (e.g., "Claude") are preferred over generic ones (e.g., "AI API Provider")
 
 ### Rule Coverage
 Each SIGMA rule provides comprehensive detection for:
@@ -621,6 +657,16 @@ To contribute:
 4. Enhance detection accuracy
 
 ## Changelog
+
+- **v1.6**: Generic AI API Provider, Proxy/Gateway, and SDK/Framework Detection
+  - Added 11 new generic SIGMA rules for comprehensive Shadow AI detection (78 → 89 rules)
+  - **AI API Provider Detection (4 rules)**: DNS and network traffic detection for 25+ AI API providers including OpenAI, Anthropic, Google AI, Mistral, Groq, Cohere, Together, Replicate, Fireworks, DeepSeek, xAI, Stability, Perplexity, HuggingFace, AI21, Amazon Bedrock, Azure OpenAI, SambaNova, Cerebras, and more
+  - **AI API Key Detection**: Environment variable detection for provider API keys, plus regex-based key pattern detection in network traffic (sk-, sk-ant-, gsk_, r8_, pplx-, hf_, fw_, sk-or-, etc.)
+  - **AI Proxy/Gateway Detection (4 rules)**: Process, network, file, and environment variable detection for LiteLLM, OpenRouter, Helicone, Portkey, PromptLayer, LangSmith, Weights & Biases, BrainTrust, MLflow, HumanLoop, Vellum, Keywords AI, Martian, and Unify
+  - **AI SDK/Framework Detection (3 rules)**: Process, file, and environment variable detection for LangChain, LlamaIndex, AutoGen, CrewAI, Haystack, Dify, FlowiseAI, Chainlit, Gradio, Streamlit, Semantic Kernel, n8n, and vector databases (ChromaDB, Pinecone, Qdrant, Weaviate, Milvus, FAISS)
+  - **De-Duplication Engine**: Added detection de-duplication to both Python and Go scanners to handle overlapping detections from generic vs. specific rules — groups by (detection_type, value), keeps highest confidence, prefers specific software names over generic
+  - Updated Python scanner's `get_software_name_from_rule()` to handle all new rule categories
+  - Updated Go scanner's `extractSoftwareNameFromTitle()` with full name mapping for all new rules
 
 - **v1.5**: Go Version - Portable Cross-Platform Binary
   - Added complete Go implementation of the AI Discovery Scanner
