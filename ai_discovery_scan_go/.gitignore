@@ -1,0 +1,12 @@
+# Compiled binaries
+ai_discovery_scan
+ai_discovery_scan.exe
+ai_discovery_scan_*
+build/
+
+# Output files
+output/
+*.log
+
+# Go build cache
+*.test
