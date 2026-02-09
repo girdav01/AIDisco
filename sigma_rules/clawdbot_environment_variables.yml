@@ -1,7 +1,7 @@
-title: ClawdBot/OpenClaw AI Discord Bot Environment Variables
+title: ClawdBot/OpenClaw/MoltBot AI Discord Bot Environment Variables
 id: 12345678-1234-5678-9abc-123456789072
 status: experimental
-description: Detects ClawdBot and OpenClaw (newer version) AI Discord bot environment variable configuration
+description: Detects ClawdBot, OpenClaw, and MoltBot AI Discord bot environment variable configuration. These are all variants of the same software.
 author: AI Discovery Scanner
 date: 2025-01-27
 modified: 2026-02-08
@@ -11,6 +11,7 @@ tags:
   - ai.llm
   - ai.clawdbot
   - ai.openclaw
+  - ai.moltbot
   - ai.discord
   - ai.claude
 logsource:
@@ -64,14 +65,40 @@ detection:
       - 'OPENCLAW_HOST'
       - 'OPENCLAW_REDIS_URL'
       - 'OPENCLAW_DATABASE_URL'
-  condition: selection_clawdbot or selection_openclaw
+  selection_moltbot:
+    EnvironmentVariables|contains:
+      - 'MOLTBOT_'
+      - 'MOLTBOT_TOKEN'
+      - 'MOLTBOT_API_KEY'
+      - 'MOLTBOT_SECRET'
+      - 'MOLTBOT_DISCORD_TOKEN'
+      - 'MOLTBOT_BOT_TOKEN'
+      - 'MOLTBOT_CLIENT_ID'
+      - 'MOLTBOT_CLIENT_SECRET'
+      - 'MOLTBOT_WEBHOOK_URL'
+      - 'MOLTBOT_WEBHOOK_SECRET'
+      - 'MOLTBOT_MODEL'
+      - 'MOLTBOT_ENDPOINT'
+      - 'MOLTBOT_ANTHROPIC_KEY'
+      - 'MOLTBOT_CLAUDE_KEY'
+      - 'MOLTBOT_CONFIG'
+      - 'MOLTBOT_HOME'
+      - 'MOLTBOT_DATA_DIR'
+      - 'MOLTBOT_LOG_LEVEL'
+      - 'MOLTBOT_DEBUG'
+      - 'MOLTBOT_BASE_URL'
+      - 'MOLTBOT_PORT'
+      - 'MOLTBOT_HOST'
+      - 'MOLTBOT_REDIS_URL'
+      - 'MOLTBOT_DATABASE_URL'
+  condition: selection_clawdbot or selection_openclaw or selection_moltbot
 fields:
   - Image
   - CommandLine
   - EnvironmentVariables
   - User
 falsepositives:
-  - Legitimate ClawdBot or OpenClaw AI Discord bot configuration
+  - Legitimate ClawdBot, OpenClaw, or MoltBot AI Discord bot configuration
   - Development environment setup
   - Discord bot testing
 level: low

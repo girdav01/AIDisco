@@ -1,7 +1,7 @@
-title: ClawdBot/OpenClaw AI Discord Bot DNS Detection
+title: ClawdBot/OpenClaw/MoltBot AI Discord Bot DNS Detection
 id: 12345678-1234-5678-9abc-123456789075
 status: experimental
-description: Detects DNS queries to ClawdBot and OpenClaw (newer version) AI Discord bot related domains
+description: Detects DNS queries to ClawdBot, OpenClaw, and MoltBot AI Discord bot related domains. These are all variants of the same software.
 author: AI Discovery Scanner
 date: 2025-01-27
 modified: 2026-02-08
@@ -13,6 +13,7 @@ tags:
   - ai.llm
   - ai.clawdbot
   - ai.openclaw
+  - ai.moltbot
   - ai.discord
   - ai.claude
   - ai.dns
@@ -20,8 +21,8 @@ logsource:
   category: dns
   product: any
 detection:
-  # Primary ClawdBot Domains
-  selection_primary_domains:
+  # ClawdBot Domains
+  selection_clawdbot_primary:
     - QueryName|endswith:
         - '.clawdbot.ai'
         - '.clawdbot.com'
@@ -39,8 +40,7 @@ detection:
         - 'clawdbot.net'
         - 'clawdbot.org'
 
-  # ClawdBot API and Service Subdomains
-  selection_api_subdomains:
+  selection_clawdbot_subdomains:
     - QueryName:
         - 'api.clawdbot.ai'
         - 'api.clawdbot.com'
@@ -53,10 +53,6 @@ detection:
         - 'static.clawdbot.com'
         - 'assets.clawdbot.ai'
         - 'assets.clawdbot.com'
-
-  # ClawdBot WebSocket and Gateway Domains
-  selection_websocket_domains:
-    - QueryName:
         - 'ws.clawdbot.ai'
         - 'ws.clawdbot.com'
         - 'wss.clawdbot.ai'
@@ -67,10 +63,6 @@ detection:
         - 'realtime.clawdbot.com'
         - 'stream.clawdbot.ai'
         - 'stream.clawdbot.com'
-
-  # ClawdBot Discord Integration Domains
-  selection_discord_domains:
-    - QueryName:
         - 'discord.clawdbot.ai'
         - 'discord.clawdbot.com'
         - 'bot.clawdbot.ai'
@@ -81,10 +73,6 @@ detection:
         - 'webhook.clawdbot.com'
         - 'webhooks.clawdbot.ai'
         - 'webhooks.clawdbot.com'
-
-  # ClawdBot Authentication and Account Domains
-  selection_auth_domains:
-    - QueryName:
         - 'auth.clawdbot.ai'
         - 'auth.clawdbot.com'
         - 'login.clawdbot.ai'
@@ -95,10 +83,6 @@ detection:
         - 'oauth.clawdbot.com'
         - 'sso.clawdbot.ai'
         - 'sso.clawdbot.com'
-
-  # ClawdBot Model and ML Service Domains
-  selection_ml_domains:
-    - QueryName:
         - 'models.clawdbot.ai'
         - 'models.clawdbot.com'
         - 'ml.clawdbot.ai'
@@ -109,10 +93,6 @@ detection:
         - 'chat.clawdbot.com'
         - 'completions.clawdbot.ai'
         - 'completions.clawdbot.com'
-
-  # ClawdBot Development and Documentation Domains
-  selection_dev_domains:
-    - QueryName:
         - 'docs.clawdbot.ai'
         - 'docs.clawdbot.com'
         - 'developer.clawdbot.ai'
@@ -126,7 +106,7 @@ detection:
         - 'staging.clawdbot.ai'
         - 'staging.clawdbot.com'
 
-  # Primary OpenClaw Domains
+  # OpenClaw Domains
   selection_openclaw_primary:
     - QueryName|endswith:
         - '.openclaw.ai'
@@ -145,8 +125,7 @@ detection:
         - 'openclaw.net'
         - 'openclaw.org'
 
-  # OpenClaw API and Service Subdomains
-  selection_openclaw_api:
+  selection_openclaw_subdomains:
     - QueryName:
         - 'api.openclaw.ai'
         - 'api.openclaw.com'
@@ -160,10 +139,6 @@ detection:
         - 'static.openclaw.com'
         - 'assets.openclaw.ai'
         - 'assets.openclaw.com'
-
-  # OpenClaw WebSocket and Gateway Domains
-  selection_openclaw_websocket:
-    - QueryName:
         - 'ws.openclaw.ai'
         - 'ws.openclaw.com'
         - 'wss.openclaw.ai'
@@ -174,10 +149,6 @@ detection:
         - 'realtime.openclaw.com'
         - 'stream.openclaw.ai'
         - 'stream.openclaw.com'
-
-  # OpenClaw Discord Integration Domains
-  selection_openclaw_discord:
-    - QueryName:
         - 'discord.openclaw.ai'
         - 'discord.openclaw.com'
         - 'bot.openclaw.ai'
@@ -188,10 +159,6 @@ detection:
         - 'webhook.openclaw.com'
         - 'webhooks.openclaw.ai'
         - 'webhooks.openclaw.com'
-
-  # OpenClaw Authentication and Account Domains
-  selection_openclaw_auth:
-    - QueryName:
         - 'auth.openclaw.ai'
         - 'auth.openclaw.com'
         - 'login.openclaw.ai'
@@ -202,10 +169,6 @@ detection:
         - 'oauth.openclaw.com'
         - 'sso.openclaw.ai'
         - 'sso.openclaw.com'
-
-  # OpenClaw Model and ML Service Domains
-  selection_openclaw_ml:
-    - QueryName:
         - 'models.openclaw.ai'
         - 'models.openclaw.com'
         - 'ml.openclaw.ai'
@@ -216,10 +179,6 @@ detection:
         - 'chat.openclaw.com'
         - 'completions.openclaw.ai'
         - 'completions.openclaw.com'
-
-  # OpenClaw Development and Documentation Domains
-  selection_openclaw_dev:
-    - QueryName:
         - 'docs.openclaw.ai'
         - 'docs.openclaw.com'
         - 'developer.openclaw.ai'
@@ -233,7 +192,93 @@ detection:
         - 'staging.openclaw.ai'
         - 'staging.openclaw.com'
 
-  condition: selection_primary_domains or selection_api_subdomains or selection_websocket_domains or selection_discord_domains or selection_auth_domains or selection_ml_domains or selection_dev_domains or selection_openclaw_primary or selection_openclaw_api or selection_openclaw_websocket or selection_openclaw_discord or selection_openclaw_auth or selection_openclaw_ml or selection_openclaw_dev
+  # MoltBot Domains
+  selection_moltbot_primary:
+    - QueryName|endswith:
+        - '.moltbot.ai'
+        - '.moltbot.com'
+        - '.moltbot.io'
+        - '.moltbot.dev'
+        - '.moltbot.app'
+        - '.moltbot.net'
+        - '.moltbot.org'
+    - QueryName:
+        - 'moltbot.ai'
+        - 'moltbot.com'
+        - 'moltbot.io'
+        - 'moltbot.dev'
+        - 'moltbot.app'
+        - 'moltbot.net'
+        - 'moltbot.org'
+
+  selection_moltbot_subdomains:
+    - QueryName:
+        - 'api.moltbot.ai'
+        - 'api.moltbot.com'
+        - 'api.moltbot.io'
+        - 'v1.api.moltbot.ai'
+        - 'v2.api.moltbot.ai'
+        - 'v3.api.moltbot.ai'
+        - 'cdn.moltbot.ai'
+        - 'cdn.moltbot.com'
+        - 'static.moltbot.ai'
+        - 'static.moltbot.com'
+        - 'assets.moltbot.ai'
+        - 'assets.moltbot.com'
+        - 'ws.moltbot.ai'
+        - 'ws.moltbot.com'
+        - 'wss.moltbot.ai'
+        - 'wss.moltbot.com'
+        - 'gateway.moltbot.ai'
+        - 'gateway.moltbot.com'
+        - 'realtime.moltbot.ai'
+        - 'realtime.moltbot.com'
+        - 'stream.moltbot.ai'
+        - 'stream.moltbot.com'
+        - 'discord.moltbot.ai'
+        - 'discord.moltbot.com'
+        - 'bot.moltbot.ai'
+        - 'bot.moltbot.com'
+        - 'bots.moltbot.ai'
+        - 'bots.moltbot.com'
+        - 'webhook.moltbot.ai'
+        - 'webhook.moltbot.com'
+        - 'webhooks.moltbot.ai'
+        - 'webhooks.moltbot.com'
+        - 'auth.moltbot.ai'
+        - 'auth.moltbot.com'
+        - 'login.moltbot.ai'
+        - 'login.moltbot.com'
+        - 'accounts.moltbot.ai'
+        - 'accounts.moltbot.com'
+        - 'oauth.moltbot.ai'
+        - 'oauth.moltbot.com'
+        - 'sso.moltbot.ai'
+        - 'sso.moltbot.com'
+        - 'models.moltbot.ai'
+        - 'models.moltbot.com'
+        - 'ml.moltbot.ai'
+        - 'ml.moltbot.com'
+        - 'inference.moltbot.ai'
+        - 'inference.moltbot.com'
+        - 'chat.moltbot.ai'
+        - 'chat.moltbot.com'
+        - 'completions.moltbot.ai'
+        - 'completions.moltbot.com'
+        - 'docs.moltbot.ai'
+        - 'docs.moltbot.com'
+        - 'developer.moltbot.ai'
+        - 'developer.moltbot.com'
+        - 'developers.moltbot.ai'
+        - 'developers.moltbot.com'
+        - 'dev.moltbot.ai'
+        - 'dev.moltbot.com'
+        - 'sandbox.moltbot.ai'
+        - 'sandbox.moltbot.com'
+        - 'staging.moltbot.ai'
+        - 'staging.moltbot.com'
+
+  condition: selection_clawdbot_primary or selection_clawdbot_subdomains or selection_openclaw_primary or selection_openclaw_subdomains or selection_moltbot_primary or selection_moltbot_subdomains
 fields:
   - QueryName
   - QueryType
@@ -243,7 +288,7 @@ fields:
   - ProcessName
   - ProcessId
 falsepositives:
-  - Legitimate ClawdBot or OpenClaw AI Discord bot usage
+  - Legitimate ClawdBot, OpenClaw, or MoltBot AI Discord bot usage
   - Authorized API integrations
   - Development and testing environments
 level: medium

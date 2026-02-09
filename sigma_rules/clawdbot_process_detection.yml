@@ -1,7 +1,7 @@
-title: ClawdBot/OpenClaw AI Discord Bot Process Detection
+title: ClawdBot/OpenClaw/MoltBot AI Discord Bot Process Detection
 id: 12345678-1234-5678-9abc-123456789070
 status: experimental
-description: Detects ClawdBot and OpenClaw (newer version) AI Discord bot process execution across multiple platforms
+description: Detects ClawdBot, OpenClaw, and MoltBot AI Discord bot process execution across multiple platforms. These are all variants of the same software.
 author: AI Discovery Scanner
 date: 2025-01-27
 modified: 2026-02-08
@@ -12,6 +12,7 @@ tags:
   - ai.llm
   - ai.clawdbot
   - ai.openclaw
+  - ai.moltbot
   - ai.discord
   - ai.claude
 logsource:
@@ -68,7 +69,36 @@ detection:
         - 'openclaw-app'
         - 'openclaw-discord'
         - 'openclaw-bot'
-  condition: selection_clawdbot or selection_openclaw
+  selection_moltbot:
+    - Image|endswith:
+        - '\moltbot.exe'
+        - '\MoltBot.exe'
+        - '\moltbot-app.exe'
+        - '\MoltBot.app.exe'
+        - '\moltbot-discord.exe'
+        - '\MoltBot Discord.exe'
+        - '\moltbot-bot.exe'
+        - '\MoltBot-Bot.exe'
+    - CommandLine|contains:
+        - 'moltbot'
+        - 'MoltBot'
+        - 'moltbot-app'
+        - 'moltbot-discord'
+        - 'moltbot-bot'
+        - 'python moltbot'
+        - 'python -m moltbot'
+        - 'node moltbot'
+        - 'npx moltbot'
+        - 'moltbot serve'
+        - 'moltbot start'
+        - 'moltbot run'
+    - ProcessName|contains:
+        - 'moltbot'
+        - 'MoltBot'
+        - 'moltbot-app'
+        - 'moltbot-discord'
+        - 'moltbot-bot'
+  condition: selection_clawdbot or selection_openclaw or selection_moltbot
 fields:
   - Image
   - CommandLine
@@ -77,7 +107,7 @@ fields:
   - ParentImage
   - ParentCommandLine
 falsepositives:
-  - Legitimate ClawdBot or OpenClaw AI Discord bot usage
+  - Legitimate ClawdBot, OpenClaw, or MoltBot AI Discord bot usage
   - AI Discord bot sessions
   - Development and testing of Discord bots
 level: medium
