@@ -1,7 +1,7 @@
-title: ClawdBot/OpenClaw AI Discord Bot File Detection
+title: ClawdBot/OpenClaw/MoltBot AI Discord Bot File Detection
 id: 12345678-1234-5678-9abc-123456789071
 status: experimental
-description: Detects ClawdBot and OpenClaw (newer version) AI Discord bot file system activity and configuration
+description: Detects ClawdBot, OpenClaw, and MoltBot AI Discord bot file system activity and configuration. These are all variants of the same software.
 author: AI Discovery Scanner
 date: 2025-01-27
 modified: 2026-02-08
@@ -11,6 +11,7 @@ tags:
   - ai.llm
   - ai.clawdbot
   - ai.openclaw
+  - ai.moltbot
   - ai.discord
   - ai.claude
 logsource:
@@ -64,14 +65,39 @@ detection:
         - '/opt/openclaw/'
         - '/usr/local/openclaw/'
         - '/Library/Application Support/OpenClaw/'
-  condition: selection_clawdbot or selection_openclaw
+  selection_moltbot:
+    - TargetFilename|contains:
+        - '\moltbot\'
+        - '\MoltBot\'
+        - '\moltbot-app\'
+        - '\MoltBot.app\'
+        - '\moltbot-discord\'
+        - '\MoltBot Discord\'
+        - '\moltbot-bot\'
+        - '\MoltBot-Bot\'
+        - '\AppData\Local\MoltBot\'
+        - '\AppData\Roaming\MoltBot\'
+        - '\AppData\Local\moltbot\'
+        - '\AppData\Roaming\moltbot\'
+        - '\AppData\Local\moltbot-app\'
+        - '\AppData\Roaming\moltbot-app\'
+        - '\Program Files\MoltBot\'
+        - '\Program Files (x86)\MoltBot\'
+        - '\Users\\.moltbot\'
+        - '\Users\\.moltbot-app\'
+        - '/.moltbot/'
+        - '/moltbot/'
+        - '/opt/moltbot/'
+        - '/usr/local/moltbot/'
+        - '/Library/Application Support/MoltBot/'
+  condition: selection_clawdbot or selection_openclaw or selection_moltbot
 fields:
   - TargetFilename
   - ProcessName
   - User
   - EventType
 falsepositives:
-  - Legitimate ClawdBot or OpenClaw installation and configuration
+  - Legitimate ClawdBot, OpenClaw, or MoltBot installation and configuration
   - AI Discord bot application setup
   - Development and testing of Discord bots
 level: medium

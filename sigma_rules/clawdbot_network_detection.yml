@@ -1,7 +1,7 @@
-title: ClawdBot/OpenClaw AI Discord Bot Network and API Detection
+title: ClawdBot/OpenClaw/MoltBot AI Discord Bot Network and API Detection
 id: 12345678-1234-5678-9abc-123456789074
 status: experimental
-description: Detects ClawdBot and OpenClaw (newer version) AI Discord bot network traffic, API calls, headers, tokens, and domain communications
+description: Detects ClawdBot, OpenClaw, and MoltBot AI Discord bot network traffic, API calls, headers, tokens, and domain communications. These are all variants of the same software.
 author: AI Discovery Scanner
 date: 2025-01-27
 modified: 2026-02-08
@@ -13,6 +13,7 @@ tags:
   - ai.llm
   - ai.clawdbot
   - ai.openclaw
+  - ai.moltbot
   - ai.discord
   - ai.claude
   - ai.api
@@ -21,7 +22,7 @@ logsource:
   product: any
 detection:
   # ClawdBot Header Fingerprinting
-  selection_headers:
+  selection_clawdbot_headers:
     - HttpHeader|contains:
         - 'x-clawdbot-key'
         - 'x-clawdbot-api-key'
@@ -36,7 +37,7 @@ detection:
         - 'x-clawdbot-request-id'
 
   # ClawdBot Bearer Token Pattern (cb- prefix)
-  selection_bearer_token:
+  selection_clawdbot_bearer:
     - Authorization|contains:
         - 'Bearer cb-'
         - 'Bearer cb_'
@@ -45,7 +46,7 @@ detection:
     - HttpHeader|re: 'Bearer\s+cb[-_][A-Za-z0-9]{32,}'
 
   # ClawdBot API Key Pattern
-  selection_api_key:
+  selection_clawdbot_api_key:
     - RequestBody|re: 'cb[-_][A-Za-z0-9]{32,}'
     - QueryString|re: 'api_key=cb[-_][A-Za-z0-9]{32,}'
     - QueryString|re: 'apikey=cb[-_][A-Za-z0-9]{32,}'
@@ -53,7 +54,7 @@ detection:
     - HttpHeader|re: '[Aa]pi[-_]?[Kk]ey:\s*cb[-_][A-Za-z0-9]{32,}'
 
   # ClawdBot Model Names
-  selection_model_names:
+  selection_clawdbot_models:
     - RequestBody|contains:
         - 'clawdbot-1'
         - 'clawdbot-2'
@@ -76,7 +77,7 @@ detection:
         - 'model=clawd'
 
   # ClawdBot SDK User-Agent Detection
-  selection_user_agent:
+  selection_clawdbot_user_agent:
     - UserAgent|contains:
         - 'ClawdBot-SDK'
         - 'clawdbot-sdk'
@@ -96,7 +97,7 @@ detection:
         - 'clawdbotclient'
 
   # ClawdBot Domain Communications
-  selection_domains:
+  selection_clawdbot_domains:
     - DestinationHostname|endswith:
         - '.clawdbot.ai'
         - '.clawdbot.com'
@@ -123,7 +124,7 @@ detection:
         - 'discord.clawdbot.com'
 
   # ClawdBot API Endpoints
-  selection_api_endpoints:
+  selection_clawdbot_api_endpoints:
     - RequestUrl|contains:
         - '/v1/clawdbot/'
         - '/api/clawdbot/'
@@ -259,7 +260,137 @@ detection:
         - '/openclaw/embeddings'
         - '/openclaw/agents'
 
-  condition: selection_headers or selection_bearer_token or selection_api_key or selection_model_names or selection_user_agent or selection_domains or selection_api_endpoints or selection_openclaw_headers or selection_openclaw_bearer or selection_openclaw_api_key or selection_openclaw_models or selection_openclaw_user_agent or selection_openclaw_domains or selection_openclaw_api_endpoints
+  # MoltBot Header Fingerprinting
+  selection_moltbot_headers:
+    - HttpHeader|contains:
+        - 'x-moltbot-key'
+        - 'x-moltbot-api-key'
+        - 'moltbot-api-key'
+        - 'x-moltbot-token'
+        - 'moltbot-token'
+        - 'x-moltbot-auth'
+        - 'moltbot-authorization'
+        - 'x-moltbot-session'
+        - 'x-moltbot-client'
+        - 'x-moltbot-version'
+        - 'x-moltbot-request-id'
+        - 'x-moltbot-trace-id'
+
+  # MoltBot Bearer Token Pattern (mb- prefix)
+  selection_moltbot_bearer:
+    - Authorization|contains:
+        - 'Bearer mb-'
+        - 'Bearer mb_'
+        - 'bearer mb-'
+        - 'bearer mb_'
+        - 'Bearer mbt-'
+        - 'Bearer mbt_'
+    - HttpHeader|re: 'Bearer\s+mb[t]?[-_][A-Za-z0-9]{32,}'
+
+  # MoltBot API Key Pattern
+  selection_moltbot_api_key:
+    - RequestBody|re: 'mb[t]?[-_][A-Za-z0-9]{32,}'
+    - QueryString|re: 'api_key=mb[t]?[-_][A-Za-z0-9]{32,}'
+    - QueryString|re: 'apikey=mb[t]?[-_][A-Za-z0-9]{32,}'
+    - QueryString|re: 'key=mb[t]?[-_][A-Za-z0-9]{32,}'
+    - HttpHeader|re: '[Aa]pi[-_]?[Kk]ey:\s*mb[t]?[-_][A-Za-z0-9]{32,}'
+
+  # MoltBot Model Names
+  selection_moltbot_models:
+    - RequestBody|contains:
+        - 'moltbot-1'
+        - 'moltbot-2'
+        - 'moltbot-3'
+        - 'moltbot-4'
+        - 'moltbot-pro'
+        - 'moltbot-mini'
+        - 'moltbot-lite'
+        - 'moltbot-instant'
+        - 'moltbot-turbo'
+        - 'moltbot-opus'
+        - 'moltbot-sonnet'
+        - 'moltbot-haiku'
+        - 'moltbot-flash'
+        - 'moltbot-ultra'
+        - 'molt-mini'
+        - 'molt-pro'
+        - 'molt-1'
+        - 'molt-2'
+        - 'molt-3'
+    - QueryString|contains:
+        - 'model=moltbot'
+        - 'model=molt'
+
+  # MoltBot SDK User-Agent Detection
+  selection_moltbot_user_agent:
+    - UserAgent|contains:
+        - 'MoltBot-SDK'
+        - 'moltbot-sdk'
+        - 'MoltBot/'
+        - 'moltbot/'
+        - 'MoltBot-Python'
+        - 'moltbot-python'
+        - 'MoltBot-Node'
+        - 'moltbot-node'
+        - 'MoltBot-JS'
+        - 'moltbot-js'
+        - 'MoltBot-Discord'
+        - 'moltbot-discord'
+        - 'MoltBot-Bot'
+        - 'moltbot-bot'
+        - 'MoltBotClient'
+        - 'moltbotclient'
+        - 'MoltBot-Go'
+        - 'moltbot-go'
+        - 'MoltBot-Rust'
+        - 'moltbot-rust'
+
+  # MoltBot Domain Communications
+  selection_moltbot_domains:
+    - DestinationHostname|endswith:
+        - '.moltbot.ai'
+        - '.moltbot.com'
+        - '.moltbot.io'
+        - '.moltbot.dev'
+        - '.moltbot.app'
+    - DestinationHostname:
+        - 'moltbot.ai'
+        - 'moltbot.com'
+        - 'moltbot.io'
+        - 'moltbot.dev'
+        - 'moltbot.app'
+        - 'api.moltbot.ai'
+        - 'api.moltbot.com'
+        - 'cdn.moltbot.ai'
+        - 'cdn.moltbot.com'
+        - 'ws.moltbot.ai'
+        - 'ws.moltbot.com'
+        - 'gateway.moltbot.ai'
+        - 'gateway.moltbot.com'
+        - 'bot.moltbot.ai'
+        - 'bot.moltbot.com'
+        - 'discord.moltbot.ai'
+        - 'discord.moltbot.com'
+
+  # MoltBot API Endpoints
+  selection_moltbot_api_endpoints:
+    - RequestUrl|contains:
+        - '/v1/moltbot/'
+        - '/v2/moltbot/'
+        - '/v3/moltbot/'
+        - '/api/moltbot/'
+        - '/moltbot/api/'
+        - '/moltbot/v1/'
+        - '/moltbot/v2/'
+        - '/moltbot/v3/'
+        - '/moltbot/chat'
+        - '/moltbot/completions'
+        - '/moltbot/messages'
+        - '/moltbot/models'
+        - '/moltbot/embeddings'
+        - '/moltbot/agents'
+
+  condition: selection_clawdbot_headers or selection_clawdbot_bearer or selection_clawdbot_api_key or selection_clawdbot_models or selection_clawdbot_user_agent or selection_clawdbot_domains or selection_clawdbot_api_endpoints or selection_openclaw_headers or selection_openclaw_bearer or selection_openclaw_api_key or selection_openclaw_models or selection_openclaw_user_agent or selection_openclaw_domains or selection_openclaw_api_endpoints or selection_moltbot_headers or selection_moltbot_bearer or selection_moltbot_api_key or selection_moltbot_models or selection_moltbot_user_agent or selection_moltbot_domains or selection_moltbot_api_endpoints
 fields:
   - SourceIP
   - DestinationHostname
@@ -272,7 +403,7 @@ fields:
   - RequestBody
   - ResponseCode
 falsepositives:
-  - Legitimate ClawdBot or OpenClaw API usage for authorized Discord bots
-  - ClawdBot or OpenClaw SDK development and testing
+  - Legitimate ClawdBot, OpenClaw, or MoltBot API usage for authorized Discord bots
+  - SDK development and testing
   - Authorized AI Discord bot deployments
 level: medium

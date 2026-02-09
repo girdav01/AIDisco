@@ -16,7 +16,7 @@ A comprehensive Python-based scanner designed to detect common Local Large Langu
 - **AI Development Tools**: GitHub Copilot, Replit Ghostwriter, Windsurf, Tabnine, Zed, Continue, Cursor
 - **AI Chat Applications**: ChatGPT, Claude, Google Gemini, Brave Leo, Poe, YouChat, Chatbox
 - **Open Source AI Platforms**: Open WebUI, AnythingLLM, LibreChat, Jan, Text Generation WebUI, LocalAI, Llamafile, Faraday, NVIDIA Chat with RTX
-- **AI Discord Bots**: ClawdBot, OpenClaw (newer version of ClawdBot)
+- **AI Discord Bots**: ClawdBot, OpenClaw, MoltBot (all variants of the same software)
 - Extensible architecture for adding more LLM software detection
 
 ### Detection Methods
@@ -29,7 +29,7 @@ A comprehensive Python-based scanner designed to detect common Local Large Langu
   - LM Studio: Port 1234 (HTTP API)
   - GPT4All: Port 4891 (HTTP API)
   - vLLM: Port 8000 (HTTP API)
-- **Comprehensive SIGMA Rules**: 84 detection rules covering process creation, file events, network activity, and environment variables
+- **Comprehensive SIGMA Rules**: 78 detection rules covering process creation, file events, network activity, and environment variables
 - **Cross-Platform Detection**: Optimized detection methods for Windows, macOS, and Linux systems
 
 ### Log Collection
@@ -99,7 +99,7 @@ python ai_discovery_scan.py -v -o detailed_scan.json --collect-logs --log-format
 ├── ai_discovery_scan.py        # Main scanner script
 ├── example_log_collection.py   # Example script for log collection
 ├── requirements.txt            # Python dependencies
-├── sigma_rules/               # SIGMA rules directory (84 rules total)
+├── sigma_rules/               # SIGMA rules directory (78 rules total)
 │   ├── ollama_detection.yml              # Comprehensive Ollama detection
 │   ├── lmstudio_detection.yml            # LM Studio detection
 │   ├── gpt4all_detection.yml             # GPT4All desktop app detection
@@ -172,18 +172,12 @@ python ai_discovery_scan.py -v -o detailed_scan.json --collect-logs --log-format
 │   ├── nvidia_chat_with_rtx_llm_software_detection.yml  # NVIDIA Chat with RTX detection
 │   ├── nvidia_chat_with_rtx_file_detection.yml          # NVIDIA Chat with RTX file detection
 │   ├── nvidia_chat_with_rtx_environment_variables.yml   # NVIDIA Chat with RTX environment variables
-│   ├── clawdbot_process_detection.yml     # ClawdBot/OpenClaw process detection
-│   ├── clawdbot_dns_detection.yml         # ClawdBot/OpenClaw DNS detection
-│   ├── clawdbot_file_detection.yml        # ClawdBot/OpenClaw file detection
-│   ├── clawdbot_environment_variables.yml # ClawdBot/OpenClaw environment variables
-│   ├── clawdbot_llm_software_detection.yml  # ClawdBot/OpenClaw LLM software detection
-│   ├── clawdbot_network_detection.yml     # ClawdBot/OpenClaw network and API detection
-│   ├── openclaw_process_detection.yml     # OpenClaw process detection (standalone)
-│   ├── openclaw_dns_detection.yml         # OpenClaw DNS detection (standalone)
-│   ├── openclaw_file_detection.yml        # OpenClaw file detection (standalone)
-│   ├── openclaw_environment_variables.yml # OpenClaw environment variables (standalone)
-│   ├── openclaw_llm_software_detection.yml  # OpenClaw LLM software detection (standalone)
-│   └── openclaw_network_detection.yml     # OpenClaw network and API detection (standalone)
+│   ├── clawdbot_process_detection.yml     # ClawdBot/OpenClaw/MoltBot process detection
+│   ├── clawdbot_dns_detection.yml         # ClawdBot/OpenClaw/MoltBot DNS detection
+│   ├── clawdbot_file_detection.yml        # ClawdBot/OpenClaw/MoltBot file detection
+│   ├── clawdbot_environment_variables.yml # ClawdBot/OpenClaw/MoltBot environment variables
+│   ├── clawdbot_llm_software_detection.yml  # ClawdBot/OpenClaw/MoltBot LLM software detection
+│   └── clawdbot_network_detection.yml     # ClawdBot/OpenClaw/MoltBot network and API detection
 └── README.md                  # This file
 ```
 
@@ -294,7 +288,7 @@ python example_log_collection.py
 
 ## SIGMA Rules
 
-The scanner includes 84 comprehensive SIGMA rules for LLM software detection:
+The scanner includes 78 comprehensive SIGMA rules for LLM software detection:
 
 ### Core LLM Software (4 rules)
 1. **ollama_detection.yml** - Comprehensive Ollama detection covering processes, files, network activity, and environment variables
@@ -376,19 +370,13 @@ The scanner includes 84 comprehensive SIGMA rules for LLM software detection:
 71. **nvidia_chat_with_rtx_file_detection.yml** - NVIDIA Chat with RTX file detection
 72. **nvidia_chat_with_rtx_environment_variables.yml** - NVIDIA Chat with RTX environment variables
 
-### AI Discord Bots - ClawdBot/OpenClaw (12 rules)
-73. **clawdbot_process_detection.yml** - ClawdBot/OpenClaw process execution detection
-74. **clawdbot_dns_detection.yml** - ClawdBot/OpenClaw DNS query detection
-75. **clawdbot_file_detection.yml** - ClawdBot/OpenClaw file system activity detection
-76. **clawdbot_environment_variables.yml** - ClawdBot/OpenClaw environment variable detection
-77. **clawdbot_llm_software_detection.yml** - ClawdBot/OpenClaw LLM software detection
-78. **clawdbot_network_detection.yml** - ClawdBot/OpenClaw network traffic and API detection
-79. **openclaw_process_detection.yml** - OpenClaw standalone process detection (newer ClawdBot version)
-80. **openclaw_dns_detection.yml** - OpenClaw standalone DNS detection
-81. **openclaw_file_detection.yml** - OpenClaw standalone file detection
-82. **openclaw_environment_variables.yml** - OpenClaw standalone environment variable detection
-83. **openclaw_llm_software_detection.yml** - OpenClaw standalone LLM software detection
-84. **openclaw_network_detection.yml** - OpenClaw standalone network and API detection
+### AI Discord Bots - ClawdBot/OpenClaw/MoltBot (6 rules)
+73. **clawdbot_process_detection.yml** - ClawdBot/OpenClaw/MoltBot process execution detection (all variants in one rule)
+74. **clawdbot_dns_detection.yml** - ClawdBot/OpenClaw/MoltBot DNS query detection (all variants in one rule)
+75. **clawdbot_file_detection.yml** - ClawdBot/OpenClaw/MoltBot file system activity detection (all variants in one rule)
+76. **clawdbot_environment_variables.yml** - ClawdBot/OpenClaw/MoltBot environment variable detection (all variants in one rule)
+77. **clawdbot_llm_software_detection.yml** - ClawdBot/OpenClaw/MoltBot LLM software detection (all variants in one rule)
+78. **clawdbot_network_detection.yml** - ClawdBot/OpenClaw/MoltBot network traffic and API detection (all variants in one rule)
 
 ### Rule Coverage
 Each SIGMA rule provides comprehensive detection for:
@@ -546,13 +534,12 @@ To contribute:
 
 ## Changelog
 
-- **v1.4**: OpenClaw Detection and ClawdBot Rule Updates
-  - Added 6 new standalone OpenClaw SIGMA detection rules (process, DNS, file, environment variables, LLM software, network/API)
-  - Updated all 6 existing ClawdBot rules to also detect OpenClaw (newer version of ClawdBot)
-  - OpenClaw detection covers: process execution, DNS domains, file system activity, environment variables, LLM software installation, and network traffic/API patterns
+- **v1.4**: ClawdBot/OpenClaw/MoltBot Consolidated Detection
+  - Updated all 6 ClawdBot Sigma rules to detect all three variants (ClawdBot, OpenClaw, MoltBot) in a single consolidated rule set
+  - Each rule contains dedicated selection blocks per variant with an OR condition for comprehensive detection
   - Added OpenClaw-specific indicators: `oc-`/`ocl-` bearer token prefixes, OpenClaw domain infrastructure, SDK user-agent strings, API endpoint patterns, and model names
-  - Updated README to reflect all 84 SIGMA rule files with actual filenames
-  - Total SIGMA rules expanded from 78 to 84
+  - Added MoltBot-specific indicators: `mb-`/`mbt-` bearer token prefixes, MoltBot domain infrastructure, SDK user-agent strings, API endpoint patterns, and model names
+  - Updated README to reflect all 78 SIGMA rule files with actual filenames
 
 - **v1.3**: Comprehensive AI Application Detection Expansion
   - Added 21 new AI applications with comprehensive SIGMA rules
