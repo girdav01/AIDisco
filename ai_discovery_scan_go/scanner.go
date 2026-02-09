@@ -57,6 +57,10 @@ func (s *Scanner) RunScan() *ScanResults {
 	fmt.Println("Running SIGMA rule-based detection...")
 	allResults = append(allResults, s.detectFromAllSigmaRules()...)
 
+	// De-duplicate results from overlapping detection methods
+	fmt.Println("De-duplicating detection results...")
+	allResults = deduplicateResults(allResults)
+
 	// Apply SIGMA rules for matching
 	sigmaMatches := s.applySigmaRules(allResults)
 
@@ -246,4 +250,76 @@ func expandPath(path string) string {
 func pathExists(path string) bool {
 	_, err := os.Stat(path)
 	return err == nil
+}
+
+// deduplicateResults removes duplicate detections caused by overlapping rules.
+//
+// When both legacy (hardcoded) detection and SIGMA rule-based detection find the
+// same artifact, or when generic AI API provider rules overlap with specific
+// software rules, this function consolidates duplicates.
+//
+// Strategy:
+//  1. Group results by (detection_type, value) — same evidence once.
+//  2. Keep the result with the highest confidence.
+//  3. On tie, prefer the more specific (non-generic) software name.
+func deduplicateResults(results []DetectionResult) []DetectionResult {
+	if len(results) == 0 {
+		return results
+	}
+
+	genericNames := map[string]bool{
+		"openai api": true, "anthropic api": true, "google ai api": true,
+		"mistral api": true, "groq api": true, "cohere api": true,
+		"ai api provider": true, "ai proxy": true, "ai framework": true,
+		"ai sdk": true, "unknown software": true,
+	}
+
+	confidenceRank := map[string]int{"high": 3, "medium": 2, "low": 1}
+
+	type dedupKey struct {
+		detectionType string
+		value         string
+	}
+
+	seen := make(map[dedupKey]DetectionResult)
+
+	for _, r := range results {
+		key := dedupKey{r.DetectionType, r.Value}
+		existing, exists := seen[key]
+		if !exists {
+			seen[key] = r
+			continue
+		}
+
+		newRank := confidenceRank[r.Confidence]
+		oldRank := confidenceRank[existing.Confidence]
+
+		if newRank > oldRank {
+			seen[key] = r
+		} else if newRank == oldRank {
+			existingGeneric := genericNames[strings.ToLower(existing.Software)]
+			newGeneric := genericNames[strings.ToLower(r.Software)]
+
+			if existingGeneric && !newGeneric {
+				seen[key] = r
+			} else if !existingGeneric && !newGeneric {
+				if len(r.Software) > len(existing.Software) {
+					seen[key] = r
+				}
+			}
+		}
+	}
+
+	deduped := make([]DetectionResult, 0, len(seen))
+	for _, r := range seen {
+		deduped = append(deduped, r)
+	}
+
+	removed := len(results) - len(deduped)
+	if removed > 0 {
+		log.Printf("De-duplication removed %d duplicate detections (%d -> %d)",
+			removed, len(results), len(deduped))
+	}
+
+	return deduped
 }

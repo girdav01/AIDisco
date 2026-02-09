@@ -1,0 +1,62 @@
+title: AI API Key Pattern Detection in Network Traffic
+id: 12345678-1234-5678-9abc-123456789083
+status: experimental
+description: |
+  Detects known AI API key patterns in network traffic, proxy logs, or file contents.
+  Each major AI provider uses a distinctive key format that can be identified via regex.
+  Detection of these patterns may indicate API key leakage, Shadow AI usage, or
+  unauthorized data exfiltration through AI services.
+author: AI Discovery Security Team
+date: 2025/01/15
+modified: 2025/02/09
+tags:
+  - attack.credential_access
+  - attack.t1552
+  - attack.exfiltration
+  - attack.t1041
+  - ai.api_provider
+  - ai.api_key
+logsource:
+  category: proxy
+  product: any
+detection:
+  selection_openai_key:
+    cs-header|re: 'sk-(proj-)?[A-Za-z0-9_\-]{20,}'
+  selection_anthropic_key:
+    cs-header|re: 'sk-ant-[A-Za-z0-9\-]{20,}'
+  selection_groq_key:
+    cs-header|re: 'gsk_[A-Za-z0-9]{50,}'
+  selection_replicate_key:
+    cs-header|re: 'r8_[A-Za-z0-9]{30,}'
+  selection_perplexity_key:
+    cs-header|re: 'pplx-[A-Za-z0-9]{40,}'
+  selection_huggingface_key:
+    cs-header|re: 'hf_[A-Za-z0-9]{30,}'
+  selection_fireworks_key:
+    cs-header|re: 'fw_[A-Za-z0-9]{20,}'
+  selection_openrouter_key:
+    cs-header|re: 'sk-or-[A-Za-z0-9\-]{20,}'
+  selection_together_key:
+    cs-header|re: 'tok_[A-Za-z0-9]{20,}'
+  selection_cohere_key:
+    cs-header|re: 'co-[A-Za-z0-9]{35,}'
+  selection_xai_key:
+    cs-header|re: 'xai-[A-Za-z0-9]{20,}'
+  selection_deepseek_key:
+    cs-header|re: 'sk-[A-Za-z0-9]{40,}'
+  selection_clawdbot_key:
+    cs-header|re: 'cb[-_][A-Za-z0-9]{32,}'
+  selection_openclaw_key:
+    cs-header|re: 'oc[l]?[-_][A-Za-z0-9]{32,}'
+  selection_moltbot_key:
+    cs-header|re: 'mb[t]?[-_][A-Za-z0-9]{32,}'
+  condition: selection_openai_key or selection_anthropic_key or selection_groq_key or selection_replicate_key or selection_perplexity_key or selection_huggingface_key or selection_fireworks_key or selection_openrouter_key or selection_together_key or selection_cohere_key or selection_xai_key or selection_deepseek_key or selection_clawdbot_key or selection_openclaw_key or selection_moltbot_key
+fields:
+  - cs-host
+  - c-uri
+  - cs-header
+  - SourceIP
+falsepositives:
+  - Authorized AI API integrations passing keys in headers
+  - Development environments with test API keys
+level: high

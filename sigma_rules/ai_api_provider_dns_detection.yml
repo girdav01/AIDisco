@@ -1,0 +1,200 @@
+title: AI API Provider DNS Query Detection
+id: 12345678-1234-5678-9abc-123456789080
+status: experimental
+description: |
+  Detects DNS queries to known AI/LLM API provider domains. This generic rule covers
+  all major commercial AI API providers including OpenAI, Anthropic, Google AI, Mistral,
+  Cohere, Groq, Together AI, Replicate, Fireworks, DeepSeek, xAI, Stability AI,
+  Perplexity, Hugging Face, AI21 Labs, Amazon Bedrock, Azure OpenAI, and others.
+  These queries may indicate Shadow AI usage or unauthorized AI API access.
+author: AI Discovery Security Team
+date: 2025/01/15
+modified: 2025/02/09
+tags:
+  - attack.exfiltration
+  - attack.t1071.004
+  - attack.t1041
+  - ai.api_provider
+  - ai.shadow_ai
+logsource:
+  category: dns
+  product: any
+detection:
+  selection_openai:
+    QueryName|endswith:
+      - '.openai.com'
+      - '.openai.org'
+    QueryName|contains:
+      - 'api.openai.com'
+      - 'platform.openai.com'
+      - 'chat.openai.com'
+      - 'cdn.openai.com'
+      - 'auth0.openai.com'
+  selection_anthropic:
+    QueryName|endswith:
+      - '.anthropic.com'
+    QueryName|contains:
+      - 'api.anthropic.com'
+      - 'console.anthropic.com'
+      - 'docs.anthropic.com'
+  selection_google_ai:
+    QueryName|contains:
+      - 'generativelanguage.googleapis.com'
+      - 'aiplatform.googleapis.com'
+      - 'aistudio.google.com'
+      - 'gemini.google.com'
+      - 'makersuite.google.com'
+      - 'ai.google.dev'
+      - 'vertexai.googleapis.com'
+  selection_mistral:
+    QueryName|endswith:
+      - '.mistral.ai'
+    QueryName|contains:
+      - 'api.mistral.ai'
+      - 'console.mistral.ai'
+      - 'chat.mistral.ai'
+      - 'la-plateforme.mistral.ai'
+  selection_cohere:
+    QueryName|endswith:
+      - '.cohere.ai'
+      - '.cohere.com'
+    QueryName|contains:
+      - 'api.cohere.ai'
+      - 'api.cohere.com'
+      - 'dashboard.cohere.ai'
+      - 'dashboard.cohere.com'
+  selection_groq:
+    QueryName|endswith:
+      - '.groq.com'
+    QueryName|contains:
+      - 'api.groq.com'
+      - 'console.groq.com'
+  selection_together:
+    QueryName|endswith:
+      - '.together.xyz'
+      - '.together.ai'
+    QueryName|contains:
+      - 'api.together.xyz'
+      - 'api.together.ai'
+  selection_replicate:
+    QueryName|endswith:
+      - '.replicate.com'
+    QueryName|contains:
+      - 'api.replicate.com'
+  selection_fireworks:
+    QueryName|endswith:
+      - '.fireworks.ai'
+    QueryName|contains:
+      - 'api.fireworks.ai'
+      - 'app.fireworks.ai'
+  selection_deepseek:
+    QueryName|endswith:
+      - '.deepseek.com'
+    QueryName|contains:
+      - 'api.deepseek.com'
+      - 'chat.deepseek.com'
+      - 'platform.deepseek.com'
+  selection_xai:
+    QueryName|endswith:
+      - '.x.ai'
+    QueryName|contains:
+      - 'api.x.ai'
+      - 'console.x.ai'
+      - 'grok.x.ai'
+  selection_stability:
+    QueryName|endswith:
+      - '.stability.ai'
+    QueryName|contains:
+      - 'api.stability.ai'
+      - 'platform.stability.ai'
+  selection_perplexity:
+    QueryName|endswith:
+      - '.perplexity.ai'
+    QueryName|contains:
+      - 'api.perplexity.ai'
+      - 'www.perplexity.ai'
+  selection_huggingface:
+    QueryName|endswith:
+      - '.huggingface.co'
+      - '.hf.co'
+    QueryName|contains:
+      - 'api-inference.huggingface.co'
+      - 'huggingface.co'
+      - 'hf.co'
+  selection_ai21:
+    QueryName|endswith:
+      - '.ai21.com'
+    QueryName|contains:
+      - 'api.ai21.com'
+      - 'studio.ai21.com'
+  selection_aws_bedrock:
+    QueryName|contains:
+      - 'bedrock-runtime'
+      - 'bedrock.us-east'
+      - 'bedrock.us-west'
+      - 'bedrock.eu-west'
+      - 'bedrock.ap-'
+    QueryName|endswith:
+      - '.amazonaws.com'
+  selection_azure_openai:
+    QueryName|contains:
+      - '.openai.azure.com'
+      - '.cognitiveservices.azure.com'
+  selection_sambanova:
+    QueryName|endswith:
+      - '.sambanova.ai'
+    QueryName|contains:
+      - 'api.sambanova.ai'
+  selection_cerebras:
+    QueryName|endswith:
+      - '.cerebras.ai'
+      - '.cerebras.net'
+    QueryName|contains:
+      - 'api.cerebras.ai'
+  selection_reka:
+    QueryName|endswith:
+      - '.reka.ai'
+    QueryName|contains:
+      - 'api.reka.ai'
+  selection_writer:
+    QueryName|endswith:
+      - '.writer.com'
+    QueryName|contains:
+      - 'api.writer.com'
+      - 'enterprise-api.writer.com'
+  selection_aleph_alpha:
+    QueryName|endswith:
+      - '.aleph-alpha.com'
+    QueryName|contains:
+      - 'api.aleph-alpha.com'
+  selection_voyage:
+    QueryName|endswith:
+      - '.voyageai.com'
+    QueryName|contains:
+      - 'api.voyageai.com'
+  selection_inflection:
+    QueryName|endswith:
+      - '.inflection.ai'
+    QueryName|contains:
+      - 'api.inflection.ai'
+  selection_databricks:
+    QueryName|contains:
+      - '.databricks.com'
+      - 'serving.databricks.com'
+  selection_anyscale:
+    QueryName|endswith:
+      - '.anyscale.com'
+    QueryName|contains:
+      - 'api.anyscale.com'
+      - 'endpoints.anyscale.com'
+  condition: selection_openai or selection_anthropic or selection_google_ai or selection_mistral or selection_cohere or selection_groq or selection_together or selection_replicate or selection_fireworks or selection_deepseek or selection_xai or selection_stability or selection_perplexity or selection_huggingface or selection_ai21 or selection_aws_bedrock or selection_azure_openai or selection_sambanova or selection_cerebras or selection_reka or selection_writer or selection_aleph_alpha or selection_voyage or selection_inflection or selection_databricks or selection_anyscale
+fields:
+  - QueryName
+  - QueryType
+  - SourceIP
+  - DestinationIP
+falsepositives:
+  - Legitimate AI service usage authorized by organization policy
+  - Browser-based access to AI provider documentation
+  - CI/CD pipelines using AI APIs for authorized purposes
+level: medium

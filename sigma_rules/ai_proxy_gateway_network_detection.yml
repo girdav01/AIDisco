@@ -1,0 +1,112 @@
+title: AI Proxy and Gateway Service Network Detection
+id: 12345678-1234-5678-9abc-123456789085
+status: experimental
+description: |
+  Detects DNS queries and network traffic to AI proxy, gateway, and observability
+  platforms. These services route, aggregate, cache, or monitor AI API calls and
+  may indicate Shadow AI infrastructure. Covers LiteLLM, OpenRouter, Helicone,
+  Portkey, PromptLayer, LangSmith, Weights & Biases, BrainTrust, and others.
+author: AI Discovery Security Team
+date: 2025/01/15
+modified: 2025/02/09
+tags:
+  - attack.command_and_control
+  - attack.t1071.001
+  - attack.t1071.004
+  - attack.t1090
+  - ai.proxy
+  - ai.shadow_ai
+logsource:
+  category: dns
+  product: any
+detection:
+  selection_openrouter:
+    QueryName|endswith:
+      - '.openrouter.ai'
+    QueryName|contains:
+      - 'openrouter.ai'
+      - 'api.openrouter.ai'
+  selection_helicone:
+    QueryName|endswith:
+      - '.helicone.ai'
+    QueryName|contains:
+      - 'helicone.ai'
+      - 'api.helicone.ai'
+      - 'oai.helicone.ai'
+      - 'anthropic.helicone.ai'
+      - 'gateway.helicone.ai'
+      - 'together.helicone.ai'
+  selection_portkey:
+    QueryName|endswith:
+      - '.portkey.ai'
+    QueryName|contains:
+      - 'api.portkey.ai'
+      - 'portkey.ai'
+      - 'rubeus.portkey.ai'
+  selection_promptlayer:
+    QueryName|endswith:
+      - '.promptlayer.com'
+    QueryName|contains:
+      - 'api.promptlayer.com'
+      - 'promptlayer.com'
+  selection_langsmith:
+    QueryName|contains:
+      - 'api.smith.langchain.com'
+      - 'smith.langchain.com'
+      - 'api.langchain.com'
+      - 'hub.langchain.com'
+  selection_wandb:
+    QueryName|endswith:
+      - '.wandb.ai'
+      - '.wandb.com'
+    QueryName|contains:
+      - 'api.wandb.ai'
+      - 'app.wandb.ai'
+      - 'trace.wandb.ai'
+  selection_braintrust:
+    QueryName|endswith:
+      - '.braintrustdata.com'
+      - '.braintrust.dev'
+    QueryName|contains:
+      - 'api.braintrustdata.com'
+      - 'braintrustproxy.com'
+  selection_mlflow:
+    QueryName|contains:
+      - 'mlflow.org'
+      - 'databricks.com'
+  selection_humanloop:
+    QueryName|endswith:
+      - '.humanloop.com'
+    QueryName|contains:
+      - 'api.humanloop.com'
+  selection_vellum:
+    QueryName|endswith:
+      - '.vellum.ai'
+    QueryName|contains:
+      - 'api.vellum.ai'
+      - 'predict.vellum.ai'
+  selection_keywords:
+    QueryName|endswith:
+      - '.keywords.ai'
+    QueryName|contains:
+      - 'api.keywordsai.co'
+      - 'keywordsai.co'
+  selection_martian:
+    QueryName|endswith:
+      - '.withmartian.com'
+    QueryName|contains:
+      - 'api.withmartian.com'
+  selection_unify:
+    QueryName|endswith:
+      - '.unify.ai'
+    QueryName|contains:
+      - 'api.unify.ai'
+  condition: selection_openrouter or selection_helicone or selection_portkey or selection_promptlayer or selection_langsmith or selection_wandb or selection_braintrust or selection_mlflow or selection_humanloop or selection_vellum or selection_keywords or selection_martian or selection_unify
+fields:
+  - QueryName
+  - QueryType
+  - SourceIP
+falsepositives:
+  - Authorized AI observability and monitoring infrastructure
+  - Approved AI gateway deployments
+level: high

@@ -1,0 +1,107 @@
+title: AI Proxy and Gateway Environment Variable Detection
+id: 12345678-1234-5678-9abc-123456789087
+status: experimental
+description: |
+  Detects environment variables associated with AI proxy and gateway services.
+  These variables configure API routing, authentication, and observability for
+  AI middleware platforms. Their presence indicates AI proxy infrastructure.
+  Covers LiteLLM, OpenRouter, Helicone, Portkey, LangSmith, W&B, and others.
+author: AI Discovery Security Team
+date: 2025/01/15
+modified: 2025/02/09
+tags:
+  - attack.credential_access
+  - attack.t1552.001
+  - attack.t1082
+  - ai.proxy
+  - ai.shadow_ai
+logsource:
+  category: process_creation
+  product: any
+detection:
+  selection_litellm:
+    EnvironmentVariables|contains:
+      - 'LITELLM_MASTER_KEY'
+      - 'LITELLM_PROXY_BASE_URL'
+      - 'LITELLM_LOG'
+      - 'LITELLM_MODE'
+      - 'LITELLM_CONFIG_PATH'
+      - 'LITELLM_SALT_KEY'
+      - 'LITELLM_DATABASE_URL'
+      - 'LITELLM_PROXY_PORT'
+      - 'LITELLM_SECRET'
+      - 'LITELLM_TELEMETRY'
+      - 'LITELLM_LOCAL_MODEL_COST_MAP'
+      - 'LITELLM_DROP_PARAMS'
+      - 'LITELLM_SET_VERBOSE'
+  selection_openrouter:
+    EnvironmentVariables|contains:
+      - 'OPENROUTER_API_KEY'
+      - 'OPENROUTER_API_BASE'
+      - 'OPENROUTER_REFERRER'
+      - 'OR_SITE_URL'
+      - 'OR_APP_NAME'
+  selection_helicone:
+    EnvironmentVariables|contains:
+      - 'HELICONE_API_KEY'
+      - 'HELICONE_BASE_URL'
+      - 'HELICONE_PROXY_URL'
+      - 'HELICONE_CACHE_ENABLED'
+      - 'HELICONE_RETRY_ENABLED'
+      - 'HELICONE_RATE_LIMIT_POLICY'
+      - 'HELICONE_PROPERTY_'
+  selection_portkey:
+    EnvironmentVariables|contains:
+      - 'PORTKEY_API_KEY'
+      - 'PORTKEY_BASE_URL'
+      - 'PORTKEY_GATEWAY_URL'
+      - 'PORTKEY_VIRTUAL_KEY'
+      - 'PORTKEY_CONFIG'
+      - 'PORTKEY_TRACE_ID'
+      - 'PORTKEY_METADATA'
+  selection_promptlayer:
+    EnvironmentVariables|contains:
+      - 'PROMPTLAYER_API_KEY'
+  selection_langsmith:
+    EnvironmentVariables|contains:
+      - 'LANGCHAIN_API_KEY'
+      - 'LANGCHAIN_TRACING_V2'
+      - 'LANGCHAIN_ENDPOINT'
+      - 'LANGCHAIN_PROJECT'
+      - 'LANGCHAIN_SESSION'
+      - 'LANGSMITH_API_KEY'
+      - 'LANGSMITH_ENDPOINT'
+      - 'LANGSMITH_PROJECT'
+  selection_wandb:
+    EnvironmentVariables|contains:
+      - 'WANDB_API_KEY'
+      - 'WANDB_PROJECT'
+      - 'WANDB_ENTITY'
+      - 'WANDB_BASE_URL'
+      - 'WANDB_MODE'
+      - 'WANDB_DIR'
+  selection_braintrust:
+    EnvironmentVariables|contains:
+      - 'BRAINTRUST_API_KEY'
+      - 'BRAINTRUST_API_URL'
+  selection_mlflow:
+    EnvironmentVariables|contains:
+      - 'MLFLOW_TRACKING_URI'
+      - 'MLFLOW_TRACKING_TOKEN'
+      - 'MLFLOW_EXPERIMENT_NAME'
+      - 'MLFLOW_DEPLOYMENTS_TARGET'
+  selection_humanloop:
+    EnvironmentVariables|contains:
+      - 'HUMANLOOP_API_KEY'
+  selection_vellum:
+    EnvironmentVariables|contains:
+      - 'VELLUM_API_KEY'
+  condition: selection_litellm or selection_openrouter or selection_helicone or selection_portkey or selection_promptlayer or selection_langsmith or selection_wandb or selection_braintrust or selection_mlflow or selection_humanloop or selection_vellum
+fields:
+  - EnvironmentVariables
+  - User
+  - ProcessName
+falsepositives:
+  - Authorized AI platform teams configuring proxy infrastructure
+  - Approved observability tools for AI operations
+level: high

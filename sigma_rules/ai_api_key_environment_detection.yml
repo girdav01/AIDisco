@@ -1,0 +1,163 @@
+title: AI API Key Environment Variable Detection
+id: 12345678-1234-5678-9abc-123456789082
+status: experimental
+description: |
+  Detects environment variables containing API keys, tokens, or credentials for
+  AI/LLM service providers. The presence of these variables indicates that AI API
+  access has been configured on the system, potentially as part of Shadow AI usage.
+  Covers all major providers: OpenAI, Anthropic, Google AI, Mistral, Groq, Cohere,
+  Together, Replicate, Fireworks, DeepSeek, xAI, Stability, Perplexity, HuggingFace,
+  AI21, Azure OpenAI, AWS Bedrock, and others.
+author: AI Discovery Security Team
+date: 2025/01/15
+modified: 2025/02/09
+tags:
+  - attack.credential_access
+  - attack.t1552.001
+  - attack.t1082
+  - ai.api_provider
+  - ai.shadow_ai
+logsource:
+  category: process_creation
+  product: any
+detection:
+  selection_openai:
+    EnvironmentVariables|contains:
+      - 'OPENAI_API_KEY'
+      - 'OPENAI_ORG_ID'
+      - 'OPENAI_ORGANIZATION'
+      - 'OPENAI_API_BASE'
+      - 'OPENAI_API_TYPE'
+      - 'OPENAI_API_VERSION'
+      - 'OPENAI_BASE_URL'
+      - 'OPENAI_PROJECT_ID'
+  selection_anthropic:
+    EnvironmentVariables|contains:
+      - 'ANTHROPIC_API_KEY'
+      - 'ANTHROPIC_BASE_URL'
+      - 'ANTHROPIC_AUTH_TOKEN'
+      - 'ANTHROPIC_API_URL'
+      - 'CLAUDE_API_KEY'
+  selection_google:
+    EnvironmentVariables|contains:
+      - 'GOOGLE_API_KEY'
+      - 'GOOGLE_APPLICATION_CREDENTIALS'
+      - 'GOOGLE_CLOUD_PROJECT'
+      - 'GOOGLE_GENAI_API_KEY'
+      - 'GEMINI_API_KEY'
+      - 'VERTEX_AI_PROJECT'
+      - 'VERTEX_AI_LOCATION'
+  selection_mistral:
+    EnvironmentVariables|contains:
+      - 'MISTRAL_API_KEY'
+      - 'MISTRAL_API_URL'
+  selection_groq:
+    EnvironmentVariables|contains:
+      - 'GROQ_API_KEY'
+      - 'GROQ_API_URL'
+  selection_cohere:
+    EnvironmentVariables|contains:
+      - 'COHERE_API_KEY'
+      - 'CO_API_KEY'
+      - 'COHERE_API_URL'
+  selection_together:
+    EnvironmentVariables|contains:
+      - 'TOGETHER_API_KEY'
+      - 'TOGETHER_API_BASE'
+      - 'TOGETHERAI_API_KEY'
+  selection_replicate:
+    EnvironmentVariables|contains:
+      - 'REPLICATE_API_TOKEN'
+      - 'REPLICATE_API_KEY'
+  selection_fireworks:
+    EnvironmentVariables|contains:
+      - 'FIREWORKS_API_KEY'
+      - 'FIREWORKS_AI_API_KEY'
+      - 'FIREWORKS_API_BASE'
+  selection_deepseek:
+    EnvironmentVariables|contains:
+      - 'DEEPSEEK_API_KEY'
+      - 'DEEPSEEK_API_BASE'
+      - 'DEEPSEEK_BASE_URL'
+  selection_xai:
+    EnvironmentVariables|contains:
+      - 'XAI_API_KEY'
+      - 'GROK_API_KEY'
+  selection_stability:
+    EnvironmentVariables|contains:
+      - 'STABILITY_API_KEY'
+      - 'STABILITY_HOST'
+  selection_perplexity:
+    EnvironmentVariables|contains:
+      - 'PERPLEXITY_API_KEY'
+      - 'PPLX_API_KEY'
+  selection_huggingface:
+    EnvironmentVariables|contains:
+      - 'HF_TOKEN'
+      - 'HF_API_TOKEN'
+      - 'HUGGING_FACE_HUB_TOKEN'
+      - 'HUGGINGFACE_API_KEY'
+      - 'HF_HOME'
+      - 'HF_HUB_CACHE'
+      - 'TRANSFORMERS_CACHE'
+  selection_ai21:
+    EnvironmentVariables|contains:
+      - 'AI21_API_KEY'
+      - 'AI21_API_URL'
+  selection_azure_openai:
+    EnvironmentVariables|contains:
+      - 'AZURE_OPENAI_API_KEY'
+      - 'AZURE_OPENAI_ENDPOINT'
+      - 'AZURE_OPENAI_API_VERSION'
+      - 'AZURE_OPENAI_DEPLOYMENT'
+      - 'AZURE_OPENAI_AD_TOKEN'
+      - 'AZURE_API_KEY'
+      - 'AZURE_API_BASE'
+  selection_aws_bedrock:
+    EnvironmentVariables|contains:
+      - 'AWS_BEDROCK_RUNTIME_ENDPOINT'
+      - 'AWS_DEFAULT_REGION'
+      - 'BEDROCK_ENDPOINT_URL'
+      - 'BEDROCK_ASSUME_ROLE'
+  selection_sambanova:
+    EnvironmentVariables|contains:
+      - 'SAMBANOVA_API_KEY'
+      - 'SAMBANOVA_URL'
+  selection_cerebras:
+    EnvironmentVariables|contains:
+      - 'CEREBRAS_API_KEY'
+  selection_voyage:
+    EnvironmentVariables|contains:
+      - 'VOYAGE_API_KEY'
+  selection_writer:
+    EnvironmentVariables|contains:
+      - 'WRITER_API_KEY'
+      - 'WRITER_ORG_ID'
+  selection_reka:
+    EnvironmentVariables|contains:
+      - 'REKA_API_KEY'
+  selection_aleph_alpha:
+    EnvironmentVariables|contains:
+      - 'ALEPH_ALPHA_API_KEY'
+      - 'AA_TOKEN'
+  selection_inflection:
+    EnvironmentVariables|contains:
+      - 'INFLECTION_API_KEY'
+  selection_anyscale:
+    EnvironmentVariables|contains:
+      - 'ANYSCALE_API_KEY'
+      - 'ANYSCALE_API_BASE'
+  selection_databricks:
+    EnvironmentVariables|contains:
+      - 'DATABRICKS_TOKEN'
+      - 'DATABRICKS_HOST'
+  condition: selection_openai or selection_anthropic or selection_google or selection_mistral or selection_groq or selection_cohere or selection_together or selection_replicate or selection_fireworks or selection_deepseek or selection_xai or selection_stability or selection_perplexity or selection_huggingface or selection_ai21 or selection_azure_openai or selection_aws_bedrock or selection_sambanova or selection_cerebras or selection_voyage or selection_writer or selection_reka or selection_aleph_alpha or selection_inflection or selection_anyscale or selection_databricks
+fields:
+  - EnvironmentVariables
+  - User
+  - ProcessName
+falsepositives:
+  - Authorized development environments with AI API access
+  - CI/CD systems with approved AI integrations
+  - Managed service accounts for AI operations
+level: high

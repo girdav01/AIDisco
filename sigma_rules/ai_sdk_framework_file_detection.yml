@@ -1,0 +1,135 @@
+title: AI SDK and Framework File Detection
+id: 12345678-1234-5678-9abc-123456789089
+status: experimental
+description: |
+  Detects installation files, configuration directories, and artifacts associated
+  with AI development frameworks and SDKs. Covers LangChain, LlamaIndex, AutoGen,
+  CrewAI, Haystack, Dify, FlowiseAI, Chainlit, Gradio, Semantic Kernel, n8n AI,
+  and other AI orchestration platforms.
+author: AI Discovery Security Team
+date: 2025/01/15
+modified: 2025/02/09
+tags:
+  - attack.persistence
+  - attack.t1059
+  - attack.t1105
+  - ai.framework
+  - ai.shadow_ai
+logsource:
+  category: file_event
+  product: any
+detection:
+  selection_langchain:
+    TargetFilename|contains:
+      - 'site-packages/langchain'
+      - 'site-packages\langchain'
+      - 'dist-packages/langchain'
+      - 'dist-packages\langchain'
+      - 'node_modules/langchain'
+      - 'node_modules\langchain'
+      - '.langchain'
+      - 'langchain.config'
+  selection_llamaindex:
+    TargetFilename|contains:
+      - 'site-packages/llama_index'
+      - 'site-packages\llama_index'
+      - 'dist-packages/llama_index'
+      - 'dist-packages\llama_index'
+      - '.llamaindex'
+      - 'storage_context'
+      - 'llama_index_store'
+  selection_autogen:
+    TargetFilename|contains:
+      - 'site-packages/autogen'
+      - 'site-packages\autogen'
+      - 'site-packages/pyautogen'
+      - 'site-packages\pyautogen'
+      - 'OAI_CONFIG_LIST'
+      - '.autogen'
+  selection_crewai:
+    TargetFilename|contains:
+      - 'site-packages/crewai'
+      - 'site-packages\crewai'
+      - '.crewai'
+      - 'crewai.yaml'
+      - 'crewai.yml'
+      - 'agents.yaml'
+      - 'tasks.yaml'
+  selection_haystack:
+    TargetFilename|contains:
+      - 'site-packages/haystack'
+      - 'site-packages\haystack'
+      - '.haystack'
+      - 'haystack-pipeline'
+  selection_dify:
+    TargetFilename|contains:
+      - '/dify/'
+      - '\dify\'
+      - '.dify'
+      - 'dify-config'
+      - 'dify.config'
+      - '/opt/dify'
+      - 'AppData\Local\Dify'
+      - 'Library/Application Support/Dify'
+  selection_flowise:
+    TargetFilename|contains:
+      - '/flowise/'
+      - '\flowise\'
+      - '.flowise'
+      - 'node_modules/flowise'
+      - 'node_modules\flowise'
+      - 'AppData\Local\Flowise'
+      - 'Library/Application Support/Flowise'
+  selection_chainlit:
+    TargetFilename|contains:
+      - 'site-packages/chainlit'
+      - 'site-packages\chainlit'
+      - '.chainlit'
+      - 'chainlit.md'
+      - 'chainlit.config'
+  selection_gradio:
+    TargetFilename|contains:
+      - 'site-packages/gradio'
+      - 'site-packages\gradio'
+      - '.gradio'
+      - 'gradio_cached_examples'
+      - 'flagged/'
+      - 'flagged\'
+  selection_semantic_kernel:
+    TargetFilename|contains:
+      - 'site-packages/semantic_kernel'
+      - 'site-packages\semantic_kernel'
+      - 'node_modules/@microsoft/semantic-kernel'
+      - 'Microsoft.SemanticKernel'
+  selection_n8n:
+    TargetFilename|contains:
+      - '/.n8n/'
+      - '\.n8n\'
+      - 'node_modules/n8n'
+      - 'node_modules\n8n'
+      - '/opt/n8n'
+      - 'AppData\Local\n8n'
+      - 'Library/Application Support/n8n'
+  selection_vector_stores:
+    TargetFilename|contains:
+      - 'chroma_db'
+      - 'chromadb'
+      - 'qdrant_data'
+      - '.qdrant'
+      - 'pinecone_index'
+      - '.pinecone'
+      - 'weaviate_data'
+      - '.weaviate'
+      - 'milvus_data'
+      - '.milvus'
+      - 'faiss_index'
+      - '.faiss'
+  condition: selection_langchain or selection_llamaindex or selection_autogen or selection_crewai or selection_haystack or selection_dify or selection_flowise or selection_chainlit or selection_gradio or selection_semantic_kernel or selection_n8n or selection_vector_stores
+fields:
+  - TargetFilename
+  - User
+  - ProcessName
+falsepositives:
+  - Authorized AI development environments
+  - Data science workstations with approved tooling
+level: medium

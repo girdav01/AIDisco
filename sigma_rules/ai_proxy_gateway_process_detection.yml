@@ -1,0 +1,113 @@
+title: AI Proxy and Gateway Service Process Detection
+id: 12345678-1234-5678-9abc-123456789084
+status: experimental
+description: |
+  Detects running processes associated with AI proxy and gateway services.
+  These services act as intermediaries to AI APIs and are commonly used to
+  aggregate, route, cache, or observe AI API calls. Includes LiteLLM, OpenRouter,
+  Helicone, Portkey, PromptLayer, and other AI middleware platforms.
+author: AI Discovery Security Team
+date: 2025/01/15
+modified: 2025/02/09
+tags:
+  - attack.command_and_control
+  - attack.t1071.001
+  - attack.t1090
+  - ai.proxy
+  - ai.shadow_ai
+logsource:
+  category: process_creation
+  product: any
+detection:
+  selection_litellm:
+    Image|endswith:
+      - '\litellm'
+      - '\litellm.exe'
+      - '/litellm'
+    CommandLine|contains:
+      - 'litellm'
+      - 'litellm --config'
+      - 'litellm --port'
+      - 'litellm --model'
+      - 'python -m litellm'
+      - 'python3 -m litellm'
+      - 'litellm.proxy'
+      - 'litellm_proxy'
+    ProcessName|contains:
+      - 'litellm'
+  selection_openrouter:
+    CommandLine|contains:
+      - 'openrouter'
+    ProcessName|contains:
+      - 'openrouter'
+  selection_helicone:
+    CommandLine|contains:
+      - 'helicone'
+      - 'hcone-proxy'
+    ProcessName|contains:
+      - 'helicone'
+  selection_portkey:
+    CommandLine|contains:
+      - 'portkey'
+      - 'portkey-ai'
+      - 'portkey-gateway'
+      - 'rubeus'
+    ProcessName|contains:
+      - 'portkey'
+      - 'rubeus'
+  selection_promptlayer:
+    CommandLine|contains:
+      - 'promptlayer'
+    ProcessName|contains:
+      - 'promptlayer'
+  selection_langsmith:
+    CommandLine|contains:
+      - 'langsmith'
+      - 'langchain serve'
+      - 'langserve'
+    ProcessName|contains:
+      - 'langsmith'
+      - 'langserve'
+  selection_wandb:
+    CommandLine|contains:
+      - 'wandb'
+      - 'weights-and-biases'
+    ProcessName|contains:
+      - 'wandb'
+  selection_braintrust:
+    CommandLine|contains:
+      - 'braintrust'
+      - 'btproxy'
+    ProcessName|contains:
+      - 'braintrust'
+      - 'btproxy'
+  selection_mlflow:
+    CommandLine|contains:
+      - 'mlflow'
+      - 'mlflow serve'
+      - 'mlflow deployments'
+    ProcessName|contains:
+      - 'mlflow'
+  selection_ai_gateway:
+    CommandLine|contains:
+      - 'ai-gateway'
+      - 'aigateway'
+      - 'llm-gateway'
+      - 'llm_gateway'
+      - 'llmproxy'
+      - 'llm-proxy'
+    ProcessName|contains:
+      - 'ai-gateway'
+      - 'llm-gateway'
+      - 'llmproxy'
+  condition: selection_litellm or selection_openrouter or selection_helicone or selection_portkey or selection_promptlayer or selection_langsmith or selection_wandb or selection_braintrust or selection_mlflow or selection_ai_gateway
+fields:
+  - Image
+  - CommandLine
+  - ProcessName
+  - User
+  - ParentImage
+falsepositives:
+  - Authorized AI infrastructure managed by platform team
+  - Development environments with approved AI proxy setups
+level: high
