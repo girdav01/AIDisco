@@ -1,0 +1,66 @@
+title: n8n Workflow Automation AI Environment Variable Detection
+id: 12345678-1234-5678-9abc-123456789096
+status: experimental
+description: |
+  Detects environment variables associated with n8n workflow automation platform.
+  n8n uses numerous environment variables for configuration including database
+  settings, authentication, webhook URLs, encryption keys, and AI-specific
+  settings for LLM integrations.
+author: AI Discovery Security Team
+date: 2025/02/10
+modified: 2025/02/10
+tags:
+  - attack.execution
+  - attack.t1059
+  - attack.t1082
+  - ai.framework
+  - ai.shadow_ai
+logsource:
+  category: process_creation
+  product: any
+detection:
+  selection_n8n_core_env:
+    EnvironmentVariables|contains:
+      - 'N8N_HOST'
+      - 'N8N_PORT'
+      - 'N8N_PROTOCOL'
+      - 'N8N_PATH'
+      - 'N8N_LISTEN_ADDRESS'
+  selection_n8n_auth_env:
+    EnvironmentVariables|contains:
+      - 'N8N_BASIC_AUTH_ACTIVE'
+      - 'N8N_BASIC_AUTH_USER'
+      - 'N8N_BASIC_AUTH_PASSWORD'
+      - 'N8N_JWT_AUTH_ACTIVE'
+      - 'N8N_JWT_AUTH_HEADER'
+  selection_n8n_db_env:
+    EnvironmentVariables|contains:
+      - 'N8N_DB_TYPE'
+      - 'N8N_DB_POSTGRESDB_HOST'
+      - 'N8N_DB_MYSQLDB_HOST'
+      - 'DB_POSTGRESDB_DATABASE'
+      - 'N8N_USER_FOLDER'
+  selection_n8n_execution_env:
+    EnvironmentVariables|contains:
+      - 'N8N_ENCRYPTION_KEY'
+      - 'N8N_WEBHOOK_URL'
+      - 'WEBHOOK_URL'
+      - 'N8N_EDITOR_BASE_URL'
+      - 'N8N_RUNNERS_ENABLED'
+      - 'N8N_DEFAULT_BINARY_DATA_MODE'
+  selection_n8n_ai_env:
+    EnvironmentVariables|contains:
+      - 'N8N_AI_'
+      - 'N8N_OPENAI_API_KEY'
+      - 'N8N_ANTHROPIC_API_KEY'
+  selection_n8n_generic:
+    EnvironmentVariables|contains:
+      - 'N8N_'
+  condition: selection_n8n_core_env or selection_n8n_auth_env or selection_n8n_db_env or selection_n8n_execution_env or selection_n8n_ai_env or selection_n8n_generic
+fields:
+  - EnvironmentVariables
+  - User
+  - ProcessName
+falsepositives:
+  - Authorized workflow automation platforms managed by IT teams
+level: medium

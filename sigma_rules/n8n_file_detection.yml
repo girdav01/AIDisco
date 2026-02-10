@@ -1,0 +1,68 @@
+title: n8n Workflow Automation AI File Detection
+id: 12345678-1234-5678-9abc-123456789095
+status: experimental
+description: |
+  Detects n8n workflow automation file artifacts on disk. n8n stores its data,
+  configuration, and workflow definitions in the ~/.n8n directory. The presence
+  of these files indicates n8n is installed or has been used, which may include
+  AI agent workflows, LLM integrations, and vector store operations.
+author: AI Discovery Security Team
+date: 2025/02/10
+modified: 2025/02/10
+tags:
+  - attack.execution
+  - attack.t1059
+  - attack.t1082
+  - ai.framework
+  - ai.shadow_ai
+logsource:
+  category: file_event
+  product: any
+detection:
+  selection_n8n_config_dir:
+    TargetFilename|contains:
+      - '/.n8n/'
+      - '\.n8n\'
+      - '/n8n/config'
+      - '\n8n\config'
+  selection_n8n_data_files:
+    TargetFilename|contains:
+      - '.n8n/config'
+      - '.n8n/database.sqlite'
+      - '.n8n/crash.journal'
+      - '.n8n/n8nEventLog'
+      - '.n8n/binaryData'
+      - '.n8n/custom'
+      - '.n8n/nodes'
+  selection_n8n_workflow_files:
+    TargetFilename|endswith:
+      - 'n8n-workflow.json'
+      - 'n8n-workflows.json'
+      - 'n8n-credentials.json'
+      - 'n8n-export.json'
+  selection_n8n_install_dirs:
+    TargetFilename|contains:
+      - '/node_modules/n8n/'
+      - '\node_modules\n8n\'
+      - '/node_modules/n8n-core/'
+      - '\node_modules\n8n-core\'
+      - '/node_modules/n8n-workflow/'
+      - '\node_modules\n8n-workflow\'
+      - '/node_modules/@n8n/'
+      - '\node_modules\@n8n\'
+  selection_n8n_docker_compose:
+    TargetFilename|contains|all:
+      - 'n8n'
+      - 'compose'
+  selection_n8n_docker_file:
+    TargetFilename|contains|all:
+      - 'n8n'
+      - 'docker'
+  condition: selection_n8n_config_dir or selection_n8n_data_files or selection_n8n_workflow_files or selection_n8n_install_dirs or selection_n8n_docker_compose or selection_n8n_docker_file
+fields:
+  - TargetFilename
+  - User
+  - ProcessName
+falsepositives:
+  - Authorized workflow automation platforms managed by IT teams
+level: medium

@@ -1,0 +1,75 @@
+title: AI Software Docker Compose and Container Configuration Detection
+id: 12345678-1234-5678-9abc-123456789092
+status: experimental
+description: |
+  Detects Docker Compose files, Kubernetes manifests, and container configuration
+  files that reference AI/LLM software images or services. These files indicate
+  that AI software is being deployed or orchestrated using container technology,
+  a common Shadow AI deployment pattern.
+author: AI Discovery Security Team
+date: 2025/02/10
+modified: 2025/02/10
+tags:
+  - attack.execution
+  - attack.t1059
+  - attack.t1610
+  - attack.defense_evasion
+  - attack.t1036
+  - ai.container
+  - ai.shadow_ai
+logsource:
+  category: file_event
+  product: any
+detection:
+  selection_compose_files:
+    TargetFilename|contains:
+      - 'docker-compose'
+      - 'compose.yml'
+      - 'compose.yaml'
+    TargetFilename|endswith:
+      - '.yml'
+      - '.yaml'
+  selection_dockerfile_ai:
+    TargetFilename|contains:
+      - 'Dockerfile'
+    TargetFilename|endswith:
+      - 'ollama'
+      - 'vllm'
+      - 'litellm'
+      - 'n8n'
+      - 'flowise'
+      - 'dify'
+      - 'langchain'
+      - 'open-webui'
+      - 'anythingllm'
+      - 'librechat'
+      - 'localai'
+  selection_k8s_ai_manifests:
+    TargetFilename|contains:
+      - 'k8s'
+      - 'kubernetes'
+      - 'helm'
+      - 'deployment'
+    TargetFilename|endswith:
+      - '.yml'
+      - '.yaml'
+  selection_container_env_files:
+    TargetFilename|contains:
+      - '.env.docker'
+      - '.env.container'
+      - 'docker.env'
+      - 'container.env'
+      - '.env.n8n'
+      - '.env.dify'
+      - '.env.litellm'
+      - '.env.flowise'
+      - '.env.ollama'
+  condition: selection_compose_files or selection_dockerfile_ai or selection_k8s_ai_manifests or selection_container_env_files
+fields:
+  - TargetFilename
+  - User
+  - ProcessName
+falsepositives:
+  - Authorized container deployments managed by platform engineering teams
+  - CI/CD pipelines building approved container images
+level: medium

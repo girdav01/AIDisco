@@ -1,0 +1,204 @@
+title: AI Software Container Image Detection
+id: 12345678-1234-5678-9abc-123456789091
+status: experimental
+description: |
+  Detects running Docker or Podman containers with AI/LLM-related images.
+  Shadow AI software is commonly deployed as containers to avoid detection by
+  traditional endpoint monitoring. This rule covers images for Ollama, vLLM,
+  Open WebUI, Dify, FlowiseAI, n8n, LiteLLM, AnythingLLM, LibreChat,
+  LocalAI, LangChain, vector databases (ChromaDB, Qdrant, Weaviate, Milvus,
+  Pinecone), HuggingFace TGI, MLflow, Jupyter AI notebooks, and more.
+author: AI Discovery Security Team
+date: 2025/02/10
+modified: 2025/02/10
+tags:
+  - attack.execution
+  - attack.t1059
+  - attack.t1610
+  - attack.defense_evasion
+  - attack.t1036
+  - ai.container
+  - ai.shadow_ai
+logsource:
+  category: process_creation
+  product: any
+detection:
+  selection_ollama_container:
+    CommandLine|contains:
+      - 'ollama/ollama'
+      - 'docker.io/ollama/ollama'
+    Image|endswith:
+      - 'ollama/ollama'
+  selection_vllm_container:
+    CommandLine|contains:
+      - 'vllm/vllm-openai'
+      - 'vllm/vllm'
+      - 'docker.io/vllm/vllm'
+    Image|endswith:
+      - 'vllm/vllm-openai'
+      - 'vllm/vllm'
+  selection_openwebui_container:
+    CommandLine|contains:
+      - 'ghcr.io/open-webui/open-webui'
+      - 'open-webui/open-webui'
+    Image|endswith:
+      - 'open-webui/open-webui'
+  selection_dify_container:
+    CommandLine|contains:
+      - 'langgenius/dify-api'
+      - 'langgenius/dify-web'
+      - 'langgenius/dify-worker'
+      - 'langgenius/dify-sandbox'
+    Image|endswith:
+      - 'langgenius/dify-api'
+      - 'langgenius/dify-web'
+      - 'langgenius/dify-worker'
+  selection_flowise_container:
+    CommandLine|contains:
+      - 'flowiseai/flowise'
+    Image|endswith:
+      - 'flowiseai/flowise'
+  selection_n8n_container:
+    CommandLine|contains:
+      - 'n8nio/n8n'
+      - 'docker.n8n.io/n8nio/n8n'
+    Image|endswith:
+      - 'n8nio/n8n'
+      - 'docker.n8n.io/n8nio/n8n'
+  selection_litellm_container:
+    CommandLine|contains:
+      - 'ghcr.io/berriai/litellm'
+      - 'litellm/litellm'
+    Image|endswith:
+      - 'berriai/litellm'
+      - 'litellm/litellm'
+  selection_anythingllm_container:
+    CommandLine|contains:
+      - 'mintplexlabs/anythingllm'
+      - 'ghcr.io/mintplexlabs/anythingllm'
+    Image|endswith:
+      - 'mintplexlabs/anythingllm'
+  selection_librechat_container:
+    CommandLine|contains:
+      - 'ghcr.io/danny-avila/librechat'
+      - 'librechat/librechat'
+    Image|endswith:
+      - 'danny-avila/librechat'
+      - 'librechat/librechat'
+  selection_localai_container:
+    CommandLine|contains:
+      - 'localai/localai'
+      - 'quay.io/go-skynet/local-ai'
+    Image|endswith:
+      - 'localai/localai'
+      - 'go-skynet/local-ai'
+  selection_tgi_container:
+    CommandLine|contains:
+      - 'ghcr.io/huggingface/text-generation-inference'
+      - 'huggingface/text-generation-inference'
+    Image|endswith:
+      - 'huggingface/text-generation-inference'
+  selection_chromadb_container:
+    CommandLine|contains:
+      - 'chromadb/chroma'
+    Image|endswith:
+      - 'chromadb/chroma'
+  selection_qdrant_container:
+    CommandLine|contains:
+      - 'qdrant/qdrant'
+    Image|endswith:
+      - 'qdrant/qdrant'
+  selection_weaviate_container:
+    CommandLine|contains:
+      - 'semitechnologies/weaviate'
+      - 'weaviate/weaviate'
+    Image|endswith:
+      - 'semitechnologies/weaviate'
+      - 'weaviate/weaviate'
+  selection_milvus_container:
+    CommandLine|contains:
+      - 'milvusdb/milvus'
+    Image|endswith:
+      - 'milvusdb/milvus'
+  selection_mlflow_container:
+    CommandLine|contains:
+      - 'mlflow/mlflow'
+      - 'ghcr.io/mlflow/mlflow'
+    Image|endswith:
+      - 'mlflow/mlflow'
+  selection_jupyter_ai_container:
+    CommandLine|contains:
+      - 'jupyter/tensorflow-notebook'
+      - 'jupyter/pytorch-notebook'
+      - 'jupyter/scipy-notebook'
+      - 'jupyter/datascience-notebook'
+    Image|endswith:
+      - 'jupyter/tensorflow-notebook'
+      - 'jupyter/pytorch-notebook'
+      - 'jupyter/scipy-notebook'
+      - 'jupyter/datascience-notebook'
+  selection_pytorch_container:
+    CommandLine|contains:
+      - 'pytorch/pytorch'
+      - 'nvcr.io/nvidia/pytorch'
+    Image|endswith:
+      - 'pytorch/pytorch'
+  selection_tensorflow_container:
+    CommandLine|contains:
+      - 'tensorflow/tensorflow'
+      - 'nvcr.io/nvidia/tensorflow'
+    Image|endswith:
+      - 'tensorflow/tensorflow'
+  selection_wandb_container:
+    CommandLine|contains:
+      - 'wandb/local'
+    Image|endswith:
+      - 'wandb/local'
+  selection_langchain_container:
+    CommandLine|contains:
+      - 'langchain/'
+    Image|endswith:
+      - 'langchain/'
+  selection_chainlit_container:
+    CommandLine|contains:
+      - 'chainlit/chainlit'
+    Image|endswith:
+      - 'chainlit/chainlit'
+  selection_gradio_container:
+    CommandLine|contains:
+      - 'gradio/gradio'
+    Image|endswith:
+      - 'gradio/gradio'
+  selection_nvidia_triton_container:
+    CommandLine|contains:
+      - 'nvcr.io/nvidia/tritonserver'
+      - 'nvidia/tritonserver'
+    Image|endswith:
+      - 'nvidia/tritonserver'
+  selection_textgen_webui_container:
+    CommandLine|contains:
+      - 'athomasson2/text-generation-webui'
+      - 'oobabooga/text-generation-webui'
+    Image|endswith:
+      - 'text-generation-webui'
+  selection_jan_container:
+    CommandLine|contains:
+      - 'jan-ai/jan'
+    Image|endswith:
+      - 'jan-ai/jan'
+  selection_pinecone_container:
+    CommandLine|contains:
+      - 'pinecone-io/'
+    Image|endswith:
+      - 'pinecone-io/'
+  condition: selection_ollama_container or selection_vllm_container or selection_openwebui_container or selection_dify_container or selection_flowise_container or selection_n8n_container or selection_litellm_container or selection_anythingllm_container or selection_librechat_container or selection_localai_container or selection_tgi_container or selection_chromadb_container or selection_qdrant_container or selection_weaviate_container or selection_milvus_container or selection_mlflow_container or selection_jupyter_ai_container or selection_pytorch_container or selection_tensorflow_container or selection_wandb_container or selection_langchain_container or selection_chainlit_container or selection_gradio_container or selection_nvidia_triton_container or selection_textgen_webui_container or selection_jan_container or selection_pinecone_container
+fields:
+  - Image
+  - CommandLine
+  - ContainerID
+  - ContainerName
+  - User
+falsepositives:
+  - Authorized AI infrastructure deployed via approved container orchestration
+  - DevOps teams running approved AI containers in development environments
+level: high

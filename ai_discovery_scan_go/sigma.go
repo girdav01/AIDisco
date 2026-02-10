@@ -377,6 +377,12 @@ func extractSoftwareNameFromTitle(title string) string {
 		{"semantic kernel", "Semantic Kernel"},
 		{"semantic_kernel", "Semantic Kernel"},
 		{"n8n", "n8n"},
+		// Container and WSL2 detection
+		{"container image", "AI Container"},
+		{"container configuration", "AI Container"},
+		{"docker compose", "AI Container"},
+		{"wsl2", "WSL2 AI"},
+		{"wsl", "WSL2 AI"},
 		// Generic API provider rules (check last — dedup prefers specific)
 		{"ai api provider", "AI API Provider"},
 		{"ai api key", "AI API Provider"},
@@ -384,6 +390,8 @@ func extractSoftwareNameFromTitle(title string) string {
 		{"ai gateway", "AI Proxy"},
 		{"ai sdk", "AI Framework"},
 		{"ai framework", "AI Framework"},
+		{"ai software container", "AI Container"},
+		{"ai software in windows wsl", "WSL2 AI"},
 	}
 
 	for _, m := range mapping {
