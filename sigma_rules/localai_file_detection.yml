@@ -1,37 +1,40 @@
 title: LocalAI File Detection
 id: 12345678-1234-5678-9abc-123456789053
 status: experimental
-description: Detects LocalAI file system activity
-author: AI Discovery Scanner
-date: 2025-01-02
+description: >
+  Detects LocalAI file system activity. LocalAI stores configuration and
+  models in its working directory. Detection targets the LocalAI project
+  directory structure and its models subdirectory.
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.persistence
   - attack.t1547
-  - ai.llm
-  - ai.localai
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: file_event
-  product: windows
+  product: any
 detection:
-  selection:
-    - TargetFilename|contains:
-        - '\.localai'
-        - '\localai\'
-        - '\LocalAI\'
-        - '\.local-ai'
-        - '\local-ai\'
-        - '\Local-AI\'
-        - '\AppData\Local\LocalAI'
-        - '\AppData\Roaming\LocalAI'
-        - '\Program Files\LocalAI'
-        - '\Program Files (x86)\LocalAI'
-  condition: selection
+  selection_project_dir:
+    TargetFilename|contains:
+      - '/LocalAI/'
+      - '\\LocalAI\\'
+      - '/local-ai/'
+      - '\\local-ai\\'
+  selection_models:
+    TargetFilename|contains:
+      - 'local-ai/models'
+      - 'local-ai\\models'
+      - 'LocalAI/models'
+      - 'LocalAI\\models'
+  condition: selection_project_dir or selection_models
 fields:
   - TargetFilename
   - ProcessName
   - User
-  - EventType
 falsepositives:
   - Legitimate LocalAI installation
-  - Development tool updates
+  - Development environments
 level: medium

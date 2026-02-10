@@ -1,32 +1,31 @@
-title: Faraday AI Environment Variables
+title: Backyard AI (formerly Faraday) Environment Detection
 id: 12345678-1234-5678-9abc-123456789060
 status: experimental
-description: Detects Faraday AI environment variable configuration
-author: AI Discovery Scanner
-date: 2025-01-02
+description: |
+  Detects commands referencing Backyard AI (formerly Faraday) environment variables
+  or configuration. Note that Backyard AI does not use well-known environment
+  variables; this rule detects command-line references to the software configuration.
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.discovery
   - attack.t1082
-  - ai.llm
-  - ai.faraday
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: process_creation
-  product: windows
+  product: any
 detection:
-  selection:
-    EnvironmentVariables|contains:
-      - 'FARADAY_'
-      - 'FARADAY_AI'
-      - 'FARADAY_TOKEN'
-      - 'FARADAY_HOST'
-      - 'FARADAY_MODEL'
-  condition: selection
+  selection_commands:
+    CommandLine|contains:
+      - 'BACKYARD_AI'
+      - 'BACKYARDAI_'
+  condition: selection_commands
+falsepositives:
+  - Development environments referencing Backyard AI configuration
+level: low
 fields:
   - Image
   - CommandLine
-  - EnvironmentVariables
   - User
-falsepositives:
-  - Legitimate Faraday AI configuration
-  - Development environment setup
-level: low

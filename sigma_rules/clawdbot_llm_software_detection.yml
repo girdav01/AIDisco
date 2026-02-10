@@ -2,22 +2,18 @@ title: ClawdBot/OpenClaw/MoltBot AI Discord Bot LLM Software Detection
 id: 12345678-1234-5678-9abc-123456789073
 status: experimental
 description: Detects ClawdBot, OpenClaw, and MoltBot AI Discord bot installation and usage across multiple platforms. These are all variants of the same software.
-author: AI Discovery Scanner
-date: 2025-01-27
-modified: 2026-02-08
+author: AI Discovery Security Team
+date: 2025/01/27
+modified: 2026/02/10
 tags:
   - attack.execution
   - attack.t1059
-  - attack.t1071.001
-  - ai.llm
-  - ai.clawdbot
-  - ai.openclaw
-  - ai.moltbot
-  - ai.discord
-  - ai.claude
+  - attack.t1082
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: process_creation
-  product: windows
+  product: any
 detection:
   selection_clawdbot:
     - Image|endswith:

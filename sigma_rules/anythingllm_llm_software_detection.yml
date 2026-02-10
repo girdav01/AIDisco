@@ -1,31 +1,36 @@
 title: AnythingLLM LLM Software Detection
 id: 12345678-1234-5678-9abc-123456789040
 status: experimental
-description: Detects AnythingLLM installation and usage
-author: AI Discovery Scanner
-date: 2025-01-02
+description: >
+  Detects AnythingLLM installation and usage. AnythingLLM has a desktop
+  Electron app (AnythingLLMDesktop.exe on Windows) and also runs as a Docker
+  container (mintplexlabs/anythingllm). The fabricated process names
+  anything-llm.exe and anythingllm.exe do not exist.
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.execution
   - attack.t1059
   - attack.t1071.001
-  - ai.llm
-  - ai.anythingllm
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: process_creation
-  product: windows
+  product: any
 detection:
-  selection:
-    - Image|endswith:
-        - '\anything-llm.exe'
-        - '\anythingllm.exe'
-        - '\anything-llm-server.exe'
-        - '\anythingllm-server.exe'
-    - CommandLine|contains:
-        - 'anything-llm'
-        - 'anythingllm'
-        - 'anything-llm-server'
-        - 'anythingllm-server'
-  condition: selection
+  selection_desktop:
+    Image|endswith:
+      - '\AnythingLLMDesktop.exe'
+      - '/AnythingLLMDesktop'
+  selection_commandline:
+    CommandLine|contains:
+      - 'AnythingLLMDesktop'
+      - 'anythingllm-desktop'
+  selection_docker:
+    CommandLine|contains:
+      - 'mintplexlabs/anythingllm'
+  condition: selection_desktop or selection_commandline or selection_docker
 fields:
   - Image
   - CommandLine

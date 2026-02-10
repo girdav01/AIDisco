@@ -1,39 +1,29 @@
 title: YouChat/You.com AI File Detection
 id: 12345678-1234-5678-9abc-123456789035
 status: experimental
-description: Detects YouChat/You.com AI file system activity
-author: AI Discovery Scanner
-date: 2025-01-02
+description: Detects You.com AI API client and SDK configuration file activity (no standalone desktop app exists)
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.persistence
   - attack.t1547
-  - ai.llm
-  - ai.youchat
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: file_event
-  product: windows
+  product: any
 detection:
-  selection:
-    - TargetFilename|contains:
-        - '\.youchat'
-        - '\youchat\'
-        - '\YouChat\'
-        - '\.you-com'
-        - '\you-com\'
-        - '\You.com\'
-        - '\AppData\Local\YouChat'
-        - '\AppData\Roaming\YouChat'
-        - '\AppData\Local\You.com'
-        - '\AppData\Roaming\You.com'
-        - '\Program Files\YouChat'
-        - '\Program Files\You.com'
-  condition: selection
+  selection_sdk:
+    TargetFilename|contains:
+      - 'you-com-api'
+      - 'youdotcom'
+  condition: selection_sdk
 fields:
   - TargetFilename
   - ProcessName
   - User
-  - EventType
 falsepositives:
-  - Legitimate YouChat/You.com AI installation
+  - Legitimate You.com API client installation
   - Development tool updates
 level: medium

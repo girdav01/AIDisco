@@ -2,21 +2,16 @@ title: ClawdBot/OpenClaw/MoltBot AI Discord Bot DNS Detection
 id: 12345678-1234-5678-9abc-123456789075
 status: experimental
 description: Detects DNS queries to ClawdBot, OpenClaw, and MoltBot AI Discord bot related domains. These are all variants of the same software.
-author: AI Discovery Scanner
-date: 2025-01-27
-modified: 2026-02-08
+author: AI Discovery Security Team
+date: 2025/01/27
+modified: 2026/02/10
 tags:
   - attack.command_and_control
   - attack.t1071.004
   - attack.discovery
   - attack.t1018
-  - ai.llm
-  - ai.clawdbot
-  - ai.openclaw
-  - ai.moltbot
-  - ai.discord
-  - ai.claude
-  - ai.dns
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: dns
   product: any

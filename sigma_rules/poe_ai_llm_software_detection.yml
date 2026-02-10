@@ -1,31 +1,31 @@
 title: Poe AI LLM Software Detection
 id: 12345678-1234-5678-9abc-123456789031
 status: experimental
-description: Detects Poe AI installation and usage
-author: AI Discovery Scanner
-date: 2025-01-02
+description: Detects Poe AI (by Quora) desktop application installation and usage on Windows and macOS
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.execution
   - attack.t1059
   - attack.t1071.001
-  - ai.llm
-  - ai.poe
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: process_creation
-  product: windows
+  product: any
 detection:
-  selection:
-    - Image|endswith:
-        - '\poe.exe'
-        - '\poe-ai.exe'
-        - '\poe-desktop.exe'
-        - '\quora-poe.exe'
-    - CommandLine|contains:
-        - 'poe'
-        - 'poe-ai'
-        - 'poe-desktop'
-        - 'quora-poe'
-  condition: selection
+  selection_image_windows:
+    Image|endswith:
+      - '\Poe.exe'
+  selection_image_macos:
+    Image|endswith:
+      - '/Poe'
+  selection_cmdline:
+    CommandLine|contains:
+      - 'Poe.exe'
+      - 'Poe.app'
+  condition: selection_image_windows or selection_image_macos or selection_cmdline
 fields:
   - Image
   - CommandLine
@@ -35,5 +35,6 @@ fields:
   - ParentCommandLine
 falsepositives:
   - Legitimate Poe AI usage
+  - Path of Exile game (similar naming may cause false positives)
   - Development environments
 level: medium

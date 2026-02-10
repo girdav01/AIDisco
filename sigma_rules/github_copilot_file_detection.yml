@@ -1,33 +1,29 @@
 title: GitHub Copilot File Detection
 id: 12345678-1234-5678-9abc-123456789002
 status: experimental
-description: Detects GitHub Copilot file system activity and configuration
-author: AI Discovery Scanner
-date: 2025-01-02
+description: Detects GitHub Copilot file system activity and configuration files.
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.persistence
   - attack.t1547
-  - ai.llm
-  - ai.copilot
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: file_event
-  product: windows
+  product: any
 detection:
-  selection:
-    - TargetFilename|contains:
-        - '\.copilot'
-        - '\copilot\'
-        - '\GitHub\Copilot'
-        - '\AppData\Local\GitHub\Copilot'
-        - '\AppData\Roaming\GitHub\Copilot'
-        - '\Program Files\GitHub\Copilot'
-        - '\Program Files (x86)\GitHub\Copilot'
-  condition: selection
+  selection_paths:
+    TargetFilename|contains:
+      - '/.config/github-copilot'
+      - '\github-copilot'
+      - 'github.copilot'
+  condition: selection_paths
 fields:
   - TargetFilename
   - ProcessName
   - User
-  - EventType
 falsepositives:
   - Legitimate GitHub Copilot installation
   - Development tool updates

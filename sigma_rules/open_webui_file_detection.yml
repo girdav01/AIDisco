@@ -1,37 +1,41 @@
 title: Open WebUI File Detection
 id: 12345678-1234-5678-9abc-123456789038
 status: experimental
-description: Detects Open WebUI file system activity
-author: AI Discovery Scanner
-date: 2025-01-02
+description: >
+  Detects Open WebUI file system activity. Open WebUI is typically deployed
+  via Docker or installed as a Python package. Detection targets Docker
+  volume paths and Python site-packages locations.
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.persistence
   - attack.t1547
-  - ai.llm
-  - ai.openwebui
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: file_event
-  product: windows
+  product: any
 detection:
-  selection:
-    - TargetFilename|contains:
-        - '\.open-webui'
-        - '\open-webui\'
-        - '\Open-WebUI\'
-        - '\.openwebui'
-        - '\openwebui\'
-        - '\OpenWebUI\'
-        - '\AppData\Local\Open-WebUI'
-        - '\AppData\Roaming\Open-WebUI'
-        - '\Program Files\Open-WebUI'
-        - '\Program Files (x86)\Open-WebUI'
-  condition: selection
+  selection_docker_volumes:
+    TargetFilename|contains:
+      - '/open-webui/data'
+      - '/open-webui/backend'
+  selection_python_package:
+    TargetFilename|contains:
+      - 'site-packages/open_webui'
+      - 'site-packages\\open_webui'
+  selection_config:
+    TargetFilename|contains:
+      - '.open-webui'
+      - '/open-webui/'
+      - '\\open-webui\\'
+  condition: selection_docker_volumes or selection_python_package or selection_config
 fields:
   - TargetFilename
   - ProcessName
   - User
-  - EventType
 falsepositives:
   - Legitimate Open WebUI installation
-  - Development tool updates
+  - Development environments
 level: medium

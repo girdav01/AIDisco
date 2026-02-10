@@ -1,37 +1,38 @@
 title: LibreChat File Detection
 id: 12345678-1234-5678-9abc-123456789044
 status: experimental
-description: Detects LibreChat file system activity
-author: AI Discovery Scanner
-date: 2025-01-02
+description: >
+  Detects LibreChat file system activity. LibreChat is deployed via Docker
+  or cloned as a Node.js project. Detection targets project directories
+  and configuration files.
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.persistence
   - attack.t1547
-  - ai.llm
-  - ai.libreachat
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: file_event
-  product: windows
+  product: any
 detection:
-  selection:
-    - TargetFilename|contains:
-        - '\.librechat'
-        - '\librechat\'
-        - '\LibreChat\'
-        - '\.libre-chat'
-        - '\libre-chat\'
-        - '\Libre-Chat\'
-        - '\AppData\Local\LibreChat'
-        - '\AppData\Roaming\LibreChat'
-        - '\Program Files\LibreChat'
-        - '\Program Files (x86)\LibreChat'
-  condition: selection
+  selection_project_dir:
+    TargetFilename|contains:
+      - '/LibreChat/'
+      - '\\LibreChat\\'
+      - '/librechat/'
+      - '\\librechat\\'
+  selection_config:
+    TargetFilename|endswith:
+      - 'librechat.yaml'
+      - 'librechat.yml'
+  condition: selection_project_dir or selection_config
 fields:
   - TargetFilename
   - ProcessName
   - User
-  - EventType
 falsepositives:
   - Legitimate LibreChat installation
-  - Development tool updates
+  - Development environments
 level: medium

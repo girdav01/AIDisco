@@ -1,37 +1,41 @@
-title: Replit Ghostwriter LLM Software Detection
-id: 12345678-1234-5678-9abc-123456789004
+title: Replit AI (formerly Ghostwriter) Software Detection
+id: 12345678-1234-5678-9abc-123456789064
 status: experimental
-description: Detects Replit Ghostwriter installation and usage
-author: AI Discovery Scanner
-date: 2025-01-02
+description: |
+  Detects Replit Desktop application which includes Replit AI (formerly Ghostwriter,
+  rebranded mid-2024) and Replit Agent capabilities. Replit is primarily a web-based
+  IDE but offers a desktop Electron app. The "Ghostwriter" branding was replaced
+  with "Replit AI" and "Replit Agent" in 2024.
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.execution
   - attack.t1059
-  - attack.t1071.001
-  - ai.llm
-  - ai.ghostwriter
+  - attack.t1082
+  - ai.framework
+  - ai.shadow_ai
+references:
+  - https://replit.com/
 logsource:
   category: process_creation
-  product: windows
+  product: any
 detection:
-  selection:
-    - Image|endswith:
-        - '\ghostwriter.exe'
-        - '\replit-ghostwriter.exe'
-        - '\ghostwriter-cli.exe'
-    - CommandLine|contains:
-        - 'ghostwriter'
-        - 'replit-ghostwriter'
-        - 'ghostwriter-cli'
-  condition: selection
+  selection_desktop:
+    Image|endswith:
+      - '\Replit.exe'
+      - '/Replit'
+  selection_commands:
+    CommandLine|contains:
+      - 'replit'
+      - 'Replit'
+  condition: selection_desktop or selection_commands
+falsepositives:
+  - Legitimate Replit usage for authorized development
+  - Replit desktop app used for non-AI purposes
+level: medium
 fields:
   - Image
   - CommandLine
-  - ProcessId
   - User
   - ParentImage
-  - ParentCommandLine
-falsepositives:
-  - Legitimate Replit Ghostwriter usage
-  - Development environments
-level: medium

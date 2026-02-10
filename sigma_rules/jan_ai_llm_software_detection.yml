@@ -1,31 +1,38 @@
 title: Jan AI LLM Software Detection
 id: 12345678-1234-5678-9abc-123456789046
 status: experimental
-description: Detects Jan AI installation and usage
-author: AI Discovery Scanner
-date: 2025-01-02
+description: >
+  Detects Jan AI desktop application installation and usage. Jan is a desktop
+  Electron app with the real process name Jan.exe (Windows) or Jan (macOS/Linux).
+  WARNING: Generic 'jan' string matching is extremely overbroad and will match
+  words like January, janitor, etc. This rule uses specific process names and
+  path patterns to reduce false positives.
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.execution
   - attack.t1059
   - attack.t1071.001
-  - ai.llm
-  - ai.jan
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: process_creation
-  product: windows
+  product: any
 detection:
-  selection:
-    - Image|endswith:
-        - '\jan.exe'
-        - '\jan-ai.exe'
-        - '\jan-desktop.exe'
-        - '\jan-server.exe'
-    - CommandLine|contains:
-        - 'jan'
-        - 'jan-ai'
-        - 'jan-desktop'
-        - 'jan-server'
-  condition: selection
+  selection_windows:
+    Image|endswith:
+      - '\Jan.exe'
+  selection_commandline:
+    CommandLine|contains:
+      - 'Jan.exe'
+      - 'jan-ai'
+      - '/jan/Jan'
+  selection_path:
+    Image|contains:
+      - '\jan\Jan.exe'
+      - '/Applications/Jan.app'
+  condition: selection_windows or selection_commandline or selection_path
 fields:
   - Image
   - CommandLine
@@ -35,5 +42,6 @@ fields:
   - ParentCommandLine
 falsepositives:
   - Legitimate Jan AI usage
-  - Development environments
+  - Other applications with Jan in the path
+  - Usernames containing Jan
 level: medium

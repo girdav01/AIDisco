@@ -1,31 +1,36 @@
 title: Open WebUI LLM Software Detection
 id: 12345678-1234-5678-9abc-123456789037
 status: experimental
-description: Detects Open WebUI installation and usage
-author: AI Discovery Scanner
-date: 2025-01-02
+description: >
+  Detects Open WebUI installation and usage. Open WebUI is a web-based LLM
+  interface that runs as a Python application or Docker container
+  (ghcr.io/open-webui/open-webui). It does not have a native desktop binary.
+  Note: The 'open-webui' string in command lines is specific enough to avoid
+  false positives from other webui projects.
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.execution
   - attack.t1059
   - attack.t1071.001
-  - ai.llm
-  - ai.openwebui
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: process_creation
-  product: windows
+  product: any
 detection:
-  selection:
-    - Image|endswith:
-        - '\open-webui.exe'
-        - '\openwebui.exe'
-        - '\webui.exe'
-        - '\open-webui-server.exe'
-    - CommandLine|contains:
-        - 'open-webui.exe'
-        - 'openwebui.exe'
-        - 'webui.exe'
-        - 'open-webui-server.exe'
-  condition: selection
+  selection_python:
+    CommandLine|contains:
+      - 'open-webui serve'
+      - 'open-webui start'
+      - 'python -m open_webui'
+      - 'uvicorn open_webui'
+  selection_docker:
+    CommandLine|contains:
+      - 'ghcr.io/open-webui/open-webui'
+      - 'open-webui/open-webui'
+  condition: selection_python or selection_docker
 fields:
   - Image
   - CommandLine
@@ -36,5 +41,4 @@ fields:
 falsepositives:
   - Legitimate Open WebUI usage
   - Development environments
-  - Microsoft Edge WebView processes
 level: medium

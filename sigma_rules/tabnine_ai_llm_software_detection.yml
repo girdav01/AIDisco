@@ -1,31 +1,32 @@
 title: Tabnine AI LLM Software Detection
 id: 12345678-1234-5678-9abc-123456789010
 status: experimental
-description: Detects Tabnine AI installation and usage
-author: AI Discovery Scanner
-date: 2025-01-02
+description: Detects Tabnine AI code completion tool installation and usage.
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.execution
   - attack.t1059
   - attack.t1071.001
-  - ai.llm
-  - ai.tabnine
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: process_creation
-  product: windows
+  product: any
 detection:
-  selection:
-    - Image|endswith:
-        - '\tabnine.exe'
-        - '\tabnine-ai.exe'
-        - '\tabnine-server.exe'
-        - '\tabnine-daemon.exe'
-    - CommandLine|contains:
-        - 'tabnine'
-        - 'tabnine-ai'
-        - 'tabnine-server'
-        - 'tabnine-daemon'
-  condition: selection
+  selection_image:
+    Image|endswith:
+      - '\TabNine.exe'
+      - '\WD-TabNine.exe'
+      - '/TabNine'
+      - '/tabnine'
+  selection_cmdline:
+    CommandLine|contains:
+      - 'TabNine'
+      - 'WD-TabNine'
+      - 'tabnine'
+  condition: selection_image or selection_cmdline
 fields:
   - Image
   - CommandLine

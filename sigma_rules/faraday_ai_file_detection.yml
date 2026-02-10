@@ -1,34 +1,39 @@
-title: Faraday AI File Detection
+title: Backyard AI (formerly Faraday) File Detection
 id: 12345678-1234-5678-9abc-123456789059
 status: experimental
-description: Detects Faraday AI file system activity
-author: AI Discovery Scanner
-date: 2025-01-02
+description: |
+  Detects Backyard AI (formerly Faraday, rebranded May 2024) file system artifacts.
+  Backyard AI stores data in platform-specific application directories.
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.persistence
-  - attack.t1547
-  - ai.llm
-  - ai.faraday
+  - attack.t1082
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: file_event
-  product: windows
+  product: any
 detection:
-  selection:
-    - TargetFilename|contains:
-        - '\.faraday'
-        - '\faraday\'
-        - '\Faraday\'
-        - '\AppData\Local\Faraday'
-        - '\AppData\Roaming\Faraday'
-        - '\Program Files\Faraday'
-        - '\Program Files (x86)\Faraday'
-  condition: selection
+  selection_backyard_paths:
+    TargetFilename|contains:
+      - '\backyard-ai\'
+      - '/backyard-ai/'
+      - '\Backyard AI\'
+      - '/Backyard AI/'
+      - '\AppData\Local\backyard-ai'
+      - '\AppData\Roaming\backyard-ai'
+  selection_legacy_faraday_paths:
+    TargetFilename|contains:
+      - '\AppData\Local\Faraday'
+      - '\AppData\Roaming\Faraday'
+      - '/Library/Application Support/Faraday'
+  condition: selection_backyard_paths or selection_legacy_faraday_paths
+falsepositives:
+  - Faraday penetration testing framework (different software) uses similar paths
+level: medium
 fields:
   - TargetFilename
   - ProcessName
   - User
-  - EventType
-falsepositives:
-  - Legitimate Faraday AI installation
-  - Development tool updates
-level: medium

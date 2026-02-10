@@ -1,31 +1,31 @@
 title: Brave Leo AI LLM Software Detection
 id: 12345678-1234-5678-9abc-123456789028
 status: experimental
-description: Detects Brave Leo AI installation and usage
-author: AI Discovery Scanner
-date: 2025-01-02
+description: Detects Brave browser with built-in Leo AI assistant. Leo is integrated into the Brave browser and has no standalone process.
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.execution
   - attack.t1059
   - attack.t1071.001
-  - ai.llm
-  - ai.leo
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: process_creation
-  product: windows
+  product: any
 detection:
-  selection:
-    - Image|endswith:
-        - '\leo.exe'
-        - '\brave-leo.exe'
-        - '\leo-ai.exe'
-        - '\leo-desktop.exe'
-    - CommandLine|contains:
-        - 'leo'
-        - 'brave-leo'
-        - 'leo-ai'
-        - 'leo-desktop'
-  condition: selection
+  selection_image:
+    Image|endswith:
+      - '\brave.exe'
+      - '/brave'
+      - '/Brave Browser'
+  selection_cmdline:
+    CommandLine|contains:
+      - 'brave.exe'
+      - 'Brave Browser'
+      - 'brave-browser'
+  condition: selection_image or selection_cmdline
 fields:
   - Image
   - CommandLine
@@ -34,6 +34,6 @@ fields:
   - ParentImage
   - ParentCommandLine
 falsepositives:
-  - Legitimate Brave Leo AI usage
-  - Development environments
+  - Legitimate Brave browser usage without Leo AI features
+  - General web browsing
 level: medium

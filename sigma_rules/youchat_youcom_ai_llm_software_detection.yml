@@ -1,31 +1,26 @@
 title: YouChat/You.com AI LLM Software Detection
 id: 12345678-1234-5678-9abc-123456789034
 status: experimental
-description: Detects YouChat/You.com AI installation and usage
-author: AI Discovery Scanner
-date: 2025-01-02
+description: Detects You.com AI platform usage via browser access or API calls (no standalone desktop app exists)
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.execution
   - attack.t1059
   - attack.t1071.001
-  - ai.llm
-  - ai.youchat
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: process_creation
-  product: windows
+  product: any
 detection:
-  selection:
-    - Image|endswith:
-        - '\youchat.exe'
-        - '\you-com.exe'
-        - '\youchat-ai.exe'
-        - '\you-desktop.exe'
-    - CommandLine|contains:
-        - 'youchat'
-        - 'you-com'
-        - 'youchat-ai'
-        - 'you-desktop'
-  condition: selection
+  selection_browser_url:
+    CommandLine|contains:
+      - 'you.com/search'
+      - 'you.com/chat'
+      - 'api.you.com'
+  condition: selection_browser_url
 fields:
   - Image
   - CommandLine
@@ -34,6 +29,6 @@ fields:
   - ParentImage
   - ParentCommandLine
 falsepositives:
-  - Legitimate YouChat/You.com AI usage
-  - Development environments
+  - Legitimate You.com usage
+  - General web browsing to you.com
 level: medium

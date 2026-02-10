@@ -1,33 +1,39 @@
 title: Text Generation WebUI (Oobabooga) LLM Software Detection
 id: 12345678-1234-5678-9abc-123456789049
 status: experimental
-description: Detects text-generation-webui (Oobabooga) installation and usage
-author: AI Discovery Scanner
-date: 2025-01-02
+description: >
+  Detects text-generation-webui (Oobabooga) installation and usage. This is
+  a Python web application, NOT a native desktop app. It has no .exe binary.
+  It runs via 'python server.py' or platform-specific launch scripts
+  (start_linux.sh, start_windows.bat, start_macos.sh, start_wsl.bat).
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.execution
   - attack.t1059
   - attack.t1071.001
-  - ai.llm
-  - ai.oobabooga
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: process_creation
-  product: windows
+  product: any
 detection:
-  selection:
-    - Image|endswith:
-        - '\text-generation-webui.exe'
-        - '\oobabooga.exe'
-        - '\webui.exe'
-        - '\text-generation-webui-server.exe'
-        - '\oobabooga-server.exe'
-    - CommandLine|contains:
-        - 'text-generation-webui.exe'
-        - 'oobabooga.exe'
-        - 'webui.exe'
-        - 'text-generation-webui-server.exe'
-        - 'oobabooga-server.exe'
-  condition: selection
+  selection_python_server:
+    CommandLine|contains:
+      - 'text-generation-webui'
+      - 'textgen'
+  selection_launch_scripts:
+    CommandLine|contains:
+      - 'start_linux.sh'
+      - 'start_windows.bat'
+      - 'start_macos.sh'
+      - 'start_wsl.bat'
+  selection_server_py:
+    CommandLine|contains|all:
+      - 'server.py'
+      - '--model'
+  condition: selection_python_server or selection_launch_scripts or selection_server_py
 fields:
   - Image
   - CommandLine
@@ -38,5 +44,5 @@ fields:
 falsepositives:
   - Legitimate text-generation-webui usage
   - Development environments
-  - Microsoft Edge WebView processes
+  - Other Python web servers using server.py with --model flag
 level: medium

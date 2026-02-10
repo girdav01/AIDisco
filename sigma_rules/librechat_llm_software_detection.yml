@@ -1,31 +1,32 @@
 title: LibreChat LLM Software Detection
 id: 12345678-1234-5678-9abc-123456789043
 status: experimental
-description: Detects LibreChat installation and usage
-author: AI Discovery Scanner
-date: 2025-01-02
+description: >
+  Detects LibreChat installation and usage. LibreChat is a web application
+  that runs via Docker (ghcr.io/danny-avila/librechat) or Node.js. It does
+  not have a native desktop binary or .exe.
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.execution
   - attack.t1059
   - attack.t1071.001
-  - ai.llm
-  - ai.libreachat
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: process_creation
-  product: windows
+  product: any
 detection:
-  selection:
-    - Image|endswith:
-        - '\librechat.exe'
-        - '\libre-chat.exe'
-        - '\librechat-server.exe'
-        - '\libre-chat-server.exe'
-    - CommandLine|contains:
-        - 'librechat'
-        - 'libre-chat'
-        - 'librechat-server'
-        - 'libre-chat-server'
-  condition: selection
+  selection_node:
+    CommandLine|contains:
+      - 'librechat'
+      - 'LibreChat'
+  selection_docker:
+    CommandLine|contains:
+      - 'danny-avila/librechat'
+      - 'ghcr.io/danny-avila/librechat'
+  condition: selection_node or selection_docker
 fields:
   - Image
   - CommandLine

@@ -1,34 +1,32 @@
 title: Poe AI File Detection
 id: 12345678-1234-5678-9abc-123456789032
 status: experimental
-description: Detects Poe AI file system activity
-author: AI Discovery Scanner
-date: 2025-01-02
+description: Detects Poe AI file system activity on Windows and macOS
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.persistence
   - attack.t1547
-  - ai.llm
-  - ai.poe
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: file_event
-  product: windows
+  product: any
 detection:
-  selection:
-    - TargetFilename|contains:
-        - '\.poe'
-        - '\poe\'
-        - '\Poe\'
-        - '\AppData\Local\Poe'
-        - '\AppData\Roaming\Poe'
-        - '\Program Files\Poe'
-        - '\Program Files (x86)\Poe'
-        - '\Quora\Poe'
-  condition: selection
+  selection_windows:
+    TargetFilename|contains:
+      - '\AppData\Local\Programs\Poe'
+      - '\AppData\Roaming\Poe'
+  selection_macos:
+    TargetFilename|contains:
+      - '/Applications/Poe.app'
+      - '/Library/Application Support/Poe'
+  condition: selection_windows or selection_macos
 fields:
   - TargetFilename
   - ProcessName
   - User
-  - EventType
 falsepositives:
   - Legitimate Poe AI installation
   - Development tool updates

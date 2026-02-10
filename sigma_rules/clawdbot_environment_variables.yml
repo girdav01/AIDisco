@@ -2,24 +2,20 @@ title: ClawdBot/OpenClaw/MoltBot AI Discord Bot Environment Variables
 id: 12345678-1234-5678-9abc-123456789072
 status: experimental
 description: Detects ClawdBot, OpenClaw, and MoltBot AI Discord bot environment variable configuration. These are all variants of the same software.
-author: AI Discovery Scanner
-date: 2025-01-27
-modified: 2026-02-08
+author: AI Discovery Security Team
+date: 2025/01/27
+modified: 2026/02/10
 tags:
   - attack.discovery
   - attack.t1082
-  - ai.llm
-  - ai.clawdbot
-  - ai.openclaw
-  - ai.moltbot
-  - ai.discord
-  - ai.claude
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: process_creation
-  product: windows
+  product: any
 detection:
   selection_clawdbot:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'CLAWDBOT_'
       - 'CLAWDBOT_TOKEN'
       - 'CLAWDBOT_API_KEY'
@@ -40,7 +36,7 @@ detection:
       - 'CLAWDBOT_DEBUG'
       - 'CLAWDBOT_BASE_URL'
   selection_openclaw:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'OPENCLAW_'
       - 'OPENCLAW_TOKEN'
       - 'OPENCLAW_API_KEY'
@@ -66,7 +62,7 @@ detection:
       - 'OPENCLAW_REDIS_URL'
       - 'OPENCLAW_DATABASE_URL'
   selection_moltbot:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'MOLTBOT_'
       - 'MOLTBOT_TOKEN'
       - 'MOLTBOT_API_KEY'
@@ -95,7 +91,6 @@ detection:
 fields:
   - Image
   - CommandLine
-  - EnvironmentVariables
   - User
 falsepositives:
   - Legitimate ClawdBot, OpenClaw, or MoltBot AI Discord bot configuration

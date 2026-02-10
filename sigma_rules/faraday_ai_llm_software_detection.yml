@@ -1,39 +1,45 @@
-title: Faraday AI LLM Software Detection
+title: Backyard AI (formerly Faraday) LLM Software Detection
 id: 12345678-1234-5678-9abc-123456789058
 status: experimental
-description: Detects Faraday AI installation and usage
-author: AI Discovery Scanner
-date: 2025-01-02
+description: |
+  Detects Backyard AI (formerly Faraday, rebranded May 2024) desktop application
+  for running local LLMs. Backyard AI provides a chat interface for local model
+  inference on Windows and macOS. Available as an Electron desktop app.
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.execution
   - attack.t1059
-  - attack.t1071.001
-  - ai.llm
-  - ai.faraday
+  - attack.t1082
+  - ai.framework
+  - ai.shadow_ai
+references:
+  - https://backyard.ai/
 logsource:
   category: process_creation
-  product: windows
+  product: any
 detection:
-  selection:
-    - Image|endswith:
-        - '\faraday.exe'
-        - '\faraday-ai.exe'
-        - '\faraday-desktop.exe'
-        - '\faraday-server.exe'
-    - CommandLine|contains:
-        - 'faraday'
-        - 'faraday-ai'
-        - 'faraday-desktop'
-        - 'faraday-server'
-  condition: selection
+  selection_backyard:
+    Image|endswith:
+      - '\Backyard AI.exe'
+      - '/Backyard AI'
+  selection_backyard_commands:
+    CommandLine|contains:
+      - 'backyard-ai'
+      - 'Backyard AI'
+      - 'backyardai'
+  selection_legacy_faraday:
+    Image|endswith:
+      - '\Faraday.exe'
+      - '/Faraday'
+  condition: selection_backyard or selection_backyard_commands or selection_legacy_faraday
+falsepositives:
+  - Legitimate use of Backyard AI for authorized local LLM usage
+  - The name Faraday may match Faraday penetration testing framework (different software)
+level: medium
 fields:
   - Image
   - CommandLine
-  - ProcessId
   - User
   - ParentImage
-  - ParentCommandLine
-falsepositives:
-  - Legitimate Faraday AI usage
-  - Development environments
-level: medium

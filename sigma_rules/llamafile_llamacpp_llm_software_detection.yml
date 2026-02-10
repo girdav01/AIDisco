@@ -1,31 +1,48 @@
 title: Llamafile/llama.cpp LLM Software Detection
 id: 12345678-1234-5678-9abc-123456789055
 status: experimental
-description: Detects Llamafile/llama.cpp installation and usage
-author: AI Discovery Scanner
-date: 2025-01-02
+description: >
+  Detects Llamafile and llama.cpp installation and usage. Llamafile is a
+  single-file executable where the process name is the llamafile itself
+  (e.g., mistral-7b.llamafile). llama.cpp real binaries are llama-cli
+  (formerly main), llama-server (formerly server), and llama-quantize.
+  The fabricated name llama-cpp.exe does not exist. These tools have no
+  standard install location as users download them to arbitrary paths.
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.execution
   - attack.t1059
   - attack.t1071.001
-  - ai.llm
-  - ai.llamafile
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: process_creation
-  product: windows
+  product: any
 detection:
-  selection:
-    - Image|endswith:
-        - '\llamafile.exe'
-        - '\llama-cpp.exe'
-        - '\llamafile-server.exe'
-        - '\llama-cpp-server.exe'
-    - CommandLine|contains:
-        - 'llamafile.exe'
-        - 'llama-cpp.exe'
-        - 'llamafile-server.exe'
-        - 'llama-cpp-server.exe'
-  condition: selection
+  selection_llamafile:
+    Image|endswith:
+      - '.llamafile'
+      - '.llamafile.exe'
+  selection_llamafile_cmd:
+    CommandLine|contains:
+      - '.llamafile'
+  selection_llamacpp_binaries:
+    Image|endswith:
+      - '\llama-cli.exe'
+      - '\llama-server.exe'
+      - '\llama-quantize.exe'
+      - '/llama-cli'
+      - '/llama-server'
+      - '/llama-quantize'
+  selection_llamacpp_cmd:
+    CommandLine|contains:
+      - 'llama-cli'
+      - 'llama-server'
+      - 'llama-quantize'
+      - 'llama.cpp'
+  condition: selection_llamafile or selection_llamafile_cmd or selection_llamacpp_binaries or selection_llamacpp_cmd
 fields:
   - Image
   - CommandLine
@@ -36,4 +53,5 @@ fields:
 falsepositives:
   - Legitimate Llamafile/llama.cpp usage
   - Development environments
+  - AI/ML research
 level: medium

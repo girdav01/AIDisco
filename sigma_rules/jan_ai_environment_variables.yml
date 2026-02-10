@@ -1,32 +1,38 @@
 title: Jan AI Environment Variables
 id: 12345678-1234-5678-9abc-123456789048
 status: experimental
-description: Detects Jan AI environment variable configuration
-author: AI Discovery Scanner
-date: 2025-01-02
+description: >
+  Detects Jan AI related patterns in process command lines. Jan does not have
+  confirmed tool-specific environment variables. This rule detects command-line
+  patterns associated with Jan AI usage instead. For best results, correlate
+  with Jan AI file and process detection rules.
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.discovery
   - attack.t1082
-  - ai.llm
-  - ai.jan
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: process_creation
-  product: windows
+  product: any
 detection:
-  selection:
-    EnvironmentVariables|contains:
-      - 'JAN_'
-      - 'JAN_AI'
-      - 'JAN_TOKEN'
-      - 'JAN_HOST'
-      - 'JAN_MODEL'
-  condition: selection
+  selection_jan_paths:
+    CommandLine|contains:
+      - 'jan/models'
+      - 'jan\\models'
+      - 'jan-ai'
+  selection_jan_server:
+    CommandLine|contains:
+      - 'Jan.exe'
+      - '/Applications/Jan.app'
+  condition: selection_jan_paths or selection_jan_server
 fields:
   - Image
   - CommandLine
-  - EnvironmentVariables
   - User
 falsepositives:
   - Legitimate Jan AI configuration
-  - Development environment setup
+  - Other tools referencing jan-related paths
 level: low

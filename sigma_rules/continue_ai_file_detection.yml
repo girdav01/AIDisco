@@ -1,33 +1,29 @@
 title: Continue AI File Detection
 id: 12345678-1234-5678-9abc-123456789017
 status: experimental
-description: Detects Continue AI file system activity
-author: AI Discovery Scanner
-date: 2025-01-02
+description: Detects Continue AI coding assistant file system activity and configuration.
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.persistence
   - attack.t1547
-  - ai.llm
-  - ai.continue
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: file_event
-  product: windows
+  product: any
 detection:
-  selection:
-    - TargetFilename|contains:
-        - '\.continue'
-        - '\continue\'
-        - '\Continue\'
-        - '\AppData\Local\Continue'
-        - '\AppData\Roaming\Continue'
-        - '\Program Files\Continue'
-        - '\Program Files (x86)\Continue'
-  condition: selection
+  selection_paths:
+    TargetFilename|contains:
+      - '\.continue\'
+      - '\.continue/'
+      - '/.continue/'
+  condition: selection_paths
 fields:
   - TargetFilename
   - ProcessName
   - User
-  - EventType
 falsepositives:
   - Legitimate Continue AI installation
   - Development tool updates

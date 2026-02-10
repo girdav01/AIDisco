@@ -1,33 +1,29 @@
 title: Brave Leo AI Environment Variables
 id: 12345678-1234-5678-9abc-123456789030
 status: experimental
-description: Detects Brave Leo AI environment variable configuration
-author: AI Discovery Scanner
-date: 2025-01-02
+description: Detects Brave browser AI feature indicators on command line. Leo AI is built into Brave and does not use standalone environment variables.
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.discovery
   - attack.t1082
-  - ai.llm
-  - ai.leo
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: process_creation
-  product: windows
+  product: any
 detection:
-  selection:
-    EnvironmentVariables|contains:
-      - 'LEO_'
-      - 'BRAVE_LEO'
-      - 'LEO_TOKEN'
-      - 'LEO_API_KEY'
-      - 'LEO_HOST'
-      - 'LEO_MODEL'
-  condition: selection
+  selection_cmdline:
+    CommandLine|contains:
+      - 'BRAVE_'
+      - '--enable-features=BraveLeo'
+  condition: selection_cmdline
 fields:
   - Image
   - CommandLine
-  - EnvironmentVariables
   - User
 falsepositives:
-  - Legitimate Brave Leo AI configuration
-  - Development environment setup
+  - Legitimate Brave browser configuration
+  - Browser feature testing
 level: low

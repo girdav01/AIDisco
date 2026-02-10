@@ -1,31 +1,28 @@
 title: Google Gemini AI LLM Software Detection
 id: 12345678-1234-5678-9abc-123456789025
 status: experimental
-description: Detects Google Gemini AI installation and usage
-author: AI Discovery Scanner
-date: 2025-01-02
+description: Detects Google Gemini AI usage via browser access or Gemini CLI tool (no standalone desktop app exists)
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.execution
   - attack.t1059
   - attack.t1071.001
-  - ai.llm
-  - ai.gemini
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: process_creation
-  product: windows
+  product: any
 detection:
-  selection:
-    - Image|endswith:
-        - '\gemini.exe'
-        - '\google-gemini.exe'
-        - '\gemini-ai.exe'
-        - '\gemini-desktop.exe'
-    - CommandLine|contains:
-        - 'gemini'
-        - 'google-gemini'
-        - 'gemini-ai'
-        - 'gemini-desktop'
-  condition: selection
+  selection_browser_url:
+    CommandLine|contains:
+      - 'gemini.google.com'
+      - 'aistudio.google.com'
+  selection_cli:
+    Image|endswith:
+      - '/gemini'
+  condition: selection_browser_url or selection_cli
 fields:
   - Image
   - CommandLine
@@ -35,5 +32,5 @@ fields:
   - ParentCommandLine
 falsepositives:
   - Legitimate Google Gemini AI usage
-  - Development environments
+  - Google AI Studio development
 level: medium

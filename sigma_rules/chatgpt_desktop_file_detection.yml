@@ -1,34 +1,33 @@
 title: ChatGPT Desktop File Detection
 id: 12345678-1234-5678-9abc-123456789020
 status: experimental
-description: Detects ChatGPT desktop file system activity
-author: AI Discovery Scanner
-date: 2025-01-02
+description: Detects ChatGPT desktop file system activity on Windows and macOS
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.persistence
   - attack.t1547
-  - ai.llm
-  - ai.chatgpt
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: file_event
-  product: windows
+  product: any
 detection:
-  selection:
-    - TargetFilename|contains:
-        - '\.chatgpt'
-        - '\chatgpt\'
-        - '\ChatGPT\'
-        - '\AppData\Local\ChatGPT'
-        - '\AppData\Roaming\ChatGPT'
-        - '\Program Files\ChatGPT'
-        - '\Program Files (x86)\ChatGPT'
-        - '\OpenAI\ChatGPT'
-  condition: selection
+  selection_windows_install:
+    TargetFilename|contains:
+      - '\Programs\ChatGPT'
+      - '\Packages\OpenAI'
+      - '\AppData\Local\ChatGPT'
+  selection_macos:
+    TargetFilename|contains:
+      - '/Applications/ChatGPT.app'
+      - '/Library/Application Support/ChatGPT'
+  condition: selection_windows_install or selection_macos
 fields:
   - TargetFilename
   - ProcessName
   - User
-  - EventType
 falsepositives:
   - Legitimate ChatGPT desktop installation
   - Development tool updates

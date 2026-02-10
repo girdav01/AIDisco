@@ -1,37 +1,38 @@
 title: AnythingLLM File Detection
 id: 12345678-1234-5678-9abc-123456789041
 status: experimental
-description: Detects AnythingLLM file system activity
-author: AI Discovery Scanner
-date: 2025-01-02
+description: >
+  Detects AnythingLLM file system activity. AnythingLLM desktop stores data
+  in platform-specific application data directories. Docker deployments use
+  mounted volumes for storage.
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.persistence
   - attack.t1547
-  - ai.llm
-  - ai.anythingllm
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: file_event
-  product: windows
+  product: any
 detection:
-  selection:
-    - TargetFilename|contains:
-        - '\.anything-llm'
-        - '\anything-llm\'
-        - '\Anything-LLM\'
-        - '\.anythingllm'
-        - '\anythingllm\'
-        - '\AnythingLLM\'
-        - '\AppData\Local\Anything-LLM'
-        - '\AppData\Roaming\Anything-LLM'
-        - '\Program Files\Anything-LLM'
-        - '\Program Files (x86)\Anything-LLM'
-  condition: selection
+  selection_windows:
+    TargetFilename|contains:
+      - '\AppData\Roaming\anythingllm-desktop'
+      - '\anythingllm-desktop\'
+  selection_macos:
+    TargetFilename|contains:
+      - '/Library/Application Support/anythingllm-desktop'
+  selection_linux:
+    TargetFilename|contains:
+      - '/.config/anythingllm'
+  condition: selection_windows or selection_macos or selection_linux
 fields:
   - TargetFilename
   - ProcessName
   - User
-  - EventType
 falsepositives:
   - Legitimate AnythingLLM installation
-  - Development tool updates
+  - Development environments
 level: medium

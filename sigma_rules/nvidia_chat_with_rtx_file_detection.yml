@@ -1,37 +1,36 @@
-title: NVIDIA Chat with RTX File Detection
+title: NVIDIA ChatRTX (formerly Chat with RTX) File Detection
 id: 12345678-1234-5678-9abc-123456789062
 status: experimental
-description: Detects NVIDIA Chat with RTX file system activity
-author: AI Discovery Scanner
-date: 2025-01-02
+description: |
+  Detects NVIDIA ChatRTX file system artifacts. ChatRTX installs to
+  C:\Program Files\NVIDIA\ChatRTX (or ChatWithRTX for older versions).
+  Deprecated by NVIDIA in January 2026.
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.persistence
-  - attack.t1547
-  - ai.llm
-  - ai.nvidia-chat-rtx
+  - attack.t1082
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: file_event
   product: windows
 detection:
-  selection:
-    - TargetFilename|contains:
-        - '\.nvidia-chat-rtx'
-        - '\nvidia-chat-rtx\'
-        - '\NVIDIA-Chat-RTX\'
-        - '\.chat-rtx'
-        - '\chat-rtx\'
-        - '\Chat-RTX\'
-        - '\AppData\Local\NVIDIA\Chat-RTX'
-        - '\AppData\Roaming\NVIDIA\Chat-RTX'
-        - '\Program Files\NVIDIA\Chat-RTX'
-        - '\Program Files (x86)\NVIDIA\Chat-RTX'
-  condition: selection
+  selection_chatrtx:
+    TargetFilename|contains:
+      - '\NVIDIA\ChatRTX'
+      - '\NVIDIA\ChatWithRTX'
+      - '\Program Files\NVIDIA\ChatRTX'
+      - '\Program Files\NVIDIA\ChatWithRTX'
+  selection_appdata:
+    TargetFilename|contains:
+      - '\AppData\Local\NVIDIA\ChatRTX'
+  condition: selection_chatrtx or selection_appdata
+falsepositives:
+  - Legitimate NVIDIA ChatRTX installation
+level: medium
 fields:
   - TargetFilename
   - ProcessName
   - User
-  - EventType
-falsepositives:
-  - Legitimate NVIDIA Chat with RTX installation
-  - Development tool updates
-level: medium

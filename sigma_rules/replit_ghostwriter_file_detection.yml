@@ -1,33 +1,33 @@
-title: Replit Ghostwriter File Detection
-id: 12345678-1234-5678-9abc-123456789005
+title: Replit AI (formerly Ghostwriter) File Detection
+id: 12345678-1234-5678-9abc-123456789065
 status: experimental
-description: Detects Replit Ghostwriter file system activity
-author: AI Discovery Scanner
-date: 2025-01-02
+description: |
+  Detects Replit Desktop application file system artifacts. Replit AI (formerly
+  Ghostwriter) is integrated into the Replit IDE platform.
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.persistence
-  - attack.t1547
-  - ai.llm
-  - ai.ghostwriter
+  - attack.t1082
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: file_event
-  product: windows
+  product: any
 detection:
-  selection:
-    - TargetFilename|contains:
-        - '\.ghostwriter'
-        - '\ghostwriter\'
-        - '\Replit\Ghostwriter'
-        - '\AppData\Local\Replit\Ghostwriter'
-        - '\AppData\Roaming\Replit\Ghostwriter'
-        - '\Program Files\Replit\Ghostwriter'
-  condition: selection
+  selection_replit_paths:
+    TargetFilename|contains:
+      - '\AppData\Local\replit'
+      - '\AppData\Roaming\replit'
+      - '\AppData\Local\Programs\Replit'
+      - '/Library/Application Support/Replit'
+      - '/.config/replit'
+  condition: selection_replit_paths
+falsepositives:
+  - Legitimate Replit installation for authorized development
+level: medium
 fields:
   - TargetFilename
   - ProcessName
   - User
-  - EventType
-falsepositives:
-  - Legitimate Replit Ghostwriter installation
-  - Development tool updates
-level: medium

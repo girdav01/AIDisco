@@ -21,7 +21,7 @@ logsource:
   product: any
 detection:
   selection_langchain:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'LANGCHAIN_API_KEY'
       - 'LANGCHAIN_TRACING_V2'
       - 'LANGCHAIN_ENDPOINT'
@@ -30,29 +30,29 @@ detection:
       - 'LANGCHAIN_CACHE'
       - 'LANGCHAIN_HANDLER'
   selection_llamaindex:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'LLAMA_INDEX_CACHE_DIR'
       - 'LLAMA_INDEX_SHOW_PROGRESS'
       - 'LLAMA_CLOUD_API_KEY'
   selection_autogen:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'AUTOGEN_USE_DOCKER'
       - 'OAI_CONFIG_LIST'
   selection_crewai:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'CREWAI_STORAGE_DIR'
       - 'CREW_VERBOSE'
   selection_haystack:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'HAYSTACK_TELEMETRY_ENABLED'
       - 'HAYSTACK_CONTENT_TRACING_ENABLED'
   selection_dify:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'DIFY_API_KEY'
       - 'DIFY_API_BASE'
       - 'DIFY_APP_ID'
   selection_flowise:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'FLOWISE_USERNAME'
       - 'FLOWISE_PASSWORD'
       - 'FLOWISE_SECRETKEY_OVERWRITE'
@@ -60,24 +60,24 @@ detection:
       - 'DATABASE_PATH'
       - 'APIKEY_PATH'
   selection_chainlit:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'CHAINLIT_AUTH_SECRET'
       - 'CHAINLIT_URL'
       - 'CHAINLIT_API_KEY'
   selection_gradio:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'GRADIO_SERVER_PORT'
       - 'GRADIO_SERVER_NAME'
       - 'GRADIO_SHARE'
       - 'GRADIO_ANALYTICS_ENABLED'
       - 'GRADIO_TEMP_DIR'
   selection_semantic_kernel:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'AZURE_OPENAI_CHAT_DEPLOYMENT_NAME'
       - 'AZURE_OPENAI_TEXT_DEPLOYMENT_NAME'
       - 'AZURE_OPENAI_EMBEDDING_DEPLOYMENT_NAME'
   selection_n8n:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'N8N_BASIC_AUTH_USER'
       - 'N8N_BASIC_AUTH_PASSWORD'
       - 'N8N_PORT'
@@ -86,41 +86,41 @@ detection:
       - 'N8N_ENCRYPTION_KEY'
       - 'N8N_AI_'
   selection_chroma:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'CHROMA_API_IMPL'
       - 'CHROMA_SERVER_HOST'
       - 'CHROMA_SERVER_HTTP_PORT'
       - 'CHROMA_COLLECTION'
       - 'CHROMA_DB_IMPL'
   selection_pinecone:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'PINECONE_API_KEY'
       - 'PINECONE_ENVIRONMENT'
       - 'PINECONE_INDEX_NAME'
       - 'PINECONE_PROJECT_NAME'
   selection_qdrant:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'QDRANT_API_KEY'
       - 'QDRANT_URL'
       - 'QDRANT_HOST'
       - 'QDRANT_PORT'
       - 'QDRANT_COLLECTION_NAME'
   selection_weaviate:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'WEAVIATE_API_KEY'
       - 'WEAVIATE_URL'
       - 'WEAVIATE_HOST'
       - 'WEAVIATE_SCHEME'
   selection_milvus:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'MILVUS_HOST'
       - 'MILVUS_PORT'
       - 'MILVUS_TOKEN'
   condition: selection_langchain or selection_llamaindex or selection_autogen or selection_crewai or selection_haystack or selection_dify or selection_flowise or selection_chainlit or selection_gradio or selection_semantic_kernel or selection_n8n or selection_chroma or selection_pinecone or selection_qdrant or selection_weaviate or selection_milvus
 fields:
-  - EnvironmentVariables
+  - CommandLine
+  - Image
   - User
-  - ProcessName
 falsepositives:
   - Authorized AI development teams
   - Managed data science environments

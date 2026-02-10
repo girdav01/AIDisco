@@ -1,40 +1,48 @@
 title: Llamafile/llama.cpp File Detection
 id: 12345678-1234-5678-9abc-123456789056
 status: experimental
-description: Detects Llamafile/llama.cpp file system activity
-author: AI Discovery Scanner
-date: 2025-01-02
+description: >
+  Detects Llamafile and llama.cpp file system activity. Llamafile uses
+  single-file executables with the .llamafile extension. llama.cpp projects
+  are typically compiled from source or downloaded as pre-built binaries.
+  These tools have no standard install location. Detection targets the
+  .llamafile extension and llama.cpp build/binary artifacts.
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.persistence
   - attack.t1547
-  - ai.llm
-  - ai.llamafile
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: file_event
-  product: windows
+  product: any
 detection:
-  selection:
-    - TargetFilename|contains:
-        - '\.llamafile'
-        - '\llamafile\'
-        - '\Llamafile\'
-        - '\.llama-cpp'
-        - '\llama-cpp\'
-        - '\llama.cpp\'
-        - '\Llama-CPP\'
-        - '\AppData\Local\Llamafile'
-        - '\AppData\Roaming\Llamafile'
-        - '\AppData\Local\llama-cpp'
-        - '\AppData\Roaming\llama-cpp'
-        - '\Program Files\Llamafile'
-        - '\Program Files\llama-cpp'
-  condition: selection
+  selection_llamafile_ext:
+    TargetFilename|endswith:
+      - '.llamafile'
+      - '.llamafile.exe'
+  selection_llamacpp_dir:
+    TargetFilename|contains:
+      - '/llama.cpp/'
+      - '\\llama.cpp\\'
+      - '/llama-cpp/'
+      - '\\llama-cpp\\'
+  selection_llamacpp_binaries:
+    TargetFilename|endswith:
+      - '/llama-cli'
+      - '/llama-server'
+      - '/llama-quantize'
+      - '\llama-cli.exe'
+      - '\llama-server.exe'
+      - '\llama-quantize.exe'
+  condition: selection_llamafile_ext or selection_llamacpp_dir or selection_llamacpp_binaries
 fields:
   - TargetFilename
   - ProcessName
   - User
-  - EventType
 falsepositives:
   - Legitimate Llamafile/llama.cpp installation
-  - Development tool updates
+  - AI/ML development and research
 level: medium

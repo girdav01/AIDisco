@@ -1,46 +1,31 @@
 title: Chatbox AI Chat Application File Detection
 id: 12345678-1234-5678-9abc-123456789008
 status: experimental
-description: Detects Chatbox AI chat application file system activity and configuration
-author: AI Discovery Scanner
-date: 2025-01-02
+description: Detects Chatbox AI desktop chat client file system activity and configuration.
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.persistence
   - attack.t1547
-  - ai.llm
-  - ai.chatbox
-  - ai.chat
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: file_event
-  product: windows
+  product: any
 detection:
-  selection:
-    - TargetFilename|contains:
-        - '\chatbox\'
-        - '\Chatbox\'
-        - '\chatbox-app\'
-        - '\Chatbox.app\'
-        - '\chatbox-desktop\'
-        - '\Chatbox Desktop\'
-        - '\AppData\Local\Chatbox\'
-        - '\AppData\Roaming\Chatbox\'
-        - '\AppData\Local\chatbox-app\'
-        - '\AppData\Roaming\chatbox-app\'
-        - '\AppData\Local\chatbox-desktop\'
-        - '\AppData\Roaming\chatbox-desktop\'
-        - '\Program Files\Chatbox\'
-        - '\Program Files (x86)\Chatbox\'
-        - '\Users\\.chatbox\'
-        - '\Users\\.chatbox-app\'
-        - '\Users\\.chatbox-desktop\'
-  condition: selection
+  selection_paths:
+    TargetFilename|contains:
+      - '\AppData\Roaming\chatbox'
+      - '\AppData\Local\chatbox'
+      - '/.config/chatbox'
+      - '\Chatbox\'
+  condition: selection_paths
 fields:
   - TargetFilename
   - ProcessName
   - User
-  - EventType
 falsepositives:
   - Legitimate Chatbox installation and configuration
   - AI chat application setup
-  - Desktop chat application configuration
 level: medium

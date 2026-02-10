@@ -1,34 +1,41 @@
 title: Text Generation WebUI (Oobabooga) Environment Variables
 id: 12345678-1234-5678-9abc-123456789051
 status: experimental
-description: Detects text-generation-webui (Oobabooga) environment variable configuration
-author: AI Discovery Scanner
-date: 2025-01-02
+description: >
+  Detects text-generation-webui (Oobabooga) configuration in process command
+  lines. Oobabooga primarily uses command-line flags rather than environment
+  variables. Note: The WEBUI_ prefix may collide with Open WebUI environment
+  variables. Correlate with other Oobabooga indicators for confirmation.
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.discovery
   - attack.t1082
-  - ai.llm
-  - ai.oobabooga
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: process_creation
-  product: windows
+  product: any
 detection:
-  selection:
-    EnvironmentVariables|contains:
-      - 'TEXT_GENERATION_WEBUI_'
-      - 'OOBABOOGA_'
-      - 'WEBUI_'
-      - 'TEXT_GENERATION_WEBUI_TOKEN'
-      - 'OOBABOOGA_TOKEN'
-      - 'WEBUI_HOST'
-      - 'WEBUI_MODEL'
-  condition: selection
+  selection_cli_flags:
+    CommandLine|contains:
+      - '--model-dir'
+      - '--listen'
+      - '--api'
+      - '--extensions'
+      - '--loader'
+  selection_textgen_specific:
+    CommandLine|contains|all:
+      - 'text-generation-webui'
+  condition: selection_cli_flags or selection_textgen_specific
 fields:
   - Image
   - CommandLine
-  - EnvironmentVariables
   - User
 falsepositives:
   - Legitimate text-generation-webui configuration
   - Development environment setup
+  - Other Python applications using similar CLI flags (--model-dir, --listen, --api)
+  - Open WebUI may share WEBUI_ prefix variables
 level: low

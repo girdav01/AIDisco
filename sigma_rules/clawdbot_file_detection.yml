@@ -2,21 +2,17 @@ title: ClawdBot/OpenClaw/MoltBot AI Discord Bot File Detection
 id: 12345678-1234-5678-9abc-123456789071
 status: experimental
 description: Detects ClawdBot, OpenClaw, and MoltBot AI Discord bot file system activity and configuration. These are all variants of the same software.
-author: AI Discovery Scanner
-date: 2025-01-27
-modified: 2026-02-08
+author: AI Discovery Security Team
+date: 2025/01/27
+modified: 2026/02/10
 tags:
   - attack.persistence
-  - attack.t1547
-  - ai.llm
-  - ai.clawdbot
-  - ai.openclaw
-  - ai.moltbot
-  - ai.discord
-  - ai.claude
+  - attack.t1082
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: file_event
-  product: windows
+  product: any
 detection:
   selection_clawdbot:
     - TargetFilename|contains:
@@ -95,7 +91,6 @@ fields:
   - TargetFilename
   - ProcessName
   - User
-  - EventType
 falsepositives:
   - Legitimate ClawdBot, OpenClaw, or MoltBot installation and configuration
   - AI Discord bot application setup

@@ -1,37 +1,44 @@
-title: Windsurf AI LLM Software Detection
-id: 12345678-1234-5678-9abc-123456789007
+title: Windsurf AI Code Editor Detection
+id: 12345678-1234-5678-9abc-123456789067
 status: experimental
-description: Detects Windsurf AI installation and usage
-author: AI Discovery Scanner
-date: 2025-01-02
+description: |
+  Detects Windsurf (by Codeium, acquired by OpenAI in 2025) AI-powered code editor.
+  Windsurf is a VS Code fork with integrated AI coding assistant (Cascade). It runs
+  as an Electron application. Also detects legacy Codeium extension processes.
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.execution
   - attack.t1059
-  - attack.t1071.001
-  - ai.llm
-  - ai.windsurf
+  - attack.t1082
+  - ai.framework
+  - ai.shadow_ai
+references:
+  - https://codeium.com/windsurf
 logsource:
   category: process_creation
-  product: windows
+  product: any
 detection:
-  selection:
-    - Image|endswith:
-        - '\windsurf.exe'
-        - '\windsurf-ai.exe'
-        - '\windsurf-cli.exe'
-    - CommandLine|contains:
-        - 'windsurf'
-        - 'windsurf-ai'
-        - 'windsurf-cli'
-  condition: selection
+  selection_windsurf:
+    Image|endswith:
+      - '\Windsurf.exe'
+      - '/windsurf'
+  selection_codeium_legacy:
+    Image|endswith:
+      - '\codeium.exe'
+      - '/codeium'
+  selection_commands:
+    CommandLine|contains:
+      - 'windsurf'
+      - 'Windsurf'
+      - 'codeium'
+  condition: selection_windsurf or selection_codeium_legacy or selection_commands
+falsepositives:
+  - Legitimate use of Windsurf for authorized development
+level: medium
 fields:
   - Image
   - CommandLine
-  - ProcessId
   - User
   - ParentImage
-  - ParentCommandLine
-falsepositives:
-  - Legitimate Windsurf AI usage
-  - Development environments
-level: medium

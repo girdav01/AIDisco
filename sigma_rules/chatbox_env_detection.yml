@@ -1,38 +1,28 @@
 title: Chatbox AI Chat Application Environment Variables
 id: 12345678-1234-5678-9abc-123456789009
 status: experimental
-description: Detects Chatbox AI chat application environment variable configuration
-author: AI Discovery Scanner
-date: 2025-01-02
+description: Detects Chatbox AI desktop chat client environment variable configuration on command line.
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.discovery
   - attack.t1082
-  - ai.llm
-  - ai.chatbox
-  - ai.chat
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: process_creation
-  product: windows
+  product: any
 detection:
-  selection:
-    EnvironmentVariables|contains:
+  selection_cmdline:
+    CommandLine|contains:
       - 'CHATBOX_'
-      - 'CHATBOX_APP_'
-      - 'CHATBOX_AI_'
-      - 'CHATBOX_OPENAI_'
-      - 'CHATBOX_ANTHROPIC_'
-      - 'CHATBOX_API_KEY'
-      - 'CHATBOX_TOKEN'
-      - 'CHATBOX_HOST'
-      - 'CHATBOX_DESKTOP_'
-  condition: selection
+  condition: selection_cmdline
 fields:
   - Image
   - CommandLine
-  - EnvironmentVariables
   - User
 falsepositives:
   - Legitimate Chatbox configuration
   - AI chat application setup
-  - Desktop chat application configuration
 level: low

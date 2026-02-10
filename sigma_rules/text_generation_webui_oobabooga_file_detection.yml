@@ -1,39 +1,40 @@
 title: Text Generation WebUI (Oobabooga) File Detection
 id: 12345678-1234-5678-9abc-123456789050
 status: experimental
-description: Detects text-generation-webui (Oobabooga) file system activity
-author: AI Discovery Scanner
-date: 2025-01-02
+description: >
+  Detects text-generation-webui (Oobabooga) file system activity. This is a
+  Python web application typically cloned from GitHub. Detection targets the
+  project directory structure and its models subdirectory.
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.persistence
   - attack.t1547
-  - ai.llm
-  - ai.oobabooga
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: file_event
-  product: windows
+  product: any
 detection:
-  selection:
-    - TargetFilename|contains:
-        - '\.text-generation-webui'
-        - '\text-generation-webui\'
-        - '\Text-Generation-WebUI\'
-        - '\.oobabooga'
-        - '\oobabooga\'
-        - '\Oobabooga\'
-        - '\AppData\Local\text-generation-webui'
-        - '\AppData\Roaming\text-generation-webui'
-        - '\AppData\Local\oobabooga'
-        - '\AppData\Roaming\oobabooga'
-        - '\Program Files\text-generation-webui'
-        - '\Program Files\oobabooga'
-  condition: selection
+  selection_project_dir:
+    TargetFilename|contains:
+      - '/text-generation-webui/'
+      - '\\text-generation-webui\\'
+  selection_models:
+    TargetFilename|contains:
+      - 'text-generation-webui/models'
+      - 'text-generation-webui\\models'
+  selection_oobabooga:
+    TargetFilename|contains:
+      - '/oobabooga/'
+      - '\\oobabooga\\'
+  condition: selection_project_dir or selection_models or selection_oobabooga
 fields:
   - TargetFilename
   - ProcessName
   - User
-  - EventType
 falsepositives:
   - Legitimate text-generation-webui installation
-  - Development tool updates
+  - Development environments
 level: medium

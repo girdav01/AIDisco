@@ -1,36 +1,31 @@
 title: Cursor AI Code Editor Process Detection
 id: 12345678-1234-5678-9abc-123456789004
 status: experimental
-description: Detects Cursor AI-powered code editor process execution across multiple platforms
-author: AI Discovery Scanner
-date: 2025-01-02
+description: Detects Cursor AI-powered code editor process execution. Cursor is a VS Code fork available on Windows, macOS, and Linux.
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.execution
   - attack.t1059
   - attack.t1071.001
-  - ai.llm
-  - ai.cursor
-  - ai.code_editor
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: process_creation
-  product: windows
+  product: any
 detection:
-  selection:
-    - Image|endswith:
-        - '\cursor.exe'
-        - '\Cursor.exe'
-        - '\cursor-app.exe'
-        - '\Cursor.app.exe'
-    - CommandLine|contains:
-        - 'cursor.exe'
-        - 'Cursor.exe'
-        - 'cursor-app.exe'
-        - 'Cursor.app.exe'
-    - ProcessName|contains:
-        - 'cursor.exe'
-        - 'Cursor.exe'
-        - 'cursor-app.exe'
-  condition: selection
+  selection_image:
+    Image|endswith:
+      - '\Cursor.exe'
+      - '/Cursor'
+      - '/cursor'
+  selection_cmdline:
+    CommandLine|contains:
+      - 'Cursor.exe'
+      - 'Cursor.app'
+      - '/cursor'
+  condition: selection_image or selection_cmdline
 fields:
   - Image
   - CommandLine

@@ -1,29 +1,27 @@
 title: Continue AI LLM Software Detection
 id: 12345678-1234-5678-9abc-123456789016
 status: experimental
-description: Detects Continue AI installation and usage
-author: AI Discovery Scanner
-date: 2025-01-02
+description: Detects Continue AI coding assistant. Continue is a VS Code/JetBrains extension and does not have a standalone executable.
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.execution
   - attack.t1059
   - attack.t1071.001
-  - ai.llm
-  - ai.continue
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: process_creation
-  product: windows
+  product: any
 detection:
-  selection:
-    - Image|endswith:
-        - '\continue.exe'
-        - '\continue-ai.exe'
-        - '\continue-cli.exe'
-    - CommandLine|contains:
-        - 'continue'
-        - 'continue-ai'
-        - 'continue-cli'
-  condition: selection
+  selection_cmdline:
+    CommandLine|contains:
+      - 'continue.server'
+      - 'continue-extension'
+      - '.continue'
+      - 'Continue.continue'
+  condition: selection_cmdline
 fields:
   - Image
   - CommandLine
@@ -32,6 +30,6 @@ fields:
   - ParentImage
   - ParentCommandLine
 falsepositives:
-  - Legitimate Continue AI usage
-  - Development environments
+  - Legitimate Continue AI extension usage
+  - Development environments with Continue extension
 level: medium

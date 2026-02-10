@@ -1,29 +1,26 @@
 title: GitHub Copilot Environment Variables
 id: 12345678-1234-5678-9abc-123456789003
 status: experimental
-description: Detects GitHub Copilot environment variable configuration
-author: AI Discovery Scanner
-date: 2025-01-02
+description: Detects GitHub Copilot environment variable configuration on command line.
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.discovery
   - attack.t1082
-  - ai.llm
-  - ai.copilot
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: process_creation
-  product: windows
+  product: any
 detection:
-  selection:
-    EnvironmentVariables|contains:
-      - 'COPILOT_'
-      - 'GITHUB_COPILOT'
-      - 'COPILOT_TOKEN'
-      - 'COPILOT_HOST'
-  condition: selection
+  selection_cmdline:
+    CommandLine|contains:
+      - 'GITHUB_COPILOT_'
+  condition: selection_cmdline
 fields:
   - Image
   - CommandLine
-  - EnvironmentVariables
   - User
 falsepositives:
   - Legitimate GitHub Copilot configuration

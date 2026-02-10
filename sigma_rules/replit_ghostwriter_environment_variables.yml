@@ -1,31 +1,31 @@
-title: Replit Ghostwriter Environment Variables
-id: 12345678-1234-5678-9abc-123456789006
+title: Replit AI (formerly Ghostwriter) Environment Detection
+id: 12345678-1234-5678-9abc-123456789066
 status: experimental
-description: Detects Replit Ghostwriter environment variable configuration
-author: AI Discovery Scanner
-date: 2025-01-02
+description: |
+  Detects commands referencing Replit environment variables. Replit uses REPLIT_
+  prefixed variables in its environment. The GHOSTWRITER_ prefix is obsolete.
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.discovery
   - attack.t1082
-  - ai.llm
-  - ai.ghostwriter
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: process_creation
-  product: windows
+  product: any
 detection:
-  selection:
-    EnvironmentVariables|contains:
-      - 'GHOSTWRITER_'
-      - 'REPLIT_GHOSTWRITER'
-      - 'GHOSTWRITER_TOKEN'
-      - 'GHOSTWRITER_HOST'
-  condition: selection
+  selection_commands:
+    CommandLine|contains:
+      - 'REPLIT_AI'
+      - 'REPLIT_AGENT'
+      - 'REPLIT_DB_URL'
+  condition: selection_commands
+falsepositives:
+  - Legitimate Replit development environment configuration
+level: low
 fields:
   - Image
   - CommandLine
-  - EnvironmentVariables
   - User
-falsepositives:
-  - Legitimate Replit Ghostwriter configuration
-  - Development environment setup
-level: low

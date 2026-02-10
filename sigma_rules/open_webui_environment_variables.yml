@@ -1,33 +1,42 @@
 title: Open WebUI Environment Variables
 id: 12345678-1234-5678-9abc-123456789039
 status: experimental
-description: Detects Open WebUI environment variable configuration
-author: AI Discovery Scanner
-date: 2025-01-02
+description: >
+  Detects Open WebUI environment variable configuration in process command
+  lines. Open WebUI uses specific environment variables for configuration.
+  Note: The WEBUI_ prefix may also match text-generation-webui (Oobabooga)
+  variables. Correlate with other Open WebUI indicators for confirmation.
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.discovery
   - attack.t1082
-  - ai.llm
-  - ai.openwebui
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: process_creation
-  product: windows
+  product: any
 detection:
-  selection:
-    EnvironmentVariables|contains:
-      - 'OPEN_WEBUI_'
-      - 'OPENWEBUI_'
-      - 'WEBUI_'
-      - 'OPEN_WEBUI_TOKEN'
-      - 'OPEN_WEBUI_HOST'
-      - 'OPEN_WEBUI_MODEL'
-  condition: selection
+  selection_specific_env:
+    CommandLine|contains:
+      - 'WEBUI_SECRET_KEY'
+      - 'OPENAI_API_BASE_URL'
+      - 'OLLAMA_BASE_URL'
+      - 'ENABLE_RAG_WEB_SEARCH'
+      - 'WEBUI_AUTH'
+      - 'ENABLE_SIGNUP'
+  selection_docker_env:
+    CommandLine|contains:
+      - 'open-webui'
+      - 'OLLAMA_BASE_URL'
+  condition: selection_specific_env or selection_docker_env
 fields:
   - Image
   - CommandLine
-  - EnvironmentVariables
   - User
 falsepositives:
   - Legitimate Open WebUI configuration
   - Development environment setup
+  - text-generation-webui (Oobabooga) may share WEBUI_ prefix variables
 level: low

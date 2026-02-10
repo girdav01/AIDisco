@@ -1,33 +1,28 @@
 title: Claude AI Environment Variables
 id: 12345678-1234-5678-9abc-123456789024
 status: experimental
-description: Detects Claude AI environment variable configuration
-author: AI Discovery Scanner
-date: 2025-01-02
+description: Detects Anthropic API key references in process command lines indicating Claude AI usage
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.discovery
   - attack.t1082
-  - ai.llm
-  - ai.claude
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: process_creation
-  product: windows
+  product: any
 detection:
-  selection:
-    EnvironmentVariables|contains:
-      - 'CLAUDE_'
-      - 'ANTHROPIC_'
-      - 'CLAUDE_TOKEN'
+  selection_api_key:
+    CommandLine|contains:
       - 'ANTHROPIC_API_KEY'
-      - 'CLAUDE_HOST'
-      - 'CLAUDE_MODEL'
-  condition: selection
+  condition: selection_api_key
 fields:
   - Image
   - CommandLine
-  - EnvironmentVariables
   - User
 falsepositives:
-  - Legitimate Claude AI configuration
+  - Legitimate Anthropic API configuration
   - Development environment setup
 level: low

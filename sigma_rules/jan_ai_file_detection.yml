@@ -1,34 +1,38 @@
 title: Jan AI File Detection
 id: 12345678-1234-5678-9abc-123456789047
 status: experimental
-description: Detects Jan AI file system activity
-author: AI Discovery Scanner
-date: 2025-01-02
+description: >
+  Detects Jan AI file system activity. Jan stores data in platform-specific
+  application data directories. Detection targets the known Jan data
+  directories on Windows, macOS, and Linux.
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.persistence
   - attack.t1547
-  - ai.llm
-  - ai.jan
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: file_event
-  product: windows
+  product: any
 detection:
-  selection:
-    - TargetFilename|contains:
-        - '\.jan'
-        - '\jan\'
-        - '\Jan\'
-        - '\AppData\Local\Jan'
-        - '\AppData\Roaming\Jan'
-        - '\Program Files\Jan'
-        - '\Program Files (x86)\Jan'
-  condition: selection
+  selection_windows:
+    TargetFilename|contains:
+      - '\AppData\Roaming\jan'
+      - '\AppData\Local\jan'
+  selection_macos:
+    TargetFilename|contains:
+      - '/Library/Application Support/jan'
+  selection_linux:
+    TargetFilename|contains:
+      - '/.config/jan'
+  condition: selection_windows or selection_macos or selection_linux
 fields:
   - TargetFilename
   - ProcessName
   - User
-  - EventType
 falsepositives:
   - Legitimate Jan AI installation
-  - Development tool updates
+  - Other applications using directories named jan
 level: medium

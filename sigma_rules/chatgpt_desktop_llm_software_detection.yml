@@ -1,29 +1,31 @@
 title: ChatGPT Desktop LLM Software Detection
 id: 12345678-1234-5678-9abc-123456789019
 status: experimental
-description: Detects ChatGPT desktop application installation and usage
-author: AI Discovery Scanner
-date: 2025-01-02
+description: Detects ChatGPT desktop application installation and usage on Windows and macOS
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.execution
   - attack.t1059
   - attack.t1071.001
-  - ai.llm
-  - ai.chatgpt
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: process_creation
-  product: windows
+  product: any
 detection:
-  selection:
-    - Image|endswith:
-        - '\chatgpt.exe'
-        - '\chatgpt-desktop.exe'
-        - '\openai-chatgpt.exe'
-    - CommandLine|contains:
-        - 'chatgpt'
-        - 'chatgpt-desktop'
-        - 'openai-chatgpt'
-  condition: selection
+  selection_image_windows:
+    Image|endswith:
+      - '\ChatGPT.exe'
+  selection_image_macos:
+    Image|endswith:
+      - '/ChatGPT'
+  selection_cmdline:
+    CommandLine|contains:
+      - 'ChatGPT.exe'
+      - 'ChatGPT.app'
+  condition: selection_image_windows or selection_image_macos or selection_cmdline
 fields:
   - Image
   - CommandLine

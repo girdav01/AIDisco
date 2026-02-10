@@ -1,32 +1,40 @@
 title: LocalAI Environment Variables
 id: 12345678-1234-5678-9abc-123456789054
 status: experimental
-description: Detects LocalAI environment variable configuration
-author: AI Discovery Scanner
-date: 2025-01-02
+description: >
+  Detects LocalAI environment variable configuration in process command
+  lines. LocalAI uses LOCALAI_ prefixed variables and common configuration
+  variables like MODELS_PATH and GALLERIES.
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.discovery
   - attack.t1082
-  - ai.llm
-  - ai.localai
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: process_creation
-  product: windows
+  product: any
 detection:
-  selection:
-    EnvironmentVariables|contains:
+  selection_localai_prefix:
+    CommandLine|contains:
       - 'LOCALAI_'
-      - 'LOCAL_AI_'
-      - 'LOCALAI_TOKEN'
-      - 'LOCALAI_HOST'
-      - 'LOCALAI_MODEL'
-  condition: selection
+  selection_config_vars:
+    CommandLine|contains:
+      - 'MODELS_PATH'
+      - 'GALLERIES'
+  selection_docker_env:
+    CommandLine|contains:
+      - 'localai/localai'
+      - 'go-skynet/local-ai'
+  condition: selection_localai_prefix or selection_config_vars or selection_docker_env
 fields:
   - Image
   - CommandLine
-  - EnvironmentVariables
   - User
 falsepositives:
   - Legitimate LocalAI configuration
   - Development environment setup
+  - MODELS_PATH may be used by other ML applications
 level: low

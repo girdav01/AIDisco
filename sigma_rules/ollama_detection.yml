@@ -1,122 +1,53 @@
 title: Ollama LLM Software Detection
-id: ollama-detection-001
+id: 12345678-1234-5678-9abc-123456789076
 status: experimental
-description: Comprehensive detection rule for Ollama Large Language Model software installation and usage
-author: Security Team
-date: 2024-08-30
-modified: 2024-08-30
+description: |
+  Detects Ollama Large Language Model software processes and commands. Ollama runs
+  local LLMs on Windows, macOS, and Linux, providing a REST API on port 11434.
+  It supports running, pulling, and managing models locally without cloud dependencies.
+  Ollama stores models in ~/.ollama/models (Linux/macOS) or %USERPROFILE%\.ollama\models
+  (Windows), and configuration in ~/.ollama (or %LOCALAPPDATA%\Ollama on Windows).
+author: AI Discovery Security Team
+date: 2024/08/30
+modified: 2026/02/10
 tags:
-    - attack.execution
-    - attack.t1059
-    - llm.ollama
-    - llm.detection
+  - attack.execution
+  - attack.t1059
+  - attack.t1082
+  - ai.framework
+  - ai.shadow_ai
 references:
-    - https://ollama.com/
+  - https://ollama.com/
+  - https://github.com/ollama/ollama
 logsource:
-    category: process_creation
-    product: windows
+  category: process_creation
+  product: any
 detection:
-    # File path detection
-    file_paths:
-        windows:
-            - '%USERPROFILE%\\.ollama'
-            - '%LOCALAPPDATA%\\Programs\\Ollama'
-            - 'C:\\Program Files\\Ollama'
-            - 'C:\\ollama'
-        macos:
-            - '/Applications/Ollama.app'
-            - '%USERPROFILE%/.ollama'
-            - '/usr/local/bin/ollama'
-        linux:
-            - '/usr/bin/ollama'
-            - '/usr/local/bin/ollama'
-            - '/usr/share/ollama'
-            - '/var/lib/ollama'
-            - '%USERPROFILE%/.ollama'
-            - '%USERPROFILE%/.local/bin/ollama'
-    
-    # Environment variables
-    environment_variables:
-        - 'OLLAMA_MODELS'
-        - 'OLLAMA_HOST'
-        - 'OLLAMA_HOME'
-    
-    # Process detection
-    process_names:
-        - 'ollama.exe'
-        - 'ollama'
-        - 'ollama app.exe'
-    
-    # Network ports
-    network_ports:
-        - 11434  # HTTP API
-    
-    # Registry keys (Windows)
-    registry_keys:
-        - 'HKEY_CURRENT_USER\\Software\\Ollama'
-        - 'HKEY_LOCAL_MACHINE\\Software\\Ollama'
-        - 'HKEY_CURRENT_USER\\Environment'
-        - 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment'
-    
-    # Command line patterns
-    command_line_patterns:
-        - 'ollama serve'
-        - 'ollama run'
-        - 'ollama pull'
-        - 'ollama list'
-        - 'ollama --version'
-    
-    # Log collection paths
-    log_collection_paths:
-        windows:
-            - '%USERPROFILE%\\.ollama'
-            - '%LOCALAPPDATA%\\Programs\\Ollama'
-            - '%LOCALAPPDATA%\\Roaming\\Ollama'
-            - 'C:\\Program Files\\Ollama'
-            - 'C:\\ollama'
-        macos:
-            - '/Applications/Ollama.app'
-            - '%USERPROFILE%/.ollama'
-            - '/usr/local/bin/ollama'
-            - '%USERPROFILE%/Library/Logs/Ollama'
-            - '%USERPROFILE%/Library/Application Support/Ollama'
-        linux:
-            - '/usr/bin/ollama'
-            - '/usr/local/bin/ollama'
-            - '/usr/share/ollama'
-            - '/var/lib/ollama'
-            - '/var/log/ollama'
-            - '%USERPROFILE%/.ollama'
-            - '%USERPROFILE%/.local/bin/ollama'
-    
-    # Version detection methods
-    version_detection:
-        command_line:
-            - 'ollama --version'
-        config_files:
-            - '%USERPROFILE%/.ollama/config.json'
-            - '%USERPROFILE%/.ollama/version'
-            - '%LOCALAPPDATA%/Programs/Ollama/version.txt'
-            - '%LOCALAPPDATA%/Programs/Ollama/VERSION'
-        package_files:
-            - '%LOCALAPPDATA%/Programs/Ollama/package.json'
-            - '%LOCALAPPDATA%/Programs/Ollama/app/package.json'
-    
-    selection:
-        Image|endswith:
-            - '\\ollama.exe'
-            - '\\ollama'
-        CommandLine|contains:
-            - 'ollama serve'
-            - 'ollama run'
-            - 'ollama pull'
-            - 'ollama list'
-    condition: selection
+  selection_process:
+    Image|endswith:
+      - '\ollama.exe'
+      - '/ollama'
+  selection_commands:
+    CommandLine|contains:
+      - 'ollama serve'
+      - 'ollama run'
+      - 'ollama pull'
+      - 'ollama list'
+      - 'ollama show'
+      - 'ollama create'
+      - 'ollama push'
+      - 'ollama ps'
+      - 'ollama cp'
+      - 'ollama rm'
+      - 'ollama start'
+      - 'ollama stop'
+  condition: selection_process or selection_commands
 falsepositives:
-    - Legitimate use of Ollama for development
+  - Legitimate use of Ollama for authorized AI development
+  - IT-approved local LLM deployments
 level: medium
 fields:
-    - Image
-    - CommandLine
-    - User
-    - ProcessId
+  - Image
+  - CommandLine
+  - User
+  - ParentImage

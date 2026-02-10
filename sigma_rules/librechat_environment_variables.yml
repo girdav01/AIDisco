@@ -1,32 +1,40 @@
 title: LibreChat Environment Variables
 id: 12345678-1234-5678-9abc-123456789045
 status: experimental
-description: Detects LibreChat environment variable configuration
-author: AI Discovery Scanner
-date: 2025-01-02
+description: >
+  Detects LibreChat environment variable configuration in process command
+  lines. LibreChat uses standard API key variables (OPENAI_API_KEY,
+  ANTHROPIC_API_KEY, etc.) which are already covered by generic AI API key
+  detection rules. This rule focuses on LibreChat-specific configuration
+  patterns.
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.discovery
   - attack.t1082
-  - ai.llm
-  - ai.libreachat
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: process_creation
-  product: windows
+  product: any
 detection:
-  selection:
-    EnvironmentVariables|contains:
-      - 'LIBRECHAT_'
-      - 'LIBRE_CHAT_'
-      - 'LIBRECHAT_TOKEN'
-      - 'LIBRECHAT_HOST'
-      - 'LIBRECHAT_MODEL'
-  condition: selection
+  selection_librechat_config:
+    CommandLine|contains:
+      - 'ALLOW_REGISTRATION'
+      - 'ALLOW_SOCIAL_LOGIN'
+      - 'ENDPOINTS'
+      - 'danny-avila/librechat'
+  selection_librechat_specific:
+    CommandLine|contains|all:
+      - 'librechat'
+  condition: selection_librechat_config or selection_librechat_specific
 fields:
   - Image
   - CommandLine
-  - EnvironmentVariables
   - User
 falsepositives:
   - Legitimate LibreChat configuration
   - Development environment setup
+  - Generic API key variables (OPENAI_API_KEY, etc.) are covered by separate rules
 level: low

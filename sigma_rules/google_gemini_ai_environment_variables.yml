@@ -1,33 +1,30 @@
 title: Google Gemini AI Environment Variables
 id: 12345678-1234-5678-9abc-123456789027
 status: experimental
-description: Detects Google Gemini AI environment variable configuration
-author: AI Discovery Scanner
-date: 2025-01-02
+description: Detects Google Gemini AI API key references in process command lines
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.discovery
   - attack.t1082
-  - ai.llm
-  - ai.gemini
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: process_creation
-  product: windows
+  product: any
 detection:
-  selection:
-    EnvironmentVariables|contains:
-      - 'GEMINI_'
-      - 'GOOGLE_GEMINI'
-      - 'GEMINI_TOKEN'
+  selection_api_keys:
+    CommandLine|contains:
+      - 'GOOGLE_API_KEY'
       - 'GEMINI_API_KEY'
-      - 'GEMINI_HOST'
-      - 'GEMINI_MODEL'
-  condition: selection
+  condition: selection_api_keys
 fields:
   - Image
   - CommandLine
-  - EnvironmentVariables
   - User
 falsepositives:
   - Legitimate Google Gemini AI configuration
+  - Other Google service API key usage
   - Development environment setup
 level: low

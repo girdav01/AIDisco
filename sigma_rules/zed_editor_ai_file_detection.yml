@@ -1,33 +1,29 @@
 title: Zed Editor AI File Detection
 id: 12345678-1234-5678-9abc-123456789014
 status: experimental
-description: Detects Zed editor AI file system activity
-author: AI Discovery Scanner
-date: 2025-01-02
+description: Detects Zed editor AI file system activity. Zed is available on macOS and Linux only - no Windows version exists.
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.persistence
   - attack.t1547
-  - ai.llm
-  - ai.zed
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: file_event
-  product: windows
+  product: any
 detection:
-  selection:
-    - TargetFilename|contains:
-        - '\.zed'
-        - '\zed\'
-        - '\Zed\'
-        - '\AppData\Local\Zed'
-        - '\AppData\Roaming\Zed'
-        - '\Program Files\Zed'
-        - '\Program Files (x86)\Zed'
-  condition: selection
+  selection_paths:
+    TargetFilename|contains:
+      - '/Applications/Zed.app'
+      - '/.config/zed'
+      - '/.local/share/zed'
+  condition: selection_paths
 fields:
   - TargetFilename
   - ProcessName
   - User
-  - EventType
 falsepositives:
   - Legitimate Zed editor installation
   - Development tool updates

@@ -22,7 +22,7 @@ logsource:
   product: any
 detection:
   selection_openai:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'OPENAI_API_KEY'
       - 'OPENAI_ORG_ID'
       - 'OPENAI_ORGANIZATION'
@@ -32,14 +32,14 @@ detection:
       - 'OPENAI_BASE_URL'
       - 'OPENAI_PROJECT_ID'
   selection_anthropic:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'ANTHROPIC_API_KEY'
       - 'ANTHROPIC_BASE_URL'
       - 'ANTHROPIC_AUTH_TOKEN'
       - 'ANTHROPIC_API_URL'
       - 'CLAUDE_API_KEY'
   selection_google:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'GOOGLE_API_KEY'
       - 'GOOGLE_APPLICATION_CREDENTIALS'
       - 'GOOGLE_CLOUD_PROJECT'
@@ -48,51 +48,51 @@ detection:
       - 'VERTEX_AI_PROJECT'
       - 'VERTEX_AI_LOCATION'
   selection_mistral:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'MISTRAL_API_KEY'
       - 'MISTRAL_API_URL'
   selection_groq:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'GROQ_API_KEY'
       - 'GROQ_API_URL'
   selection_cohere:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'COHERE_API_KEY'
       - 'CO_API_KEY'
       - 'COHERE_API_URL'
   selection_together:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'TOGETHER_API_KEY'
       - 'TOGETHER_API_BASE'
       - 'TOGETHERAI_API_KEY'
   selection_replicate:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'REPLICATE_API_TOKEN'
       - 'REPLICATE_API_KEY'
   selection_fireworks:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'FIREWORKS_API_KEY'
       - 'FIREWORKS_AI_API_KEY'
       - 'FIREWORKS_API_BASE'
   selection_deepseek:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'DEEPSEEK_API_KEY'
       - 'DEEPSEEK_API_BASE'
       - 'DEEPSEEK_BASE_URL'
   selection_xai:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'XAI_API_KEY'
       - 'GROK_API_KEY'
   selection_stability:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'STABILITY_API_KEY'
       - 'STABILITY_HOST'
   selection_perplexity:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'PERPLEXITY_API_KEY'
       - 'PPLX_API_KEY'
   selection_huggingface:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'HF_TOKEN'
       - 'HF_API_TOKEN'
       - 'HUGGING_FACE_HUB_TOKEN'
@@ -101,11 +101,11 @@ detection:
       - 'HF_HUB_CACHE'
       - 'TRANSFORMERS_CACHE'
   selection_ai21:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'AI21_API_KEY'
       - 'AI21_API_URL'
   selection_azure_openai:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'AZURE_OPENAI_API_KEY'
       - 'AZURE_OPENAI_ENDPOINT'
       - 'AZURE_OPENAI_API_VERSION'
@@ -114,48 +114,48 @@ detection:
       - 'AZURE_API_KEY'
       - 'AZURE_API_BASE'
   selection_aws_bedrock:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'AWS_BEDROCK_RUNTIME_ENDPOINT'
       - 'AWS_DEFAULT_REGION'
       - 'BEDROCK_ENDPOINT_URL'
       - 'BEDROCK_ASSUME_ROLE'
   selection_sambanova:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'SAMBANOVA_API_KEY'
       - 'SAMBANOVA_URL'
   selection_cerebras:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'CEREBRAS_API_KEY'
   selection_voyage:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'VOYAGE_API_KEY'
   selection_writer:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'WRITER_API_KEY'
       - 'WRITER_ORG_ID'
   selection_reka:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'REKA_API_KEY'
   selection_aleph_alpha:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'ALEPH_ALPHA_API_KEY'
       - 'AA_TOKEN'
   selection_inflection:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'INFLECTION_API_KEY'
   selection_anyscale:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'ANYSCALE_API_KEY'
       - 'ANYSCALE_API_BASE'
   selection_databricks:
-    EnvironmentVariables|contains:
+    CommandLine|contains:
       - 'DATABRICKS_TOKEN'
       - 'DATABRICKS_HOST'
   condition: selection_openai or selection_anthropic or selection_google or selection_mistral or selection_groq or selection_cohere or selection_together or selection_replicate or selection_fireworks or selection_deepseek or selection_xai or selection_stability or selection_perplexity or selection_huggingface or selection_ai21 or selection_azure_openai or selection_aws_bedrock or selection_sambanova or selection_cerebras or selection_voyage or selection_writer or selection_reka or selection_aleph_alpha or selection_inflection or selection_anyscale or selection_databricks
 fields:
-  - EnvironmentVariables
+  - CommandLine
+  - Image
   - User
-  - ProcessName
 falsepositives:
   - Authorized development environments with AI API access
   - CI/CD systems with approved AI integrations

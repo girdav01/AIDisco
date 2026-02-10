@@ -13,9 +13,9 @@ A comprehensive scanner designed to detect common Local Large Language Model (LL
 - **LM Studio**: Desktop application for running LLMs with GUI
 - **GPT4All**: Cross-platform desktop application for running local LLMs
 - **vLLM**: High-performance inference library for LLMs
-- **AI Development Tools**: GitHub Copilot, Replit Ghostwriter, Windsurf, Tabnine, Zed, Continue, Cursor
-- **AI Chat Applications**: ChatGPT, Claude, Google Gemini, Brave Leo, Poe, YouChat, Chatbox
-- **Open Source AI Platforms**: Open WebUI, AnythingLLM, LibreChat, Jan, Text Generation WebUI, LocalAI, Llamafile, Faraday, NVIDIA Chat with RTX
+- **AI Development Tools**: GitHub Copilot, Replit AI (formerly Ghostwriter), Windsurf (Codeium), Tabnine, Zed, Continue, Cursor
+- **AI Chat Applications**: ChatGPT, Claude, Google Gemini, Brave Leo (browser-integrated), Poe, YouChat/You.com, Chatbox
+- **Open Source AI Platforms**: Open WebUI, AnythingLLM, LibreChat, Jan, Text Generation WebUI, LocalAI, Llamafile/llama.cpp, Backyard AI (formerly Faraday), NVIDIA ChatRTX (deprecated Jan 2026)
 - **AI Discord Bots**: ClawdBot, OpenClaw, MoltBot (all variants of the same software)
 - **AI Workflow Automation**: n8n (with dedicated process, file, and environment variable detection)
 - **Container AI Detection**: Docker and Podman container enumeration for 27+ AI images
@@ -703,6 +703,20 @@ To contribute:
 4. Enhance detection accuracy
 
 ## Changelog
+
+- **v1.8**: Comprehensive SIGMA Rule Audit and Fix
+  - Audited all 95 SIGMA rules committed ~5 months ago for accuracy and currency
+  - **Core 4 rules rewritten**: Ollama, LM Studio, GPT4All, vLLM rules completely rewritten with proper SIGMA format, real process names, verified command patterns, and multi-platform support
+  - **Rebranding fixes**: Faraday → Backyard AI (May 2024), NVIDIA Chat with RTX → ChatRTX (deprecated Jan 2026), Replit Ghostwriter → Replit AI/Agent (mid-2024), Windsurf/Codeium (acquired by OpenAI 2025)
+  - **Duplicate Rule ID resolution**: Fixed 6 duplicate UUID pairs between Cursor/Replit and Chatbox/Windsurf rules
+  - **Platform corrections**: Zed Editor rules fixed to target macOS/Linux only (no Windows version exists); Brave Leo rules corrected to detect Brave browser (Leo has no standalone app)
+  - **Overbroad pattern fixes**: Continue AI `CommandLine|contains: 'continue'` replaced with specific extension patterns; Jan AI `CommandLine|contains: 'jan'` replaced with specific app patterns
+  - **Fabricated patterns removed**: Removed ~100+ fabricated process names, environment variables, and file paths across all rules (e.g., `ghostwriter.exe`, `vllm-engine`, `OLLAMA_HOME`, `gemini.exe`)
+  - **Structural fixes**: Replaced invalid `EnvironmentVariables|contains` with `CommandLine|contains` across all environment detection rules; changed `product: windows` to `product: any` for multi-platform tools; standardized tags to `ai.framework`/`ai.shadow_ai`; updated all date formats and author fields
+  - **LM Studio**: Added detection for `llmster` daemon and `lms` CLI (v0.4.0+)
+  - **Claude AI**: Added Claude Code CLI detection
+  - **Google Gemini/YouChat**: Converted from fabricated desktop app rules to web/API detection (no desktop apps exist)
+  - Go scanner builds cleanly with all updated rules
 
 - **v1.7**: Container, WSL2, and n8n Shadow AI Detection
   - Added **Container AI Detection** for Docker and Podman with 27+ AI-related image patterns (Ollama, vLLM, Open WebUI, Dify, FlowiseAI, n8n, LiteLLM, AnythingLLM, LibreChat, LocalAI, ChromaDB, Qdrant, Weaviate, Milvus, HuggingFace TGI, MLflow, Jupyter, PyTorch, TensorFlow, NVIDIA Triton, LangChain, W&B, etc.)

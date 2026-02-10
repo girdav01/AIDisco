@@ -1,31 +1,31 @@
-title: Windsurf AI Environment Variables
-id: 12345678-1234-5678-9abc-123456789009
+title: Windsurf AI Code Editor Environment Detection
+id: 12345678-1234-5678-9abc-123456789069
 status: experimental
-description: Detects Windsurf AI environment variable configuration
-author: AI Discovery Scanner
-date: 2025-01-02
+description: |
+  Detects commands referencing Windsurf or Codeium environment variables.
+  Codeium uses CODEIUM_ prefixed environment variables for API configuration.
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.discovery
   - attack.t1082
-  - ai.llm
-  - ai.windsurf
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: process_creation
-  product: windows
+  product: any
 detection:
-  selection:
-    EnvironmentVariables|contains:
+  selection_commands:
+    CommandLine|contains:
+      - 'CODEIUM_API'
+      - 'CODEIUM_TOKEN'
       - 'WINDSURF_'
-      - 'WINDSURF_AI'
-      - 'WINDSURF_TOKEN'
-      - 'WINDSURF_HOST'
-  condition: selection
+  condition: selection_commands
+falsepositives:
+  - Legitimate Codeium/Windsurf development configuration
+level: low
 fields:
   - Image
   - CommandLine
-  - EnvironmentVariables
   - User
-falsepositives:
-  - Legitimate Windsurf AI configuration
-  - Development environment setup
-level: low

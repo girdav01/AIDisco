@@ -1,33 +1,41 @@
-title: Windsurf AI File Detection
-id: 12345678-1234-5678-9abc-123456789008
+title: Windsurf AI Code Editor File Detection
+id: 12345678-1234-5678-9abc-123456789068
 status: experimental
-description: Detects Windsurf AI file system activity
-author: AI Discovery Scanner
-date: 2025-01-02
+description: |
+  Detects Windsurf (by Codeium) file system artifacts. Windsurf is a VS Code fork
+  and stores data in similar locations to VS Code. Also detects legacy Codeium paths.
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.persistence
-  - attack.t1547
-  - ai.llm
-  - ai.windsurf
+  - attack.t1082
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: file_event
-  product: windows
+  product: any
 detection:
-  selection:
-    - TargetFilename|contains:
-        - '\.windsurf'
-        - '\windsurf\'
-        - '\Windsurf\'
-        - '\AppData\Local\Windsurf'
-        - '\AppData\Roaming\Windsurf'
-        - '\Program Files\Windsurf'
-  condition: selection
+  selection_windsurf_paths:
+    TargetFilename|contains:
+      - '\AppData\Local\Programs\Windsurf'
+      - '\AppData\Roaming\Windsurf'
+      - '/.windsurf/'
+      - '/Windsurf/'
+  selection_codeium_paths:
+    TargetFilename|contains:
+      - '\.codeium\'
+      - '/.codeium/'
+      - '\AppData\Local\Codeium'
+  selection_windsurf_extensions:
+    TargetFilename|contains:
+      - '.windsurf\extensions'
+      - 'windsurf-extensions'
+  condition: selection_windsurf_paths or selection_codeium_paths or selection_windsurf_extensions
+falsepositives:
+  - Legitimate Windsurf installation for authorized development
+level: medium
 fields:
   - TargetFilename
   - ProcessName
   - User
-  - EventType
-falsepositives:
-  - Legitimate Windsurf AI installation
-  - Development tool updates
-level: medium

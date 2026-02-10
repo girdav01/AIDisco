@@ -1,32 +1,38 @@
 title: AnythingLLM Environment Variables
 id: 12345678-1234-5678-9abc-123456789042
 status: experimental
-description: Detects AnythingLLM environment variable configuration
-author: AI Discovery Scanner
-date: 2025-01-02
+description: >
+  Detects AnythingLLM environment variable configuration in process command
+  lines. AnythingLLM uses generic-sounding environment variable names
+  (STORAGE_DIR, SERVER_PORT, JWT_SECRET) which may cause false positives.
+  Correlate with other AnythingLLM indicators for confirmation.
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.discovery
   - attack.t1082
-  - ai.llm
-  - ai.anythingllm
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: process_creation
-  product: windows
+  product: any
 detection:
-  selection:
-    EnvironmentVariables|contains:
-      - 'ANYTHING_LLM_'
-      - 'ANYTHINGLLM_'
-      - 'ANYTHING_LLM_TOKEN'
-      - 'ANYTHING_LLM_HOST'
-      - 'ANYTHING_LLM_MODEL'
-  condition: selection
+  selection_llm_specific:
+    CommandLine|contains:
+      - 'LLM_PROVIDER'
+      - 'EMBEDDING_ENGINE'
+      - 'VECTOR_DB'
+  selection_docker_env:
+    CommandLine|contains|all:
+      - 'mintplexlabs/anythingllm'
+  condition: selection_llm_specific or selection_docker_env
 fields:
   - Image
   - CommandLine
-  - EnvironmentVariables
   - User
 falsepositives:
   - Legitimate AnythingLLM configuration
   - Development environment setup
+  - Generic variable names (STORAGE_DIR, SERVER_PORT) may match other applications
 level: low

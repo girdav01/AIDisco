@@ -1,31 +1,36 @@
 title: LocalAI LLM Software Detection
 id: 12345678-1234-5678-9abc-123456789052
 status: experimental
-description: Detects LocalAI installation and usage
-author: AI Discovery Scanner
-date: 2025-01-02
+description: >
+  Detects LocalAI installation and usage. LocalAI runs as a Go binary
+  (local-ai) or Docker container (localai/localai, quay.io/go-skynet/local-ai).
+  The real binary name is 'local-ai', not 'localai.exe'.
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.execution
   - attack.t1059
   - attack.t1071.001
-  - ai.llm
-  - ai.localai
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: process_creation
-  product: windows
+  product: any
 detection:
-  selection:
-    - Image|endswith:
-        - '\localai.exe'
-        - '\local-ai.exe'
-        - '\localai-server.exe'
-        - '\local-ai-server.exe'
-    - CommandLine|contains:
-        - 'localai'
-        - 'local-ai'
-        - 'localai-server'
-        - 'local-ai-server'
-  condition: selection
+  selection_binary:
+    Image|endswith:
+      - '/local-ai'
+      - '\local-ai.exe'
+  selection_commandline:
+    CommandLine|contains:
+      - 'local-ai'
+      - 'localai'
+  selection_docker:
+    CommandLine|contains:
+      - 'localai/localai'
+      - 'go-skynet/local-ai'
+  condition: selection_binary or selection_commandline or selection_docker
 fields:
   - Image
   - CommandLine

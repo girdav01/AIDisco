@@ -1,115 +1,58 @@
 title: LM Studio LLM Software Detection
-id: lmstudio-detection-001
+id: 12345678-1234-5678-9abc-123456789077
 status: experimental
-description: Comprehensive detection rule for LM Studio Large Language Model software installation and usage
-author: Security Team
-date: 2024-08-30
-modified: 2024-08-30
+description: |
+  Detects LM Studio local LLM software processes. LM Studio is an Electron-based
+  desktop application for running local LLMs on Windows, macOS, and Linux. As of
+  v0.4.0 (Jan 2026) it includes a headless daemon (llmster) and CLI tool (lms) for
+  server management. It serves a local OpenAI-compatible API on port 1234.
+  Data is stored in ~/.cache/lm-studio (Linux/macOS) or %LOCALAPPDATA%\LM-Studio (Windows).
+author: AI Discovery Security Team
+date: 2024/08/30
+modified: 2026/02/10
 tags:
-    - attack.execution
-    - attack.t1059
-    - llm.lmstudio
-    - llm.detection
+  - attack.execution
+  - attack.t1059
+  - attack.t1082
+  - ai.framework
+  - ai.shadow_ai
 references:
-    - https://lmstudio.ai/
+  - https://lmstudio.ai/
 logsource:
-    category: process_creation
-    product: windows
+  category: process_creation
+  product: any
 detection:
-    # File path detection
-    file_paths:
-        windows:
-            - '%LOCALAPPDATA%\\LMStudio'
-            - '%APPDATA%\\LMStudio'
-            - '%LOCALAPPDATA%\\Programs\\LMStudio'
-            - '%USERPROFILE%\\.cache\\lm-studio'
-            - '%USERPROFILE%\\.lmstudio'
-        macos:
-            - '/Applications/LM Studio.app'
-            - '%USERPROFILE%/.cache/lm-studio'
-            - '%USERPROFILE%/.lmstudio'
-            - '%USERPROFILE%/Library/Application Support/LMStudio'
-        linux:
-            - '%USERPROFILE%/.cache/lm-studio'
-            - '%USERPROFILE%/.lmstudio'
-            - '%USERPROFILE%/LMStudio'
-            - '/opt/lmstudio'
-    
-    # Environment variables
-    environment_variables:
-        - 'LMSTUDIO_MODELS_DIR'
-        - 'LM_STUDIO_HOME'
-    
-    # Process detection
-    process_names:
-        - 'lmstudio.exe'
-        - 'lm-studio.exe'
-        - 'LMStudio.exe'
-        - 'LM Studio'
-    
-    # Network ports
-    network_ports:
-        - 1234  # HTTP API
-    
-    # Registry keys (Windows)
-    registry_keys:
-        - 'HKEY_CURRENT_USER\\Software\\LMStudio'
-        - 'HKEY_LOCAL_MACHINE\\Software\\LMStudio'
-        - 'HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall'
-        - 'HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall'
-    
-    # Command line patterns
-    command_line_patterns:
-        - 'lmstudio'
-        - 'lm-studio'
-        - 'LMStudio'
-    
-    # Log collection paths
-    log_collection_paths:
-        windows:
-            - '%LOCALAPPDATA%\\LMStudio'
-            - '%APPDATA%\\LMStudio'
-            - '%LOCALAPPDATA%\\Programs\\LMStudio'
-            - '%USERPROFILE%\\.cache\\lm-studio'
-            - '%USERPROFILE%\\.lmstudio'
-        macos:
-            - '/Applications/LM Studio.app'
-            - '%USERPROFILE%/.cache/lm-studio'
-            - '%USERPROFILE%/.lmstudio'
-            - '%USERPROFILE%/Library/Application Support/LMStudio'
-            - '%USERPROFILE%/Library/Preferences/LMStudio'
-        linux:
-            - '%USERPROFILE%/.cache/lm-studio'
-            - '%USERPROFILE%/.lmstudio'
-            - '%USERPROFILE%/LMStudio'
-            - '/opt/lmstudio'
-    
-    # Version detection methods
-    version_detection:
-        config_files:
-            - '%LOCALAPPDATA%/LMStudio/version.txt'
-            - '%LOCALAPPDATA%/LMStudio/VERSION'
-            - '%LOCALAPPDATA%/LMStudio/app/version.txt'
-            - '%USERPROFILE%/.lmstudio/version'
-        package_files:
-            - '%LOCALAPPDATA%/LMStudio/package.json'
-            - '%LOCALAPPDATA%/LMStudio/app/package.json'
-    
-    selection:
-        Image|endswith:
-            - '\\LMStudio.exe'
-            - '\\lmstudio.exe'
-            - '\\lm-studio.exe'
-        CommandLine|contains:
-            - 'lmstudio'
-            - 'lm-studio'
-            - 'LMStudio'
-    condition: selection
+  selection_gui:
+    Image|endswith:
+      - '\LM Studio.exe'
+      - '/LM Studio'
+  selection_daemon:
+    Image|endswith:
+      - '\llmster.exe'
+      - '/llmster'
+  selection_lms_commands:
+    CommandLine|contains:
+      - 'lms server'
+      - 'lms load'
+      - 'lms unload'
+      - 'lms ls'
+      - 'lms get'
+      - 'lms create'
+      - 'lms status'
+      - 'lms version'
+      - 'lms log'
+  selection_lmstudio:
+    CommandLine|contains:
+      - 'lmstudio'
+      - 'lm-studio'
+      - 'LMStudio'
+  condition: selection_gui or selection_daemon or selection_lms_commands or selection_lmstudio
 falsepositives:
-    - Legitimate use of LM Studio for development
+  - Legitimate use of LM Studio for authorized AI development
+  - IT-approved local LLM deployments
 level: medium
 fields:
-    - Image
-    - CommandLine
-    - User
-    - ProcessId
+  - Image
+  - CommandLine
+  - User
+  - ParentImage

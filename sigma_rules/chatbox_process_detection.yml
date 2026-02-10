@@ -1,39 +1,32 @@
 title: Chatbox AI Chat Application Process Detection
 id: 12345678-1234-5678-9abc-123456789007
 status: experimental
-description: Detects Chatbox AI chat application process execution across multiple platforms
-author: AI Discovery Scanner
-date: 2025-01-02
+description: Detects Chatbox AI desktop chat client process execution. Chatbox is an Electron-based desktop AI chat application.
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.execution
   - attack.t1059
   - attack.t1071.001
-  - ai.llm
-  - ai.chatbox
-  - ai.chat
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: process_creation
-  product: windows
+  product: any
 detection:
-  selection:
-    - Image|endswith:
-        - '\chatbox.exe'
-        - '\Chatbox.exe'
-        - '\chatbox-app.exe'
-        - '\Chatbox.app.exe'
-        - '\chatbox-desktop.exe'
-        - '\Chatbox Desktop.exe'
-    - CommandLine|contains:
-        - 'chatbox'
-        - 'Chatbox'
-        - 'chatbox-app'
-        - 'chatbox-desktop'
-    - ProcessName|contains:
-        - 'chatbox'
-        - 'Chatbox'
-        - 'chatbox-app'
-        - 'chatbox-desktop'
-  condition: selection
+  selection_image:
+    Image|endswith:
+      - '\Chatbox.exe'
+      - '\chatbox.exe'
+      - '/chatbox'
+      - '/Chatbox'
+  selection_cmdline:
+    CommandLine|contains:
+      - 'Chatbox.exe'
+      - 'chatbox.exe'
+      - 'Chatbox.app'
+  condition: selection_image or selection_cmdline
 fields:
   - Image
   - CommandLine
@@ -44,5 +37,4 @@ fields:
 falsepositives:
   - Legitimate Chatbox AI chat application usage
   - AI chat sessions
-  - Desktop chat applications
 level: medium

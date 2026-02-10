@@ -1,29 +1,31 @@
 title: GitHub Copilot LLM Software Detection
 id: 12345678-1234-5678-9abc-123456789001
 status: experimental
-description: Detects GitHub Copilot installation and usage across multiple platforms
-author: AI Discovery Scanner
-date: 2025-01-02
+description: Detects GitHub Copilot agent process. GitHub Copilot runs as an extension inside VS Code and JetBrains IDEs with a copilot-agent background process.
+author: AI Discovery Security Team
+date: 2025/01/02
+modified: 2026/02/10
 tags:
   - attack.execution
   - attack.t1059
   - attack.t1071.001
-  - ai.llm
-  - ai.copilot
+  - ai.framework
+  - ai.shadow_ai
 logsource:
   category: process_creation
-  product: windows
+  product: any
 detection:
-  selection:
-    - Image|endswith:
-        - '\copilot.exe'
-        - '\copilot-cli.exe'
-        - '\copilot-agent.exe'
-    - CommandLine|contains:
-        - 'copilot'
-        - 'github-copilot'
-        - 'copilot-cli'
-  condition: selection
+  selection_image:
+    Image|endswith:
+      - 'copilot-agent'
+      - 'copilot-agent.exe'
+      - 'copilot-language-server'
+  selection_cmdline:
+    CommandLine|contains:
+      - 'copilot-agent'
+      - 'github.copilot'
+      - 'copilot-language-server'
+  condition: selection_image or selection_cmdline
 fields:
   - Image
   - CommandLine
