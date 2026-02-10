@@ -4,7 +4,7 @@
 
 # AI Discovery Scanner
 
-A comprehensive scanner designed to detect common Local Large Language Model (LLM) software installations on Windows, macOS, and Linux systems. Available in both **Python** and **Go** versions. The Go version compiles to a single static binary with no runtime dependencies, making it ideal for deployment across diverse environments. The scanner includes SIGMA rules for threat detection and monitoring.
+A comprehensive scanner designed to detect common Local Large Language Model (LLM) software installations on Windows, macOS, and Linux systems, including software hidden in **Docker/Podman containers** and **Windows WSL2** distributions. Available in both **Python** and **Go** versions. The Go version compiles to a single static binary with no runtime dependencies, making it ideal for deployment across diverse environments. The scanner includes SIGMA rules for threat detection and monitoring.
 
 ## Features
 
@@ -17,6 +17,9 @@ A comprehensive scanner designed to detect common Local Large Language Model (LL
 - **AI Chat Applications**: ChatGPT, Claude, Google Gemini, Brave Leo, Poe, YouChat, Chatbox
 - **Open Source AI Platforms**: Open WebUI, AnythingLLM, LibreChat, Jan, Text Generation WebUI, LocalAI, Llamafile, Faraday, NVIDIA Chat with RTX
 - **AI Discord Bots**: ClawdBot, OpenClaw, MoltBot (all variants of the same software)
+- **AI Workflow Automation**: n8n (with dedicated process, file, and environment variable detection)
+- **Container AI Detection**: Docker and Podman container enumeration for 27+ AI images
+- **WSL2 AI Detection**: Windows Subsystem for Linux scanning for hidden AI software
 - Extensible architecture for adding more LLM software detection
 
 ### Detection Methods
@@ -29,7 +32,9 @@ A comprehensive scanner designed to detect common Local Large Language Model (LL
   - LM Studio: Port 1234 (HTTP API)
   - GPT4All: Port 4891 (HTTP API)
   - vLLM: Port 8000 (HTTP API)
-- **Comprehensive SIGMA Rules**: 89 detection rules covering process creation, file events, network activity, environment variables, AI API providers, AI proxy/gateways, and AI development frameworks
+- **Comprehensive SIGMA Rules**: 95 detection rules covering process creation, file events, network activity, environment variables, AI API providers, AI proxy/gateways, AI development frameworks, container images, and WSL2
+- **Container Enumeration**: Scans Docker and Podman containers for AI-related images, environment variables, and exposed ports; parses Docker Compose files for AI service definitions
+- **WSL2 Scanning**: Enumerates Windows WSL2 distributions and checks for AI binaries, directories, Docker containers, Python packages, and environment variables inside each distro
 - **De-Duplication Engine**: Automatically removes duplicate detections when multiple rules match the same evidence, preferring specific software names over generic ones
 - **Cross-Platform Detection**: Optimized detection methods for Windows, macOS, and Linux systems
 
@@ -177,11 +182,14 @@ ai_discovery_scan.exe --collect-logs -v
 │   ├── process_windows.go      # Process detection via tasklist (Windows)
 │   ├── registry_windows.go     # Windows registry detection
 │   ├── registry_other.go       # Registry stubs for non-Windows
+│   ├── container.go            # Container AI detection (Docker/Podman)
+│   ├── wsl2_windows.go         # WSL2 AI detection (Windows)
+│   ├── wsl2_other.go           # WSL2 stubs for non-Windows
 │   ├── Makefile                # Cross-platform build targets
 │   └── .gitignore              # Build artifact exclusions
 ├── example_log_collection.py   # Example script for log collection
 ├── requirements.txt            # Python dependencies
-├── sigma_rules/               # SIGMA rules directory (89 rules total)
+├── sigma_rules/               # SIGMA rules directory (95 rules total)
 │   ├── ollama_detection.yml              # Comprehensive Ollama detection
 │   ├── lmstudio_detection.yml            # LM Studio detection
 │   ├── gpt4all_detection.yml             # GPT4All desktop app detection
@@ -270,7 +278,13 @@ ai_discovery_scan.exe --collect-logs -v
 │   ├── ai_proxy_gateway_environment_detection.yml   # AI proxy/gateway environment variable detection
 │   ├── ai_sdk_framework_process_detection.yml       # AI SDK/framework process detection (LangChain, CrewAI, etc.)
 │   ├── ai_sdk_framework_file_detection.yml          # AI SDK/framework file and installation detection
-│   └── ai_sdk_framework_environment_detection.yml   # AI SDK/framework environment variable detection
+│   ├── ai_sdk_framework_environment_detection.yml   # AI SDK/framework environment variable detection
+│   ├── ai_container_image_detection.yml             # AI container image detection (Docker/Podman, 27+ images)
+│   ├── ai_container_compose_detection.yml           # AI Docker Compose and container config detection
+│   ├── ai_wsl2_detection.yml                        # AI software in Windows WSL2 detection
+│   ├── n8n_process_detection.yml                    # n8n workflow automation process detection
+│   ├── n8n_file_detection.yml                       # n8n file and configuration detection
+│   └── n8n_environment_detection.yml                # n8n environment variable detection
 └── README.md                  # This file
 ```
 
@@ -381,7 +395,7 @@ python example_log_collection.py
 
 ## SIGMA Rules
 
-The scanner includes 89 comprehensive SIGMA rules for LLM software detection:
+The scanner includes 95 comprehensive SIGMA rules for LLM software detection:
 
 ### Core LLM Software (4 rules)
 1. **ollama_detection.yml** - Comprehensive Ollama detection covering processes, files, network activity, and environment variables
@@ -488,6 +502,35 @@ The scanner includes 89 comprehensive SIGMA rules for LLM software detection:
 88. **ai_sdk_framework_file_detection.yml** - File/installation detection for AI SDKs, frameworks, and vector databases (ChromaDB, Pinecone, Qdrant, Weaviate, Milvus, FAISS)
 89. **ai_sdk_framework_environment_detection.yml** - Environment variable detection for AI frameworks and vector stores (LANGCHAIN_*, LLAMA_INDEX_*, CREWAI_*, DIFY_*, FLOWISE_*, GRADIO_*, CHROMA_*, PINECONE_*, QDRANT_*, WEAVIATE_*, MILVUS_*)
 
+### Container AI Detection (2 rules)
+90. **ai_container_image_detection.yml** - Detects running Docker/Podman containers with 27+ AI-related images (Ollama, vLLM, Open WebUI, Dify, FlowiseAI, n8n, LiteLLM, AnythingLLM, LibreChat, LocalAI, HuggingFace TGI, ChromaDB, Qdrant, Weaviate, Milvus, MLflow, Jupyter, PyTorch, TensorFlow, NVIDIA Triton, LangChain, Chainlit, Gradio, W&B)
+91. **ai_container_compose_detection.yml** - Detects Docker Compose files, Dockerfiles, Kubernetes manifests, and container environment files referencing AI services
+
+### WSL2 AI Detection (1 rule)
+92. **ai_wsl2_detection.yml** - Detects AI software running inside Windows WSL2 distributions including WSL commands targeting AI software, Docker inside WSL, and WSL network port forwarding for AI services
+
+### n8n Workflow Automation Detection (3 rules)
+93. **n8n_process_detection.yml** - Dedicated n8n process detection including npm/npx, Node.js, Docker, and service commands
+94. **n8n_file_detection.yml** - n8n file artifacts: ~/.n8n/ directory, database, workflow exports, node_modules, Docker Compose references
+95. **n8n_environment_detection.yml** - n8n environment variables (N8N_HOST, N8N_PORT, N8N_ENCRYPTION_KEY, N8N_WEBHOOK_URL, N8N_DB_*, N8N_AI_*)
+
+### Container AI Detection
+The scanner actively enumerates Docker and Podman containers to find shadow AI software:
+- **Container Image Matching**: Checks running container images against 27+ known AI software patterns (Ollama, vLLM, Open WebUI, Dify, FlowiseAI, n8n, LiteLLM, AnythingLLM, LibreChat, LocalAI, ChromaDB, Qdrant, Weaviate, Milvus, HuggingFace TGI, MLflow, Jupyter, PyTorch, TensorFlow, NVIDIA Triton, etc.)
+- **Container Environment Variables**: Inspects container env vars for AI API keys and configuration (OPENAI_API_KEY, ANTHROPIC_API_KEY, N8N_*, LITELLM_*, etc.)
+- **Container Port Detection**: Identifies containers exposing known AI service ports (11434, 8000, 5678, 3000, 8080, etc.)
+- **Docker Compose Analysis**: Scans Docker Compose files in common directories for AI service definitions
+- **Dual Runtime Support**: Checks both Docker and Podman container runtimes
+
+### WSL2 AI Detection (Windows)
+On Windows systems, the scanner enumerates WSL2 distributions and checks for hidden AI software:
+- **Distribution Enumeration**: Lists all WSL2 distributions with state and version
+- **Binary Detection**: Checks for AI binaries (ollama, vllm, litellm, n8n, flowise, streamlit, jupyter, mlflow, etc.)
+- **Directory Detection**: Scans for AI software data directories (~/.ollama, ~/.n8n, ~/.vllm, etc.)
+- **Docker-in-WSL**: Enumerates Docker containers running inside WSL2 distros
+- **Python Package Detection**: Checks for AI-related pip packages (openai, anthropic, langchain, torch, etc.)
+- **Environment Variables**: Scans WSL2 environment for AI API keys and configuration
+
 ### De-Duplication
 The scanner includes a built-in de-duplication engine that handles overlapping detections:
 - When both legacy (hardcoded) detection and SIGMA rule-based detection find the same artifact, duplicates are automatically removed
@@ -526,6 +569,9 @@ Each SIGMA rule follows the standard SIGMA format with:
 - **T1018**: Remote System Discovery
 - **T1547**: Boot or Logon Autostart Execution
 - **T1547.001**: Registry Run Keys / Startup Folder
+- **T1610**: Deploy Container
+- **T1036**: Masquerading (containers hiding AI workloads)
+- **T1202**: Indirect Command Execution (WSL2 bypass)
 
 ## Output Format
 
@@ -657,6 +703,19 @@ To contribute:
 4. Enhance detection accuracy
 
 ## Changelog
+
+- **v1.7**: Container, WSL2, and n8n Shadow AI Detection
+  - Added **Container AI Detection** for Docker and Podman with 27+ AI-related image patterns (Ollama, vLLM, Open WebUI, Dify, FlowiseAI, n8n, LiteLLM, AnythingLLM, LibreChat, LocalAI, ChromaDB, Qdrant, Weaviate, Milvus, HuggingFace TGI, MLflow, Jupyter, PyTorch, TensorFlow, NVIDIA Triton, LangChain, W&B, etc.)
+  - Container detection includes: image name matching, environment variable inspection, exposed port detection, and Docker Compose file analysis
+  - Added **WSL2 AI Detection** (Windows only) that enumerates WSL2 distributions and scans for AI binaries, directories, Docker-in-WSL containers, Python packages, and environment variables
+  - Added 6 new SIGMA rules (89 -> 95 total):
+    - **Container Detection (2 rules)**: `ai_container_image_detection.yml` for 27+ AI container images, `ai_container_compose_detection.yml` for Docker Compose/Kubernetes manifests
+    - **WSL2 Detection (1 rule)**: `ai_wsl2_detection.yml` for AI software inside WSL2 distros
+    - **n8n Detection (3 rules)**: Dedicated `n8n_process_detection.yml`, `n8n_file_detection.yml`, `n8n_environment_detection.yml` for comprehensive n8n workflow automation detection
+  - New detection types: `container_image`, `container_env_var`, `container_port`, `container_compose`, `wsl2_distro`, `wsl2_binary`, `wsl2_file_path`, `wsl2_container`, `wsl2_python_package`, `wsl2_env_var`
+  - Added `container.go`, `wsl2_windows.go`, `wsl2_other.go` to Go scanner
+  - Added `detect_container_ai()`, `detect_wsl2_ai()` methods to Python scanner
+  - Updated MITRE ATT&CK mappings: T1610 (Deploy Container), T1036 (Masquerading), T1202 (Indirect Command Execution)
 
 - **v1.6**: Generic AI API Provider, Proxy/Gateway, and SDK/Framework Detection
   - Added 11 new generic SIGMA rules for comprehensive Shadow AI detection (78 → 89 rules)

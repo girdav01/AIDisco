@@ -1,0 +1,132 @@
+title: AI Software in Windows WSL2 Detection
+id: 12345678-1234-5678-9abc-123456789093
+status: experimental
+description: |
+  Detects AI and LLM software running inside Windows Subsystem for Linux (WSL2)
+  distributions. WSL2 provides a full Linux kernel and is commonly used to run
+  AI software that may bypass Windows-centric endpoint detection tools. This rule
+  detects WSL-related processes, commands targeting WSL distributions, and
+  AI software indicators within WSL environments.
+author: AI Discovery Security Team
+date: 2025/02/10
+modified: 2025/02/10
+tags:
+  - attack.execution
+  - attack.t1059
+  - attack.defense_evasion
+  - attack.t1202
+  - attack.t1036
+  - ai.wsl2
+  - ai.shadow_ai
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_wsl_ai_ollama:
+    CommandLine|contains|all:
+      - 'wsl'
+      - 'ollama'
+  selection_wsl_ai_vllm:
+    CommandLine|contains|all:
+      - 'wsl'
+      - 'vllm'
+  selection_wsl_ai_litellm:
+    CommandLine|contains|all:
+      - 'wsl'
+      - 'litellm'
+  selection_wsl_ai_n8n:
+    CommandLine|contains|all:
+      - 'wsl'
+      - 'n8n'
+  selection_wsl_ai_flowise:
+    CommandLine|contains|all:
+      - 'wsl'
+      - 'flowise'
+  selection_wsl_ai_langchain:
+    CommandLine|contains|all:
+      - 'wsl'
+      - 'langchain'
+  selection_wsl_ai_dify:
+    CommandLine|contains|all:
+      - 'wsl'
+      - 'dify'
+  selection_wsl_ai_localai:
+    CommandLine|contains|all:
+      - 'wsl'
+      - 'localai'
+  selection_wsl_ai_docker:
+    CommandLine|contains|all:
+      - 'wsl'
+      - 'docker'
+  selection_wsl_ai_podman:
+    CommandLine|contains|all:
+      - 'wsl'
+      - 'podman'
+  selection_wsl_ai_nvidia:
+    CommandLine|contains|all:
+      - 'wsl'
+      - 'nvidia-smi'
+  selection_wsl_ai_pip:
+    CommandLine|contains|all:
+      - 'wsl'
+      - 'pip install'
+    CommandLine|contains:
+      - 'torch'
+      - 'transformers'
+      - 'langchain'
+      - 'openai'
+      - 'anthropic'
+      - 'chromadb'
+      - 'llama-index'
+      - 'crewai'
+      - 'vllm'
+      - 'litellm'
+  selection_wsl_docker_run:
+    CommandLine|contains|all:
+      - 'wsl'
+      - 'docker run'
+  selection_wsl_docker_compose:
+    CommandLine|contains|all:
+      - 'wsl'
+      - 'docker compose'
+  selection_wsl_process:
+    Image|endswith:
+      - '\wsl.exe'
+      - '\wslhost.exe'
+    CommandLine|contains:
+      - 'ollama'
+      - 'vllm'
+      - 'litellm'
+      - 'n8n'
+      - 'flowise'
+      - 'localai'
+      - 'jupyter'
+      - 'streamlit'
+      - 'gradio'
+      - 'chainlit'
+      - 'mlflow'
+      - 'dify'
+  selection_wsl_port_forward:
+    CommandLine|contains|all:
+      - 'netsh'
+      - 'portproxy'
+    CommandLine|contains:
+      - '11434'
+      - '8000'
+      - '5678'
+      - '3000'
+      - '8080'
+      - '5000'
+      - '8888'
+      - '7860'
+  condition: selection_wsl_ai_ollama or selection_wsl_ai_vllm or selection_wsl_ai_litellm or selection_wsl_ai_n8n or selection_wsl_ai_flowise or selection_wsl_ai_langchain or selection_wsl_ai_dify or selection_wsl_ai_localai or selection_wsl_ai_docker or selection_wsl_ai_podman or selection_wsl_ai_nvidia or selection_wsl_ai_pip or selection_wsl_docker_run or selection_wsl_docker_compose or selection_wsl_process or selection_wsl_port_forward
+fields:
+  - Image
+  - CommandLine
+  - User
+  - ParentImage
+  - ParentCommandLine
+falsepositives:
+  - Authorized development environments using WSL2 for approved AI development
+  - IT administrators managing WSL2 distributions for approved purposes
+level: high

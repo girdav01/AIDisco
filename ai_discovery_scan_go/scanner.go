@@ -57,6 +57,16 @@ func (s *Scanner) RunScan() *ScanResults {
 	fmt.Println("Running SIGMA rule-based detection...")
 	allResults = append(allResults, s.detectFromAllSigmaRules()...)
 
+	// Container AI detection (Docker/Podman)
+	fmt.Println("Scanning for AI software in containers...")
+	allResults = append(allResults, s.detectContainerAI()...)
+
+	// WSL2 AI detection (Windows only)
+	if runtime.GOOS == "windows" {
+		fmt.Println("Scanning for AI software in WSL2 distributions...")
+		allResults = append(allResults, s.detectWSL2AI()...)
+	}
+
 	// De-duplicate results from overlapping detection methods
 	fmt.Println("De-duplicating detection results...")
 	allResults = deduplicateResults(allResults)

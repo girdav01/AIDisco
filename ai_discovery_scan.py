@@ -713,6 +713,10 @@ class LLMSoftwareDetector:
             ('gradio', 'Gradio'), ('streamlit', 'Streamlit'),
             ('semantic kernel', 'Semantic Kernel'), ('semantic_kernel', 'Semantic Kernel'),
             ('n8n', 'n8n'),
+            # Container and WSL2 detection
+            ('container image', 'AI Container'), ('ai software container', 'AI Container'),
+            ('docker compose', 'AI Container'), ('container configuration', 'AI Container'),
+            ('wsl2', 'WSL2 AI'), ('wsl', 'WSL2 AI'),
             # Generic API provider rules (last — dedup prefers specific)
             ('ai api provider', 'AI API Provider'), ('ai api key', 'AI API Provider'),
             ('ai proxy', 'AI Proxy'), ('ai gateway', 'AI Proxy'),
@@ -735,6 +739,7 @@ class LLMSoftwareDetector:
                     'clawdbot': 'ClawdBot', 'openclaw': 'OpenClaw', 'moltbot': 'MoltBot',
                     'api_provider': 'AI API Provider', 'proxy': 'AI Proxy',
                     'framework': 'AI Framework', 'shadow_ai': 'Shadow AI',
+                    'container': 'AI Container', 'wsl2': 'WSL2 AI',
                 }
                 if software in tag_mapping:
                     return tag_mapping[software]
@@ -1253,6 +1258,465 @@ class LLMSoftwareDetector:
 
         return results
 
+    # ------------------------------------------------------------------
+    # Container AI Detection (Docker / Podman)
+    # ------------------------------------------------------------------
+
+    # Known AI container image patterns -> software name
+    AI_CONTAINER_IMAGES = [
+        # LLM inference servers
+        ('ollama/ollama', 'Ollama'),
+        ('vllm/vllm', 'vLLM'),
+        ('huggingface/text-generation-inference', 'HuggingFace TGI'),
+        ('localai/localai', 'LocalAI'),
+        ('go-skynet/local-ai', 'LocalAI'),
+        # AI chat/UI platforms
+        ('open-webui/open-webui', 'Open WebUI'),
+        ('mintplexlabs/anythingllm', 'AnythingLLM'),
+        ('danny-avila/librechat', 'LibreChat'),
+        ('librechat/librechat', 'LibreChat'),
+        ('jan-ai/jan', 'Jan'),
+        ('text-generation-webui', 'Text Generation WebUI'),
+        # AI workflow/orchestration
+        ('langgenius/dify', 'Dify'),
+        ('flowiseai/flowise', 'FlowiseAI'),
+        ('n8nio/n8n', 'n8n'),
+        ('docker.n8n.io/n8nio/n8n', 'n8n'),
+        ('chainlit/chainlit', 'Chainlit'),
+        ('gradio/gradio', 'Gradio'),
+        # AI proxy/gateway
+        ('berriai/litellm', 'LiteLLM'),
+        ('litellm/litellm', 'LiteLLM'),
+        ('mlflow/mlflow', 'MLflow'),
+        ('wandb/local', 'Weights & Biases'),
+        # Vector databases
+        ('chromadb/chroma', 'ChromaDB'),
+        ('qdrant/qdrant', 'Qdrant'),
+        ('semitechnologies/weaviate', 'Weaviate'),
+        ('weaviate/weaviate', 'Weaviate'),
+        ('milvusdb/milvus', 'Milvus'),
+        ('pinecone-io/', 'Pinecone'),
+        # AI/ML frameworks & notebooks
+        ('jupyter/tensorflow-notebook', 'Jupyter AI'),
+        ('jupyter/pytorch-notebook', 'Jupyter AI'),
+        ('jupyter/scipy-notebook', 'Jupyter AI'),
+        ('jupyter/datascience-notebook', 'Jupyter AI'),
+        ('pytorch/pytorch', 'PyTorch'),
+        ('tensorflow/tensorflow', 'TensorFlow'),
+        ('nvcr.io/nvidia/pytorch', 'PyTorch'),
+        ('nvcr.io/nvidia/tensorflow', 'TensorFlow'),
+        ('nvidia/tritonserver', 'NVIDIA Triton'),
+        ('nvcr.io/nvidia/tritonserver', 'NVIDIA Triton'),
+        # LangChain ecosystem
+        ('langchain/', 'LangChain'),
+        # ClawdBot/OpenClaw/MoltBot
+        ('clawdbot/', 'ClawdBot'),
+        ('openclaw/', 'OpenClaw'),
+        ('moltbot/', 'MoltBot'),
+    ]
+
+    AI_CONTAINER_ENV_PATTERNS = [
+        ('OPENAI_API_KEY', 'AI API Provider'),
+        ('ANTHROPIC_API_KEY', 'AI API Provider'),
+        ('OLLAMA_', 'Ollama'),
+        ('VLLM_', 'vLLM'),
+        ('LITELLM_', 'LiteLLM'),
+        ('N8N_', 'n8n'),
+        ('FLOWISE_', 'FlowiseAI'),
+        ('DIFY_', 'Dify'),
+        ('LANGCHAIN_', 'LangChain'),
+        ('OPENROUTER_', 'OpenRouter'),
+        ('HUGGINGFACE_', 'HuggingFace'),
+        ('HF_TOKEN', 'HuggingFace'),
+        ('GROQ_API_KEY', 'AI API Provider'),
+        ('MISTRAL_API_KEY', 'AI API Provider'),
+        ('COHERE_API_KEY', 'AI API Provider'),
+        ('TOGETHER_API_KEY', 'AI API Provider'),
+        ('REPLICATE_API_TOKEN', 'AI API Provider'),
+        ('DEEPSEEK_API_KEY', 'AI API Provider'),
+        ('CHROMA_', 'ChromaDB'),
+        ('QDRANT_', 'Qdrant'),
+        ('WEAVIATE_', 'Weaviate'),
+        ('MILVUS_', 'Milvus'),
+        ('PINECONE_', 'Pinecone'),
+        ('WANDB_', 'Weights & Biases'),
+        ('MLFLOW_', 'MLflow'),
+        ('CLAWDBOT_', 'ClawdBot'),
+        ('OPENCLAW_', 'OpenClaw'),
+        ('MOLTBOT_', 'MoltBot'),
+    ]
+
+    AI_SERVICE_PORTS = {
+        '11434': 'Ollama', '8000': 'vLLM', '1234': 'LM Studio',
+        '3000': 'Open WebUI', '5678': 'n8n', '3001': 'FlowiseAI',
+        '5001': 'Dify', '8080': 'LocalAI', '4891': 'GPT4All',
+        '8265': 'LiteLLM', '8501': 'Streamlit', '7860': 'Gradio',
+        '8888': 'Jupyter', '5000': 'MLflow', '6333': 'Qdrant',
+        '8529': 'Weaviate', '19530': 'Milvus', '8002': 'NVIDIA Triton',
+    }
+
+    def detect_container_ai(self) -> List[DetectionResult]:
+        """Detect AI software running in Docker/Podman containers."""
+        results = []
+
+        for runtime in ['docker', 'podman']:
+            containers = self._list_containers(runtime)
+            if containers is None:
+                continue
+
+            logger.info(f"Found {len(containers)} {runtime} containers")
+
+            for c in containers:
+                # Check image name against known AI patterns
+                image_lower = c.get('image', '').lower()
+                for pattern, software in self.AI_CONTAINER_IMAGES:
+                    if pattern.lower() in image_lower:
+                        results.append(DetectionResult(
+                            software=software,
+                            detection_type="container_image",
+                            value=f"Container: {c.get('name', 'unknown')}, Image: {c.get('image', '')} ({runtime})",
+                            path=f"{runtime}://{c.get('id', '')}",
+                            confidence="high"
+                        ))
+                        break
+
+                # Check container environment variables
+                env_results = self._check_container_env(runtime, c)
+                results.extend(env_results)
+
+                # Check exposed ports
+                port_results = self._check_container_ports(c, runtime)
+                results.extend(port_results)
+
+        # Check Docker Compose files
+        results.extend(self._detect_compose_files())
+
+        return results
+
+    def _list_containers(self, runtime: str) -> Optional[list]:
+        """List running containers for the given runtime."""
+        try:
+            result = subprocess.run(
+                [runtime, 'ps', '--format', '{{.ID}}\t{{.Image}}\t{{.Names}}\t{{.Ports}}\t{{.Status}}'],
+                capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT
+            )
+            if result.returncode != 0:
+                return None
+
+            containers = []
+            for line in result.stdout.strip().split('\n'):
+                if not line.strip():
+                    continue
+                parts = line.split('\t')
+                c = {'id': parts[0], 'image': parts[1] if len(parts) > 1 else ''}
+                if len(parts) > 2:
+                    c['name'] = parts[2]
+                if len(parts) > 3:
+                    c['ports'] = parts[3]
+                if len(parts) > 4:
+                    c['status'] = parts[4]
+                containers.append(c)
+            return containers
+        except (FileNotFoundError, subprocess.TimeoutExpired, OSError):
+            return None
+
+    def _check_container_env(self, runtime: str, container: dict) -> List[DetectionResult]:
+        """Check container environment variables for AI-related keys."""
+        results = []
+        try:
+            result = subprocess.run(
+                [runtime, 'inspect', '--format', '{{json .Config.Env}}', container.get('id', '')],
+                capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT
+            )
+            if result.returncode != 0:
+                return results
+
+            import json as _json
+            env_vars = _json.loads(result.stdout.strip())
+            if not isinstance(env_vars, list):
+                return results
+
+            for env in env_vars:
+                env_upper = env.upper()
+                for pattern, software in self.AI_CONTAINER_ENV_PATTERNS:
+                    if pattern in env_upper:
+                        # Mask sensitive values
+                        masked = self._mask_env_value(env)
+                        results.append(DetectionResult(
+                            software=software,
+                            detection_type="container_env_var",
+                            value=f"Container {container.get('name', 'unknown')} ({runtime}): {masked}",
+                            path=f"{runtime}://{container.get('id', '')}",
+                            confidence="high"
+                        ))
+                        break
+        except (subprocess.TimeoutExpired, OSError, json.JSONDecodeError):
+            pass
+        return results
+
+    def _check_container_ports(self, container: dict, runtime: str) -> List[DetectionResult]:
+        """Check if container exposes known AI service ports."""
+        results = []
+        ports_str = container.get('ports', '').lower()
+        for port, software in self.AI_SERVICE_PORTS.items():
+            if f':{port}->' in ports_str or f':{port}/' in ports_str:
+                results.append(DetectionResult(
+                    software=software,
+                    detection_type="container_port",
+                    value=f"Container {container.get('name', 'unknown')} ({runtime}) exposes port {port} ({software})",
+                    path=f"{runtime}://{container.get('id', '')}",
+                    confidence="medium"
+                ))
+        return results
+
+    def _detect_compose_files(self) -> List[DetectionResult]:
+        """Search for Docker Compose files containing AI service definitions."""
+        results = []
+        home = str(Path.home())
+        search_dirs = [
+            home, os.path.join(home, 'docker'), os.path.join(home, 'containers'),
+            os.path.join(home, 'projects'), os.path.join(home, 'workspace'),
+            os.path.join(home, 'dev'), '/opt', '/srv', '/etc/docker',
+        ]
+        compose_names = ['docker-compose.yml', 'docker-compose.yaml', 'compose.yml', 'compose.yaml']
+
+        for d in search_dirs:
+            for name in compose_names:
+                path = os.path.join(d, name)
+                if not os.path.isfile(path):
+                    continue
+                try:
+                    with open(path, 'r', errors='ignore') as f:
+                        content = f.read(1024 * 1024)  # 1 MB max
+                    content_lower = content.lower()
+                    for pattern, software in self.AI_CONTAINER_IMAGES:
+                        if pattern.lower() in content_lower:
+                            results.append(DetectionResult(
+                                software=software,
+                                detection_type="container_compose",
+                                value=f"Docker Compose references {software} image: {path}",
+                                path=path,
+                                confidence="high"
+                            ))
+                except (OSError, PermissionError):
+                    pass
+        return results
+
+    @staticmethod
+    def _mask_env_value(env: str) -> str:
+        """Mask sensitive values in environment variable strings."""
+        parts = env.split('=', 1)
+        if len(parts) != 2:
+            return env
+        key, val = parts
+        sensitive = ['KEY', 'TOKEN', 'SECRET', 'PASSWORD', 'AUTH']
+        if any(s in key.upper() for s in sensitive):
+            if len(val) > 8:
+                return f"{key}={val[:4]}****{val[-4:]}"
+            return f"{key}=****"
+        return env
+
+    # ------------------------------------------------------------------
+    # WSL2 AI Detection (Windows only)
+    # ------------------------------------------------------------------
+
+    def detect_wsl2_ai(self) -> List[DetectionResult]:
+        """Detect AI software hidden in WSL2 distributions (Windows only)."""
+        results = []
+        if platform.system() != 'Windows':
+            return results
+
+        distros = self._list_wsl_distros()
+        if not distros:
+            return results
+
+        logger.info(f"Found {len(distros)} WSL2 distribution(s)")
+
+        for distro in distros:
+            name = distro['name']
+            state = distro['state']
+            version = distro.get('version', '?')
+            logger.info(f"Scanning WSL2 distro: {name} (state: {state})")
+
+            # Report distro existence
+            results.append(DetectionResult(
+                software="WSL2 Distribution",
+                detection_type="wsl2_distro",
+                value=f"WSL2 distro: {name} (state: {state}, version: {version})",
+                confidence="medium" if state.lower() == 'running' else "low"
+            ))
+
+            if state.lower() != 'running':
+                continue
+
+            # Scan running distro for AI software
+            results.extend(self._scan_wsl_distro_for_ai(name))
+
+        return results
+
+    def _list_wsl_distros(self) -> list:
+        """Enumerate installed WSL distributions."""
+        try:
+            result = subprocess.run(
+                ['wsl', '--list', '--verbose'],
+                capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT
+            )
+            if result.returncode != 0:
+                return []
+
+            distros = []
+            for i, line in enumerate(result.stdout.strip().split('\n')):
+                if i == 0:
+                    continue  # skip header
+                line = line.strip().lstrip('*').strip()
+                if not line:
+                    continue
+                fields = line.split()
+                if len(fields) >= 3:
+                    distros.append({'name': fields[0], 'state': fields[1], 'version': fields[2]})
+            return distros
+        except (FileNotFoundError, subprocess.TimeoutExpired, OSError):
+            return []
+
+    def _scan_wsl_distro_for_ai(self, distro_name: str) -> List[DetectionResult]:
+        """Check a running WSL2 distribution for AI software."""
+        results = []
+
+        # Check for AI binaries
+        ai_binaries = [
+            ('ollama', 'Ollama'), ('vllm', 'vLLM'), ('litellm', 'LiteLLM'),
+            ('n8n', 'n8n'), ('flowise', 'FlowiseAI'), ('chainlit', 'Chainlit'),
+            ('streamlit', 'Streamlit'), ('gradio', 'Gradio'), ('jupyter', 'Jupyter'),
+            ('mlflow', 'MLflow'), ('langchain-cli', 'LangChain'), ('dify', 'Dify'),
+            ('localai', 'LocalAI'), ('llamafile', 'Llamafile'), ('llama-server', 'Llamafile'),
+            ('crewai', 'CrewAI'),
+        ]
+        for binary, software in ai_binaries:
+            try:
+                result = subprocess.run(
+                    ['wsl', '-d', distro_name, '--', 'which', binary],
+                    capture_output=True, text=True, timeout=10
+                )
+                if result.returncode == 0 and result.stdout.strip():
+                    path = result.stdout.strip()
+                    results.append(DetectionResult(
+                        software=software,
+                        detection_type="wsl2_binary",
+                        value=f"WSL2 {distro_name}: {software} found at {path}",
+                        path=f"wsl://{distro_name}{path}",
+                        confidence="high"
+                    ))
+            except (subprocess.TimeoutExpired, OSError):
+                pass
+
+        # Check for AI directories
+        ai_dirs = [
+            ('~/.ollama', 'Ollama'), ('~/.vllm', 'vLLM'), ('~/.n8n', 'n8n'),
+            ('~/.cache/lm-studio', 'LM Studio'), ('~/.local/share/gpt4all', 'GPT4All'),
+            ('~/.config/flowise', 'FlowiseAI'), ('~/.langchain', 'LangChain'),
+            ('~/.dify', 'Dify'),
+        ]
+        for dir_path, software in ai_dirs:
+            try:
+                result = subprocess.run(
+                    ['wsl', '-d', distro_name, '--', 'test', '-d', dir_path, '&&', 'echo', 'exists'],
+                    capture_output=True, text=True, timeout=10
+                )
+                if result.returncode == 0 and 'exists' in result.stdout:
+                    results.append(DetectionResult(
+                        software=software,
+                        detection_type="wsl2_file_path",
+                        value=f"WSL2 {distro_name}: {software} directory found at {dir_path}",
+                        path=f"wsl://{distro_name}/{dir_path}",
+                        confidence="high"
+                    ))
+            except (subprocess.TimeoutExpired, OSError):
+                pass
+
+        # Check for Docker inside WSL
+        try:
+            result = subprocess.run(
+                ['wsl', '-d', distro_name, '--', 'docker', 'ps', '--format', '{{.Image}}'],
+                capture_output=True, text=True, timeout=15
+            )
+            if result.returncode == 0 and result.stdout.strip():
+                for line in result.stdout.strip().split('\n'):
+                    image_lower = line.strip().lower()
+                    if not image_lower:
+                        continue
+                    for pattern, software in self.AI_CONTAINER_IMAGES:
+                        if pattern.lower() in image_lower:
+                            results.append(DetectionResult(
+                                software=software,
+                                detection_type="wsl2_container",
+                                value=f"WSL2 {distro_name}: Docker container with {software} image: {line.strip()}",
+                                path=f"wsl://{distro_name}/docker",
+                                confidence="high"
+                            ))
+                            break
+        except (subprocess.TimeoutExpired, OSError):
+            pass
+
+        # Check for AI Python packages
+        ai_packages = [
+            ('openai', 'AI API Provider'), ('anthropic', 'AI API Provider'),
+            ('langchain', 'LangChain'), ('llama-index', 'LlamaIndex'),
+            ('transformers', 'HuggingFace Transformers'), ('torch', 'PyTorch'),
+            ('tensorflow', 'TensorFlow'), ('crewai', 'CrewAI'),
+            ('autogen', 'AutoGen'), ('chromadb', 'ChromaDB'),
+            ('vllm', 'vLLM'), ('litellm', 'LiteLLM'),
+        ]
+        try:
+            result = subprocess.run(
+                ['wsl', '-d', distro_name, '--', 'pip', 'list', '--format=columns'],
+                capture_output=True, text=True, timeout=15
+            )
+            if result.returncode == 0:
+                pip_lower = result.stdout.lower()
+                for pkg, software in ai_packages:
+                    if pkg in pip_lower:
+                        results.append(DetectionResult(
+                            software=software,
+                            detection_type="wsl2_python_package",
+                            value=f"WSL2 {distro_name}: Python package '{pkg}' installed ({software})",
+                            path=f"wsl://{distro_name}/pip/{pkg}",
+                            confidence="medium"
+                        ))
+        except (subprocess.TimeoutExpired, OSError):
+            pass
+
+        # Check for AI environment variables inside WSL
+        ai_env_vars = [
+            ('OPENAI_API_KEY', 'AI API Provider'), ('ANTHROPIC_API_KEY', 'AI API Provider'),
+            ('OLLAMA_HOST', 'Ollama'), ('LITELLM_', 'LiteLLM'), ('N8N_', 'n8n'),
+            ('LANGCHAIN_', 'LangChain'), ('HF_TOKEN', 'HuggingFace'),
+            ('HUGGINGFACE_', 'HuggingFace'), ('GROQ_API_KEY', 'AI API Provider'),
+            ('MISTRAL_API_KEY', 'AI API Provider'), ('CLAWDBOT_', 'ClawdBot'),
+            ('OPENCLAW_', 'OpenClaw'),
+        ]
+        try:
+            result = subprocess.run(
+                ['wsl', '-d', distro_name, '--', 'env'],
+                capture_output=True, text=True, timeout=10
+            )
+            if result.returncode == 0:
+                for line in result.stdout.split('\n'):
+                    line_upper = line.upper()
+                    for pattern, software in ai_env_vars:
+                        if pattern in line_upper:
+                            results.append(DetectionResult(
+                                software=software,
+                                detection_type="wsl2_env_var",
+                                value=f"WSL2 {distro_name}: {self._mask_env_value(line.strip())}",
+                                path=f"wsl://{distro_name}/env",
+                                confidence="high"
+                            ))
+                            break
+        except (subprocess.TimeoutExpired, OSError):
+            pass
+
+        return results
+
     def run_scan(self) -> Dict:
         """Run complete scan for LLM software using SIGMA rules"""
         print("Starting LLM Software Detection Scan...")
@@ -1280,6 +1744,17 @@ class LLMSoftwareDetector:
         print("Running SIGMA rule-based detection...")
         sigma_results = self.detect_from_all_sigma_rules()
         all_results.extend(sigma_results)
+
+        # Container AI detection (Docker/Podman)
+        print("Scanning for AI software in containers...")
+        container_results = self.detect_container_ai()
+        all_results.extend(container_results)
+
+        # WSL2 AI detection (Windows only)
+        if platform.system() == 'Windows':
+            print("Scanning for AI software in WSL2 distributions...")
+            wsl_results = self.detect_wsl2_ai()
+            all_results.extend(wsl_results)
 
         # De-duplicate results from overlapping detection methods
         print("De-duplicating detection results...")
@@ -1521,7 +1996,67 @@ class LLMSoftwareDetector:
             return 'GPT4All'
         elif 'vllm' in title_lower:
             return 'vLLM'
-        
+        # AI proxy/gateway services
+        elif 'litellm' in title_lower:
+            return 'LiteLLM'
+        elif 'openrouter' in title_lower:
+            return 'OpenRouter'
+        elif 'helicone' in title_lower:
+            return 'Helicone'
+        elif 'portkey' in title_lower:
+            return 'Portkey'
+        elif 'promptlayer' in title_lower:
+            return 'PromptLayer'
+        elif 'langsmith' in title_lower:
+            return 'LangSmith'
+        elif 'braintrust' in title_lower:
+            return 'BrainTrust'
+        elif 'mlflow' in title_lower:
+            return 'MLflow'
+        elif 'humanloop' in title_lower:
+            return 'HumanLoop'
+        elif 'vellum' in title_lower:
+            return 'Vellum'
+        # AI SDK/frameworks
+        elif 'langchain' in title_lower:
+            return 'LangChain'
+        elif 'llamaindex' in title_lower or 'llama_index' in title_lower:
+            return 'LlamaIndex'
+        elif 'autogen' in title_lower:
+            return 'AutoGen'
+        elif 'crewai' in title_lower:
+            return 'CrewAI'
+        elif 'haystack' in title_lower:
+            return 'Haystack'
+        elif 'dify' in title_lower:
+            return 'Dify'
+        elif 'flowise' in title_lower:
+            return 'FlowiseAI'
+        elif 'chainlit' in title_lower:
+            return 'Chainlit'
+        elif 'gradio' in title_lower:
+            return 'Gradio'
+        elif 'streamlit' in title_lower:
+            return 'Streamlit'
+        elif 'semantic kernel' in title_lower or 'semantic_kernel' in title_lower:
+            return 'Semantic Kernel'
+        elif 'n8n' in title_lower:
+            return 'n8n'
+        # Container and WSL2 detection
+        elif 'container image' in title_lower or 'ai software container' in title_lower:
+            return 'AI Container'
+        elif 'docker compose' in title_lower or 'container configuration' in title_lower:
+            return 'AI Container'
+        elif 'wsl2' in title_lower or 'wsl' in title_lower:
+            return 'WSL2 AI'
+        # Generic (check last)
+        elif 'ai api provider' in title_lower or 'ai api key' in title_lower:
+            return 'AI API Provider'
+        elif 'ai proxy' in title_lower or 'ai gateway' in title_lower:
+            return 'AI Proxy'
+        elif 'ai sdk' in title_lower or 'ai framework' in title_lower:
+            return 'AI Framework'
+
         return ""
     
     def detect_from_sigma_rule(self, rule: Dict, software_name: str) -> List[DetectionResult]:
