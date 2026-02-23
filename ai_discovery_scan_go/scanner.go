@@ -67,6 +67,10 @@ func (s *Scanner) RunScan() *ScanResults {
 		allResults = append(allResults, s.detectWSL2AI()...)
 	}
 
+	// Network connection detection (active connections, listening ports, DNS cache)
+	fmt.Println("Scanning for active AI network connections...")
+	allResults = append(allResults, s.detectNetworkAI()...)
+
 	// De-duplicate results from overlapping detection methods
 	fmt.Println("De-duplicating detection results...")
 	allResults = deduplicateResults(allResults)

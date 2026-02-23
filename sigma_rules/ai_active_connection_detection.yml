@@ -1,0 +1,211 @@
+title: AI Service Active Network Connection Detection
+id: 12345678-1234-5678-9abc-123456789096
+status: experimental
+description: |
+  Detects active TCP connections to known AI/LLM service endpoints by monitoring
+  established connections and listening ports. This rule covers both outbound
+  connections to cloud AI API providers (OpenAI, Anthropic, Google AI, Mistral,
+  Groq, DeepSeek, xAI, Cohere, Together AI, Replicate, Fireworks, Perplexity,
+  HuggingFace, AI21 Labs, SambaNova, Cerebras, Stability AI, and others) and
+  local AI services listening on well-known ports (Ollama 11434, LM Studio 1234,
+  GPT4All 4891, vLLM 8000, etc.). Also detects connections to AI proxy/gateway
+  services such as OpenRouter, Helicone, Portkey, LangSmith, and Weights & Biases.
+author: AI Discovery Security Team
+date: 2025/03/01
+modified: 2025/03/01
+tags:
+  - attack.exfiltration
+  - attack.t1071.001
+  - attack.t1041
+  - attack.command_and_control
+  - attack.t1571
+  - ai.network_detection
+  - ai.shadow_ai
+logsource:
+  category: network_connection
+  product: any
+detection:
+  # Outbound connections to AI API providers
+  selection_openai_connection:
+    DestinationHostname|endswith:
+      - '.openai.com'
+    DestinationPort:
+      - 443
+      - 80
+  selection_anthropic_connection:
+    DestinationHostname|endswith:
+      - '.anthropic.com'
+    DestinationPort:
+      - 443
+      - 80
+  selection_google_ai_connection:
+    DestinationHostname|contains:
+      - 'generativelanguage.googleapis.com'
+      - 'aiplatform.googleapis.com'
+      - 'aistudio.google.com'
+      - 'gemini.google.com'
+  selection_mistral_connection:
+    DestinationHostname|endswith:
+      - '.mistral.ai'
+    DestinationPort:
+      - 443
+  selection_groq_connection:
+    DestinationHostname|endswith:
+      - '.groq.com'
+    DestinationPort:
+      - 443
+  selection_deepseek_connection:
+    DestinationHostname|endswith:
+      - '.deepseek.com'
+    DestinationPort:
+      - 443
+  selection_xai_connection:
+    DestinationHostname|endswith:
+      - '.x.ai'
+    DestinationPort:
+      - 443
+  selection_cohere_connection:
+    DestinationHostname|endswith:
+      - '.cohere.ai'
+      - '.cohere.com'
+    DestinationPort:
+      - 443
+  selection_together_connection:
+    DestinationHostname|endswith:
+      - '.together.xyz'
+      - '.together.ai'
+    DestinationPort:
+      - 443
+  selection_replicate_connection:
+    DestinationHostname|endswith:
+      - '.replicate.com'
+    DestinationPort:
+      - 443
+  selection_fireworks_connection:
+    DestinationHostname|endswith:
+      - '.fireworks.ai'
+    DestinationPort:
+      - 443
+  selection_perplexity_connection:
+    DestinationHostname|endswith:
+      - '.perplexity.ai'
+    DestinationPort:
+      - 443
+  selection_huggingface_connection:
+    DestinationHostname|endswith:
+      - '.huggingface.co'
+      - '.hf.co'
+    DestinationPort:
+      - 443
+  selection_ai21_connection:
+    DestinationHostname|endswith:
+      - '.ai21.com'
+    DestinationPort:
+      - 443
+  selection_sambanova_connection:
+    DestinationHostname|endswith:
+      - '.sambanova.ai'
+    DestinationPort:
+      - 443
+  selection_cerebras_connection:
+    DestinationHostname|endswith:
+      - '.cerebras.ai'
+    DestinationPort:
+      - 443
+  selection_stability_connection:
+    DestinationHostname|endswith:
+      - '.stability.ai'
+    DestinationPort:
+      - 443
+  selection_voyageai_connection:
+    DestinationHostname|endswith:
+      - '.voyageai.com'
+    DestinationPort:
+      - 443
+  # AI proxy/gateway connections
+  selection_proxy_connection:
+    DestinationHostname|contains:
+      - 'openrouter.ai'
+      - 'helicone.ai'
+      - 'portkey.ai'
+      - 'smith.langchain.com'
+      - 'wandb.ai'
+      - 'braintrustdata.com'
+      - 'humanloop.com'
+      - 'vellum.ai'
+  # ClawdBot / OpenClaw / MoltBot connections
+  selection_clawdbot_connection:
+    DestinationHostname|endswith:
+      - '.clawdbot.ai'
+      - '.clawdbot.com'
+      - '.openclaw.ai'
+      - '.moltbot.ai'
+  # Local AI service listening ports
+  selection_local_ollama:
+    DestinationPort:
+      - 11434
+    SourceHostname|contains:
+      - 'localhost'
+      - '127.0.0.1'
+  selection_local_lmstudio:
+    DestinationPort:
+      - 1234
+    SourceHostname|contains:
+      - 'localhost'
+      - '127.0.0.1'
+  selection_local_gpt4all:
+    DestinationPort:
+      - 4891
+    SourceHostname|contains:
+      - 'localhost'
+      - '127.0.0.1'
+  selection_local_vllm:
+    DestinationPort:
+      - 8000
+    SourceHostname|contains:
+      - 'localhost'
+      - '127.0.0.1'
+  selection_local_ai_services:
+    DestinationPort:
+      - 3000
+      - 5678
+      - 3001
+      - 5001
+      - 8080
+      - 8265
+      - 8501
+      - 7860
+      - 6333
+      - 8529
+      - 19530
+    SourceHostname|contains:
+      - 'localhost'
+      - '127.0.0.1'
+  condition: >
+    selection_openai_connection or selection_anthropic_connection or
+    selection_google_ai_connection or selection_mistral_connection or
+    selection_groq_connection or selection_deepseek_connection or
+    selection_xai_connection or selection_cohere_connection or
+    selection_together_connection or selection_replicate_connection or
+    selection_fireworks_connection or selection_perplexity_connection or
+    selection_huggingface_connection or selection_ai21_connection or
+    selection_sambanova_connection or selection_cerebras_connection or
+    selection_stability_connection or selection_voyageai_connection or
+    selection_proxy_connection or selection_clawdbot_connection or
+    selection_local_ollama or selection_local_lmstudio or
+    selection_local_gpt4all or selection_local_vllm or
+    selection_local_ai_services
+fields:
+  - SourceIP
+  - SourcePort
+  - DestinationIP
+  - DestinationPort
+  - DestinationHostname
+  - ProcessName
+  - ProcessId
+falsepositives:
+  - Authorized AI service integrations approved by security policy
+  - Legitimate development and testing environments
+  - Browser-based access to AI provider websites (not API calls)
+  - CI/CD pipelines with approved AI integrations
+level: medium
