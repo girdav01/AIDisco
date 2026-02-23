@@ -1,0 +1,70 @@
+title: HTTP Request to AI API Endpoint via Proxy
+id: aidisco-net-008
+status: experimental
+description: |
+  Detects HTTP/HTTPS requests to AI API endpoints as seen in proxy, web gateway,
+  or NGFW logs with URL visibility. This provides higher fidelity than DNS-only
+  detection as it can identify specific API paths (e.g., /v1/chat/completions)
+  confirming actual AI API usage rather than just domain resolution.
+references:
+  - https://github.com/girdav01/AIDisco
+author: David Girard (@girdav01)
+date: 2026/02/22
+modified: 2026/02/22
+tags:
+  - attack.exfiltration
+  - attack.t1567          # Exfiltration Over Web Service
+  - attack.t1071.001      # Application Layer Protocol: Web Protocols
+  - cve.shadow_ai
+  - aidisco.network
+logsource:
+  category: proxy
+detection:
+  # OpenAI-compatible API paths (used by OpenAI, Groq, Together, Fireworks, etc.)
+  selection_openai_compat_path:
+    c-uri|contains:
+      - '/v1/chat/completions'
+      - '/v1/completions'
+      - '/v1/embeddings'
+      - '/v1/images/generations'
+      - '/v1/audio/transcriptions'
+      - '/v1/assistants'
+      - '/v1/threads'
+      - '/v1/files'
+  # Anthropic API paths
+  selection_anthropic_path:
+    c-uri|contains:
+      - '/v1/messages'
+      - '/v1/complete'
+    cs-host|endswith:
+      - 'anthropic.com'
+  # Azure OpenAI specific paths
+  selection_azure_openai_path:
+    c-uri|contains:
+      - '/openai/deployments/'
+    c-uri|contains:
+      - '/chat/completions'
+      - '/completions'
+      - '/embeddings'
+  # Google AI paths
+  selection_google_ai_path:
+    c-uri|contains:
+      - ':generateContent'
+      - ':streamGenerateContent'
+      - ':embedContent'
+    cs-host|endswith:
+      - 'googleapis.com'
+  # AWS Bedrock paths
+  selection_bedrock_path:
+    c-uri|contains:
+      - '/model/'
+    c-uri|contains:
+      - '/invoke'
+      - '/converse'
+    cs-host|contains:
+      - 'bedrock'
+  condition: selection_openai_compat_path or selection_anthropic_path or selection_azure_openai_path or selection_google_ai_path or selection_bedrock_path
+falsepositives:
+  - Approved AI applications
+  - Internal AI gateways proxying requests
+level: high

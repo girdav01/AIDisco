@@ -5,10 +5,13 @@ description: |
   Detects HTTP/HTTPS network traffic to AI API providers by identifying characteristic
   API endpoints, authorization headers, bearer tokens, model names, SDK user-agents,
   and API key patterns in proxy/firewall logs. Covers OpenAI, Anthropic, Google AI,
-  Mistral, Groq, Cohere, Together, DeepSeek, xAI, and other major providers.
+  Azure OpenAI, AWS Bedrock, Mistral, Groq, Cohere, Together, DeepSeek, xAI,
+  and other major providers. See also proxy_ai_sdk_useragent_detection.yml for
+  comprehensive SDK user-agent detection and proxy_ai_high_volume_traffic.yml
+  for volume-based automated pipeline detection.
 author: AI Discovery Security Team
 date: 2025/01/15
-modified: 2025/02/09
+modified: 2026/02/23
 tags:
   - attack.exfiltration
   - attack.t1071.001
@@ -238,7 +241,67 @@ detection:
       - 'j2-ultra'
       - 'j2-mid'
       - 'j2-light'
-  condition: selection_openai_endpoints or selection_openai_keys or selection_openai_models or selection_openai_useragent or selection_anthropic_endpoints or selection_anthropic_headers or selection_anthropic_keys or selection_anthropic_models or selection_anthropic_useragent or selection_google_endpoints or selection_google_models or selection_mistral_endpoints or selection_mistral_models or selection_groq_endpoints or selection_groq_keys or selection_cohere_endpoints or selection_together_endpoints or selection_deepseek_endpoints or selection_deepseek_models or selection_xai_endpoints or selection_xai_models or selection_replicate_endpoints or selection_replicate_keys or selection_fireworks_endpoints or selection_perplexity_endpoints or selection_perplexity_keys or selection_perplexity_models or selection_huggingface_endpoints or selection_stability_endpoints or selection_ai21_endpoints or selection_ai21_models
+  # Azure OpenAI - distinctive URL path pattern
+  selection_azure_openai_endpoints:
+    c-uri|contains:
+      - '/openai/deployments/'
+    c-uri|endswith:
+      - '/chat/completions'
+      - '/completions'
+      - '/embeddings'
+    cs-host|endswith:
+      - '.openai.azure.com'
+  selection_azure_openai_headers:
+    cs-header|contains:
+      - 'api-key'
+    cs-host|endswith:
+      - '.openai.azure.com'
+  # Azure AI SDK user-agents
+  selection_azure_useragent:
+    cs-user-agent|contains:
+      - 'azsdk-python-ai-inference/'
+      - 'azsdk-python-openai/'
+      - 'azsdk-js-openai/'
+  # AWS Bedrock - distinctive URL path and header patterns
+  selection_bedrock_endpoints:
+    c-uri|contains:
+      - '/model/'
+    c-uri|endswith:
+      - '/invoke'
+      - '/converse'
+      - '/invoke-with-response-stream'
+    cs-host|contains:
+      - 'bedrock'
+    cs-host|endswith:
+      - '.amazonaws.com'
+  selection_bedrock_headers:
+    cs-header|contains:
+      - 'X-Amz-Target: AmazonBedrockRuntime'
+  # AWS SDK user-agents (Bedrock)
+  selection_aws_useragent:
+    cs-user-agent|contains:
+      - 'aws-sdk-python/'
+      - 'Boto3/'
+      - 'aws-sdk-js/'
+      - 'aws-sdk-java/'
+  # Google AI SDK user-agents
+  selection_google_useragent:
+    cs-user-agent|contains:
+      - 'google-cloud-sdk/'
+      - 'google-api-python-client/'
+  # Additional SDK user-agents for various providers
+  selection_misc_useragent:
+    cs-user-agent|contains:
+      - 'cohere-python/'
+      - 'cohere-go/'
+      - 'replicate-python/'
+      - 'Groq/'
+      - 'groq-python/'
+      - 'mistralai/'
+      - 'huggingface_hub/'
+      - 'langchain/'
+      - 'langsmith/'
+  condition: selection_openai_endpoints or selection_openai_keys or selection_openai_models or selection_openai_useragent or selection_anthropic_endpoints or selection_anthropic_headers or selection_anthropic_keys or selection_anthropic_models or selection_anthropic_useragent or selection_google_endpoints or selection_google_models or selection_mistral_endpoints or selection_mistral_models or selection_groq_endpoints or selection_groq_keys or selection_cohere_endpoints or selection_together_endpoints or selection_deepseek_endpoints or selection_deepseek_models or selection_xai_endpoints or selection_xai_models or selection_replicate_endpoints or selection_replicate_keys or selection_fireworks_endpoints or selection_perplexity_endpoints or selection_perplexity_keys or selection_perplexity_models or selection_huggingface_endpoints or selection_stability_endpoints or selection_ai21_endpoints or selection_ai21_models or selection_azure_openai_endpoints or selection_azure_openai_headers or selection_azure_useragent or selection_bedrock_endpoints or selection_bedrock_headers or selection_aws_useragent or selection_google_useragent or selection_misc_useragent
 fields:
   - cs-host
   - c-uri

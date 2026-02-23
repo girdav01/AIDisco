@@ -1,0 +1,54 @@
+title: DNS Query to AI Code Assistant Service
+id: aidisco-net-003
+status: experimental
+description: |
+  Detects DNS resolution of AI-powered code assistant services. These tools
+  send source code context (often entire files or repositories) to external
+  servers for completion. This represents a significant intellectual property
+  leakage vector, especially for proprietary codebases, trade secrets, and
+  security-sensitive code (cryptographic implementations, auth logic, etc.).
+references:
+  - https://github.com/girdav01/AIDisco
+  - https://owasp.org/www-project-top-10-for-large-language-model-applications/
+author: David Girard (@girdav01)
+date: 2026/02/22
+modified: 2026/02/22
+tags:
+  - attack.exfiltration
+  - attack.t1567          # Exfiltration Over Web Service
+  - attack.t1041          # Exfiltration Over C2 Channel
+  - attack.collection
+  - attack.t1213          # Data from Information Repositories
+  - cve.shadow_ai
+  - cve.ip_leakage
+  - aidisco.network
+logsource:
+  category: dns
+detection:
+  selection_code_assistants:
+    query|endswith:
+      # GitHub Copilot
+      - 'copilot-proxy.githubusercontent.com'
+      - 'api.githubcopilot.com'
+      - 'copilot.githubassets.com'
+      - 'default.exp-tas.com'
+      # Cursor IDE
+      - 'api2.cursor.sh'
+      - 'api.cursor.com'
+      # Tabnine
+      - 'api.tabnine.com'
+      # Codeium / Windsurf
+      - 'server.codeium.com'
+      - 'api.codeium.com'
+      # Sourcegraph Cody
+      - 'cody.dev'
+      # Replit
+      - 'replit.com'
+      # Phind (developer search)
+      - 'api.phind.com'
+      - 'www.phind.com'
+  condition: selection_code_assistants
+falsepositives:
+  - IT-approved and licensed code assistant deployments
+  - Developer workstations with sanctioned Copilot licenses
+level: high

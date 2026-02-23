@@ -1,0 +1,53 @@
+title: DNS Query to AI Observability Platform - Full Prompt Exposure
+id: aidisco-net-005
+status: experimental
+description: |
+  Detects DNS queries to AI observability, tracing, and proxy platforms.
+  These services act as intermediaries or logging endpoints that receive
+  COMPLETE prompt/response pairs, making them high-risk data exposure points.
+  Even if the primary LLM provider is sanctioned, unauthorized observability
+  tools create additional copies of sensitive data in third-party systems.
+references:
+  - https://github.com/girdav01/AIDisco
+author: David Girard (@girdav01)
+date: 2026/02/22
+modified: 2026/02/22
+tags:
+  - attack.exfiltration
+  - attack.t1567          # Exfiltration Over Web Service
+  - attack.collection
+  - attack.t1074          # Data Staged
+  - cve.shadow_ai
+  - cve.data_exposure
+  - aidisco.network
+logsource:
+  category: dns
+detection:
+  selection_observability:
+    query|endswith:
+      # LangSmith (LangChain tracing)
+      - 'api.smith.langchain.com'
+      - 'smith.langchain.com'
+      # Langfuse
+      - 'cloud.langfuse.com'
+      - 'us.cloud.langfuse.com'
+      # Helicone (OpenAI proxy)
+      - 'oai.helicone.ai'
+      - 'api.helicone.ai'
+      # Portkey AI Gateway
+      - 'api.portkey.ai'
+      # Weights & Biases (experiment tracking)
+      - 'api.wandb.ai'
+      # Arize AI (ML observability)
+      - 'api.arize.com'
+      # Braintrust
+      - 'api.braintrustdata.com'
+      # Humanloop
+      - 'api.humanloop.com'
+      # PromptLayer
+      - 'api.promptlayer.com'
+  condition: selection_observability
+falsepositives:
+  - Approved AI development teams using sanctioned observability tools
+  - Security teams monitoring AI usage through authorized platforms
+level: high

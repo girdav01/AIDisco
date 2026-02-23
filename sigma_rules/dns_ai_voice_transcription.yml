@@ -1,0 +1,50 @@
+title: DNS Query to AI Voice and Transcription Service
+id: aidisco-net-011
+status: experimental
+description: |
+  Detects DNS queries to AI-powered voice synthesis, speech-to-text, and meeting
+  transcription services. These services are HIGH risk because they receive audio
+  content that often includes confidential meeting discussions, internal strategy
+  conversations, and sensitive business communications. Unauthorized use of
+  transcription services on internal meetings is a significant data exposure vector.
+references:
+  - https://github.com/girdav01/AIDisco
+author: David Girard (@girdav01)
+date: 2026/02/23
+modified: 2026/02/23
+tags:
+  - attack.exfiltration
+  - attack.t1567          # Exfiltration Over Web Service
+  - attack.collection
+  - attack.t1123          # Audio Capture
+  - cve.shadow_ai
+  - cve.data_exposure
+  - aidisco.network
+logsource:
+  category: dns
+detection:
+  selection_elevenlabs:
+    query|endswith:
+      - 'api.elevenlabs.io'
+      - 'elevenlabs.io'
+  selection_assemblyai:
+    query|endswith:
+      - 'api.assemblyai.com'
+      - 'assemblyai.com'
+  selection_otter:
+    query|endswith:
+      - 'otter.ai'
+      - 'api.otter.ai'
+  selection_openai_audio:
+    # OpenAI Whisper uses api.openai.com - detect via proxy path /v1/audio/*
+    # This selection catches the dedicated audio transcription API
+    query|endswith:
+      - 'api.openai.com'
+    # Note: This will overlap with LLM API rules. Use in conjunction with
+    # proxy_ai_api_requests.yml to identify audio-specific API calls.
+  condition: selection_elevenlabs or selection_assemblyai or selection_otter
+falsepositives:
+  - Approved accessibility tools using speech-to-text
+  - Sanctioned meeting transcription subscriptions
+  - Podcast or media production workflows
+level: high

@@ -1,0 +1,58 @@
+title: DNS Query to AI Image, Video, and Music Generation Service
+id: aidisco-net-010
+status: experimental
+description: |
+  Detects DNS queries to AI-powered image, video, and music generation services.
+  These services receive text prompts that may contain sensitive business information,
+  product descriptions, or creative briefs. Generated outputs may also raise IP
+  concerns. While the direct data risk is lower than LLM API usage, prompt content
+  can still leak confidential strategy, branding, or product details.
+references:
+  - https://github.com/girdav01/AIDisco
+author: David Girard (@girdav01)
+date: 2026/02/23
+modified: 2026/02/23
+tags:
+  - attack.exfiltration
+  - attack.t1567          # Exfiltration Over Web Service
+  - cve.shadow_ai
+  - aidisco.network
+logsource:
+  category: dns
+detection:
+  selection_midjourney:
+    query|endswith:
+      - 'www.midjourney.com'
+      - 'cdn.midjourney.com'
+      - 'midjourney.com'
+  selection_stability:
+    query|endswith:
+      - 'api.stability.ai'
+      - 'dreamstudio.ai'
+      - 'stability.ai'
+  selection_leonardo:
+    query|endswith:
+      - 'api.leonardo.ai'
+      - 'app.leonardo.ai'
+      - 'leonardo.ai'
+  selection_runway:
+    query|endswith:
+      - 'api.runwayml.com'
+      - 'app.runwayml.com'
+      - 'runwayml.com'
+  selection_suno:
+    query|endswith:
+      - 'suno.com'
+      - 'studio-api.suno.ai'
+  selection_dalle:
+    # DALL-E uses OpenAI API - detect via proxy path /v1/images/generations
+    # This selection catches the OpenAI domain when image gen is suspected
+    query|endswith:
+      - 'cdn.oaistatic.com'
+      - 'files.oaiusercontent.com'
+  condition: selection_midjourney or selection_stability or selection_leonardo or selection_runway or selection_suno or selection_dalle
+falsepositives:
+  - Marketing teams using approved image generation tools
+  - Design departments with sanctioned AI subscriptions
+  - Browsing AI art galleries or portfolios
+level: medium

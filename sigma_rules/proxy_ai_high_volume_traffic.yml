@@ -1,0 +1,48 @@
+title: High Volume AI API Traffic - Potential Automated Pipeline
+id: aidisco-net-009
+status: experimental
+description: |
+  Detects unusually high volume of connections to AI API endpoints from a
+  single source within a short time window. This pattern indicates automated
+  AI usage (scripts, pipelines, batch processing) rather than interactive
+  chat sessions, suggesting shadow AI infrastructure rather than casual usage.
+  Automated pipelines process more data and pose higher exfiltration risk.
+references:
+  - https://github.com/girdav01/AIDisco
+author: David Girard (@girdav01)
+date: 2026/02/22
+modified: 2026/02/22
+tags:
+  - attack.exfiltration
+  - attack.t1567          # Exfiltration Over Web Service
+  - attack.t1020          # Automated Exfiltration
+  - cve.shadow_ai
+  - cve.automated_ai
+  - aidisco.network
+logsource:
+  category: proxy
+detection:
+  selection_ai_domains:
+    cs-host|endswith:
+      - 'api.openai.com'
+      - 'api.anthropic.com'
+      - 'generativelanguage.googleapis.com'
+      - 'api.mistral.ai'
+      - 'api.cohere.ai'
+      - 'api.groq.com'
+      - 'api.together.xyz'
+      - 'api.replicate.com'
+      - 'api.fireworks.ai'
+      - 'api.deepseek.com'
+      - '.openai.azure.com'
+  selection_method:
+    cs-method: 'POST'
+  # Threshold: Customize based on your environment
+  # Default: Alert when >50 POST requests in 5-minute window from single source
+  condition: selection_ai_domains and selection_method | count(c-ip) by cs-host > 50
+  timeframe: 5m
+falsepositives:
+  - Approved batch processing AI pipelines
+  - Load testing of sanctioned AI applications
+  - AI application backends with high request volume
+level: high
