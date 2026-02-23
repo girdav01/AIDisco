@@ -1,0 +1,49 @@
+title: DNS Query Indicating AI Model Download Activity
+id: aidisco-net-004
+status: experimental
+description: |
+  Detects DNS queries to model registries and hosting platforms that indicate
+  someone is downloading AI/ML models to run locally. While local models don't
+  exfiltrate data during inference, the presence of unauthorized local AI
+  infrastructure indicates shadow AI activity and may violate acceptable use
+  policies. Large model downloads also consume significant bandwidth.
+references:
+  - https://github.com/girdav01/AIDisco
+author: David Girard (@girdav01)
+date: 2026/02/22
+modified: 2026/02/22
+tags:
+  - attack.resource_development
+  - attack.t1583.006      # Acquire Infrastructure: Web Services
+  - attack.t1608          # Stage Capabilities
+  - cve.shadow_ai
+  - aidisco.network
+logsource:
+  category: dns
+detection:
+  selection_model_registries:
+    query|endswith:
+      # Ollama
+      - 'registry.ollama.ai'
+      # Hugging Face (model downloads)
+      - 'cdn-lfs.huggingface.co'
+      - 'huggingface.co'
+      # LM Studio
+      - 'models.lmstudio.ai'
+      # PyTorch Hub
+      - 'download.pytorch.org'
+      # NVIDIA NGC
+      - 'nvcr.io'
+      # TensorFlow Hub
+      - 'tfhub.dev'
+      - 'storage.googleapis.com'
+  filter_legitimate_storage:
+    # storage.googleapis.com is used for many things - only flag in context
+    query|endswith:
+      - 'storage.googleapis.com'
+  condition: selection_model_registries and not filter_legitimate_storage
+falsepositives:
+  - Approved ML/AI development teams downloading models
+  - Data science workstations with sanctioned model access
+  - CI/CD pipelines building ML applications
+level: medium

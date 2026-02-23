@@ -1,0 +1,58 @@
+title: DNS Query to Chinese AI Provider - Critical Data Sovereignty Risk
+id: aidisco-net-002
+status: experimental
+description: |
+  Detects DNS resolution of Chinese AI service endpoints. These services are
+  subject to PRC data laws requiring data sharing with Chinese government.
+  Any data sent to these services should be considered compromised from a
+  data sovereignty perspective. Organizations handling regulated data (ITAR,
+  HIPAA, financial, government) should block these outright.
+references:
+  - https://github.com/girdav01/AIDisco
+  - https://owasp.org/www-project-top-10-for-large-language-model-applications/
+author: David Girard (@girdav01)
+date: 2026/02/22
+modified: 2026/02/22
+tags:
+  - attack.exfiltration
+  - attack.t1567          # Exfiltration Over Web Service
+  - attack.t1071.001      # Application Layer Protocol: Web Protocols
+  - cve.shadow_ai
+  - cve.data_sovereignty
+  - aidisco.network
+  - aidisco.critical
+logsource:
+  category: dns
+detection:
+  selection_chinese_ai:
+    query|endswith:
+      # DeepSeek
+      - 'api.deepseek.com'
+      - 'chat.deepseek.com'
+      - 'deepseek.com'
+      # Alibaba / Qwen
+      - 'dashscope.aliyuncs.com'
+      - 'tongyi.aliyun.com'
+      - 'qianwen.aliyun.com'
+      # Baidu / ERNIE
+      - 'aip.baidubce.com'
+      - 'yiyan.baidu.com'
+      # Zhipu / ChatGLM
+      - 'open.bigmodel.cn'
+      - 'chatglm.cn'
+      # Moonshot / Kimi
+      - 'api.moonshot.cn'
+      - 'kimi.moonshot.cn'
+      # Baichuan
+      - 'api.baichuan-ai.com'
+      # 01.AI / Yi
+      - 'api.lingyiwanwu.com'
+      # MiniMax
+      - 'api.minimax.chat'
+      # SenseTime
+      - 'api.sensenova.cn'
+  condition: selection_chinese_ai
+falsepositives:
+  - Legitimate research on Chinese AI models (should still be flagged for review)
+  - Threat intelligence gathering
+level: critical

@@ -1,0 +1,45 @@
+title: DNS Query to Cloud Vector Database - Potential RAG Pipeline
+id: aidisco-net-006
+status: experimental
+description: |
+  Detects DNS queries to cloud-hosted vector database services. These are
+  commonly used in Retrieval-Augmented Generation (RAG) pipelines where
+  organizational documents are embedded and stored externally. This represents
+  a significant data exposure risk as document embeddings can potentially be
+  reversed to reconstruct original content, and the services store semantic
+  representations of potentially sensitive internal data.
+references:
+  - https://github.com/girdav01/AIDisco
+author: David Girard (@girdav01)
+date: 2026/02/22
+modified: 2026/02/22
+tags:
+  - attack.exfiltration
+  - attack.t1567          # Exfiltration Over Web Service
+  - attack.collection
+  - attack.t1213          # Data from Information Repositories
+  - cve.shadow_ai
+  - cve.data_exposure
+  - aidisco.network
+logsource:
+  category: dns
+detection:
+  selection_vector_db:
+    query|contains:
+      # Pinecone
+      - '.svc.pinecone.io'
+      - 'api.pinecone.io'
+      # Weaviate Cloud
+      - '.weaviate.network'
+      # Qdrant Cloud
+      - '.cloud.qdrant.io'
+      # ChromaDB Cloud
+      - 'api.trychroma.com'
+      # Milvus Cloud (Zilliz)
+      - '.zillizcloud.com'
+      - 'api.zilliz.com'
+  condition: selection_vector_db
+falsepositives:
+  - Approved AI/ML teams using sanctioned vector databases
+  - Internal RAG applications with documented data handling
+level: high

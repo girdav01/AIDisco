@@ -1,0 +1,104 @@
+title: AI SDK User-Agent Detection in HTTP Traffic
+id: aidisco-net-013
+status: experimental
+description: |
+  Detects AI SDK and framework user-agent strings in HTTP proxy or web gateway logs.
+  These user-agents identify programmatic AI API usage via official SDKs, which
+  indicates intentional AI integration rather than casual browser-based usage.
+  SDK-based access typically processes more data and operates in automated pipelines,
+  representing a higher exfiltration risk than interactive chat sessions.
+references:
+  - https://github.com/girdav01/AIDisco
+author: David Girard (@girdav01)
+date: 2026/02/23
+modified: 2026/02/23
+tags:
+  - attack.exfiltration
+  - attack.t1567          # Exfiltration Over Web Service
+  - attack.t1071.001      # Application Layer Protocol: Web Protocols
+  - cve.shadow_ai
+  - cve.automated_ai
+  - aidisco.network
+logsource:
+  category: proxy
+detection:
+  # OpenAI SDK user-agents
+  selection_openai_sdk:
+    cs-user-agent|contains:
+      - 'OpenAI/Python'
+      - 'OpenAI/Node'
+      - 'OpenAI/Java'
+      - 'openai-python/'
+      - 'OpenAI-DotNet'
+      - 'OpenAI-Go'
+      - 'OpenAI-Rust'
+  # Anthropic SDK user-agents
+  selection_anthropic_sdk:
+    cs-user-agent|contains:
+      - 'Anthropic/Python'
+      - 'Anthropic/TypeScript'
+      - 'anthropic-python/'
+      - 'anthropic-sdk'
+  # Google AI SDK user-agents
+  selection_google_sdk:
+    cs-user-agent|contains:
+      - 'google-cloud-sdk/'
+      - 'google-api-python-client/'
+  # AWS SDK user-agents (Bedrock)
+  selection_aws_sdk:
+    cs-user-agent|contains:
+      - 'aws-sdk-python/'
+      - 'Boto3/'
+      - 'aws-sdk-js/'
+      - 'aws-sdk-java/'
+  # Azure AI SDK user-agents
+  selection_azure_sdk:
+    cs-user-agent|contains:
+      - 'azsdk-python-ai-inference/'
+      - 'azsdk-python-openai/'
+      - 'azsdk-js-openai/'
+  # Hugging Face SDK user-agents
+  selection_huggingface_sdk:
+    cs-user-agent|contains:
+      - 'huggingface_hub/'
+      - 'transformers/'
+  # LangChain / LangSmith SDK user-agents
+  selection_langchain_sdk:
+    cs-user-agent|contains:
+      - 'langchain/'
+      - 'langchain-core/'
+      - 'langsmith/'
+  # Other provider SDK user-agents
+  selection_other_sdk:
+    cs-user-agent|contains:
+      - 'cohere-python/'
+      - 'cohere-go/'
+      - 'replicate-python/'
+      - 'Groq/'
+      - 'groq-python/'
+      - 'mistralai/'
+      - 'pinecone-python-client/'
+  # Observability and proxy SDK user-agents
+  selection_observability_sdk:
+    cs-user-agent|contains:
+      - 'wandb/'
+      - 'wandb-client/'
+      - 'litellm/'
+      - 'LiteLLM/'
+      - 'helicone/'
+      - 'portkey/'
+  condition: >
+    selection_openai_sdk or selection_anthropic_sdk or selection_google_sdk or
+    selection_aws_sdk or selection_azure_sdk or selection_huggingface_sdk or
+    selection_langchain_sdk or selection_other_sdk or selection_observability_sdk
+fields:
+  - cs-user-agent
+  - cs-host
+  - c-uri
+  - c-ip
+  - cs-method
+falsepositives:
+  - Approved AI applications using official SDKs
+  - CI/CD pipelines with sanctioned AI integrations
+  - Internal AI gateway services
+level: high

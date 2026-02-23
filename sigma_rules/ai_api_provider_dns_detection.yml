@@ -5,11 +5,16 @@ description: |
   Detects DNS queries to known AI/LLM API provider domains. This generic rule covers
   all major commercial AI API providers including OpenAI, Anthropic, Google AI, Mistral,
   Cohere, Groq, Together AI, Replicate, Fireworks, DeepSeek, xAI, Stability AI,
-  Perplexity, Hugging Face, AI21 Labs, Amazon Bedrock, Azure OpenAI, and others.
+  Perplexity, Hugging Face, AI21 Labs, Amazon Bedrock, Azure OpenAI, Chinese AI
+  providers (Alibaba/Qwen, Baidu/ERNIE, Zhipu/ChatGLM, Moonshot/Kimi, Baichuan,
+  01.AI/Yi, MiniMax, SenseTime), and others.
   These queries may indicate Shadow AI usage or unauthorized AI API access.
+  See also the specialized rules (dns_ai_chinese_providers_critical.yml,
+  dns_ai_code_assistants.yml, dns_ai_vector_databases.yml, etc.) for focused
+  detection with appropriate severity levels per category.
 author: AI Discovery Security Team
 date: 2025/01/15
-modified: 2025/02/09
+modified: 2026/02/23
 tags:
   - attack.exfiltration
   - attack.t1071.004
@@ -24,19 +29,28 @@ detection:
     QueryName|endswith:
       - '.openai.com'
       - '.openai.org'
+      - 'chatgpt.com'
+      - 'cdn.oaistatic.com'
+      - 'files.oaiusercontent.com'
     QueryName|contains:
       - 'api.openai.com'
       - 'platform.openai.com'
       - 'chat.openai.com'
+      - 'chatgpt.com'
       - 'cdn.openai.com'
       - 'auth0.openai.com'
+      - 'ab.chatgpt.com'
+      - 'cdn.oaistatic.com'
+      - 'files.oaiusercontent.com'
   selection_anthropic:
     QueryName|endswith:
       - '.anthropic.com'
+      - 'claude.ai'
     QueryName|contains:
       - 'api.anthropic.com'
       - 'console.anthropic.com'
       - 'docs.anthropic.com'
+      - 'claude.ai'
   selection_google_ai:
     QueryName|contains:
       - 'generativelanguage.googleapis.com'
@@ -46,6 +60,9 @@ detection:
       - 'makersuite.google.com'
       - 'ai.google.dev'
       - 'vertexai.googleapis.com'
+      - 'notebooklm.google.com'
+      - 'notebooks.googleapis.com'
+      - 'ml.googleapis.com'
   selection_mistral:
     QueryName|endswith:
       - '.mistral.ai'
@@ -63,6 +80,7 @@ detection:
       - 'api.cohere.com'
       - 'dashboard.cohere.ai'
       - 'dashboard.cohere.com'
+      - 'coral.cohere.com'
   selection_groq:
     QueryName|endswith:
       - '.groq.com'
@@ -79,8 +97,10 @@ detection:
   selection_replicate:
     QueryName|endswith:
       - '.replicate.com'
+      - '.replicate.delivery'
     QueryName|contains:
       - 'api.replicate.com'
+      - 'replicate.delivery'
   selection_fireworks:
     QueryName|endswith:
       - '.fireworks.ai'
@@ -117,10 +137,12 @@ detection:
     QueryName|endswith:
       - '.huggingface.co'
       - '.hf.co'
+      - '.hf.space'
     QueryName|contains:
       - 'api-inference.huggingface.co'
       - 'huggingface.co'
       - 'hf.co'
+      - 'cdn-lfs.huggingface.co'
   selection_ai21:
     QueryName|endswith:
       - '.ai21.com'
@@ -130,16 +152,20 @@ detection:
   selection_aws_bedrock:
     QueryName|contains:
       - 'bedrock-runtime'
+      - 'bedrock-agent-runtime'
       - 'bedrock.us-east'
       - 'bedrock.us-west'
       - 'bedrock.eu-west'
       - 'bedrock.ap-'
+      - 'codewhisperer.'
+      - 'qdeveloper.'
     QueryName|endswith:
       - '.amazonaws.com'
   selection_azure_openai:
     QueryName|contains:
       - '.openai.azure.com'
       - '.cognitiveservices.azure.com'
+      - 'oai.azure.com'
   selection_sambanova:
     QueryName|endswith:
       - '.sambanova.ai'
@@ -187,7 +213,31 @@ detection:
     QueryName|contains:
       - 'api.anyscale.com'
       - 'endpoints.anyscale.com'
-  condition: selection_openai or selection_anthropic or selection_google_ai or selection_mistral or selection_cohere or selection_groq or selection_together or selection_replicate or selection_fireworks or selection_deepseek or selection_xai or selection_stability or selection_perplexity or selection_huggingface or selection_ai21 or selection_aws_bedrock or selection_azure_openai or selection_sambanova or selection_cerebras or selection_reka or selection_writer or selection_aleph_alpha or selection_voyage or selection_inflection or selection_databricks or selection_anyscale
+  # Chinese AI providers (also covered by dns_ai_chinese_providers_critical.yml at critical severity)
+  selection_alibaba_ai:
+    QueryName|contains:
+      - 'dashscope.aliyuncs.com'
+      - 'tongyi.aliyun.com'
+      - 'qianwen.aliyun.com'
+  selection_baidu_ai:
+    QueryName|contains:
+      - 'aip.baidubce.com'
+      - 'yiyan.baidu.com'
+  selection_zhipu_ai:
+    QueryName|contains:
+      - 'open.bigmodel.cn'
+      - 'chatglm.cn'
+  selection_moonshot_ai:
+    QueryName|contains:
+      - 'api.moonshot.cn'
+      - 'kimi.moonshot.cn'
+  selection_chinese_ai_other:
+    QueryName|contains:
+      - 'api.baichuan-ai.com'
+      - 'api.lingyiwanwu.com'
+      - 'api.minimax.chat'
+      - 'api.sensenova.cn'
+  condition: selection_openai or selection_anthropic or selection_google_ai or selection_mistral or selection_cohere or selection_groq or selection_together or selection_replicate or selection_fireworks or selection_deepseek or selection_xai or selection_stability or selection_perplexity or selection_huggingface or selection_ai21 or selection_aws_bedrock or selection_azure_openai or selection_sambanova or selection_cerebras or selection_reka or selection_writer or selection_aleph_alpha or selection_voyage or selection_inflection or selection_databricks or selection_anyscale or selection_alibaba_ai or selection_baidu_ai or selection_zhipu_ai or selection_moonshot_ai or selection_chinese_ai_other
 fields:
   - QueryName
   - QueryType

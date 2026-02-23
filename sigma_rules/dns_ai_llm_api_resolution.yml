@@ -1,0 +1,64 @@
+title: DNS Query to AI LLM API Endpoint
+id: aidisco-net-001
+status: experimental
+description: |
+  Detects DNS resolution of known AI LLM API endpoints indicating potential
+  shadow AI usage. This includes direct API calls to commercial LLM providers.
+  High volume or repeated queries from non-approved hosts may indicate
+  unauthorized AI application usage or data exfiltration via AI services.
+references:
+  - https://github.com/girdav01/AIDisco
+  - https://owasp.org/www-project-top-10-for-large-language-model-applications/
+author: David Girard (@girdav01)
+date: 2026/02/22
+modified: 2026/02/22
+tags:
+  - attack.exfiltration
+  - attack.t1567          # Exfiltration Over Web Service
+  - attack.t1071.001      # Application Layer Protocol: Web Protocols
+  - attack.t1048          # Exfiltration Over Alternative Protocol
+  - cve.shadow_ai
+  - aidisco.network
+logsource:
+  category: dns
+detection:
+  selection_llm_api:
+    query|endswith:
+      # OpenAI
+      - 'api.openai.com'
+      - 'chat.openai.com'
+      - 'chatgpt.com'
+      # Anthropic
+      - 'api.anthropic.com'
+      - 'claude.ai'
+      # Google AI
+      - 'generativelanguage.googleapis.com'
+      - 'aiplatform.googleapis.com'
+      - 'gemini.google.com'
+      - 'aistudio.google.com'
+      # Mistral
+      - 'api.mistral.ai'
+      - 'chat.mistral.ai'
+      # Cohere
+      - 'api.cohere.ai'
+      - 'api.cohere.com'
+      # Groq
+      - 'api.groq.com'
+      # Together AI
+      - 'api.together.xyz'
+      - 'api.together.ai'
+      # Perplexity
+      - 'api.perplexity.ai'
+      # xAI / Grok
+      - 'api.x.ai'
+      - 'grok.x.ai'
+      # Replicate
+      - 'api.replicate.com'
+      # Fireworks
+      - 'api.fireworks.ai'
+  condition: selection_llm_api
+falsepositives:
+  - Approved AI applications with documented business justification
+  - Security tools performing AI API monitoring
+  - IT-sanctioned AI integrations
+level: medium

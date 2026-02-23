@@ -1,0 +1,47 @@
+title: DNS Query to AI Content Writing and Productivity Tool
+id: aidisco-net-012
+status: experimental
+description: |
+  Detects DNS queries to AI-powered content writing, editing, and productivity tools.
+  These services receive document content, emails, and text that may contain sensitive
+  business information. Some of these tools (e.g., Notion AI, Grammarly) are embedded
+  in productivity platforms making AI usage harder to distinguish from normal usage.
+  Others (Jasper, Copy.ai) are dedicated AI content generators.
+references:
+  - https://github.com/girdav01/AIDisco
+author: David Girard (@girdav01)
+date: 2026/02/23
+modified: 2026/02/23
+tags:
+  - attack.exfiltration
+  - attack.t1567          # Exfiltration Over Web Service
+  - cve.shadow_ai
+  - aidisco.network
+logsource:
+  category: dns
+detection:
+  selection_jasper:
+    query|endswith:
+      - 'api.jasper.ai'
+      - 'app.jasper.ai'
+      - 'jasper.ai'
+  selection_copyai:
+    query|endswith:
+      - 'api.copy.ai'
+      - 'app.copy.ai'
+      - 'copy.ai'
+  selection_notion_ai:
+    # Note: Hard to distinguish AI usage from normal Notion. Flag for awareness.
+    query|endswith:
+      - 'www.notion.so'
+      - 'api.notion.com'
+  selection_grammarly:
+    # Note: Hard to separate AI rewriting from traditional grammar checking.
+    query|endswith:
+      - 'grammarly.com'
+  condition: selection_jasper or selection_copyai or selection_notion_ai or selection_grammarly
+falsepositives:
+  - Sanctioned productivity tool subscriptions (Notion, Grammarly)
+  - Marketing teams with approved content generation tools
+  - Normal Notion/Grammarly usage without AI features (high FP for these)
+level: low

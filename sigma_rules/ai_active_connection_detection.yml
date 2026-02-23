@@ -3,16 +3,18 @@ id: 12345678-1234-5678-9abc-123456789096
 status: experimental
 description: |
   Detects active TCP connections to known AI/LLM service endpoints by monitoring
-  established connections and listening ports. This rule covers both outbound
-  connections to cloud AI API providers (OpenAI, Anthropic, Google AI, Mistral,
-  Groq, DeepSeek, xAI, Cohere, Together AI, Replicate, Fireworks, Perplexity,
-  HuggingFace, AI21 Labs, SambaNova, Cerebras, Stability AI, and others) and
-  local AI services listening on well-known ports (Ollama 11434, LM Studio 1234,
-  GPT4All 4891, vLLM 8000, etc.). Also detects connections to AI proxy/gateway
-  services such as OpenRouter, Helicone, Portkey, LangSmith, and Weights & Biases.
+  established connections and listening ports. This rule covers outbound connections
+  to cloud AI API providers (OpenAI, Anthropic, Google AI, Mistral, Groq, DeepSeek,
+  xAI, Cohere, Together AI, Replicate, Fireworks, Perplexity, HuggingFace, AI21 Labs,
+  SambaNova, Cerebras, Stability AI, and others), Chinese AI providers (Alibaba,
+  Baidu, Zhipu, Moonshot), code assistants (Copilot, Cursor, Codeium), image/video
+  generation (Midjourney, Leonardo, Runway), voice/transcription (ElevenLabs,
+  AssemblyAI, Otter.ai), vector databases (Pinecone, Weaviate, Qdrant), observability
+  tools (Langfuse, Arize), AI proxy/gateway services (OpenRouter, Helicone, Portkey,
+  LangSmith, Weights & Biases), and local AI services on well-known ports.
 author: AI Discovery Security Team
 date: 2025/03/01
-modified: 2025/03/01
+modified: 2026/02/23
 tags:
   - attack.exfiltration
   - attack.t1071.001
@@ -29,12 +31,16 @@ detection:
   selection_openai_connection:
     DestinationHostname|endswith:
       - '.openai.com'
+      - 'chatgpt.com'
+      - 'cdn.oaistatic.com'
+      - 'files.oaiusercontent.com'
     DestinationPort:
       - 443
       - 80
   selection_anthropic_connection:
     DestinationHostname|endswith:
       - '.anthropic.com'
+      - 'claude.ai'
     DestinationPort:
       - 443
       - 80
@@ -122,6 +128,83 @@ detection:
       - '.voyageai.com'
     DestinationPort:
       - 443
+  # Chinese AI providers (CRITICAL - data sovereignty risk)
+  selection_chinese_ai_connection:
+    DestinationHostname|endswith:
+      - '.deepseek.com'
+      - '.aliyuncs.com'
+      - '.aliyun.com'
+      - '.baidubce.com'
+      - '.baidu.com'
+      - '.bigmodel.cn'
+      - 'chatglm.cn'
+      - '.moonshot.cn'
+      - '.baichuan-ai.com'
+      - '.lingyiwanwu.com'
+      - '.minimax.chat'
+      - '.sensenova.cn'
+    DestinationPort:
+      - 443
+  # Code assistant connections
+  selection_code_assistant_connection:
+    DestinationHostname|contains:
+      - 'copilot-proxy.githubusercontent.com'
+      - 'api.githubcopilot.com'
+      - 'copilot.githubassets.com'
+      - 'api2.cursor.sh'
+      - 'api.cursor.com'
+      - 'api.tabnine.com'
+      - 'server.codeium.com'
+      - 'api.codeium.com'
+      - 'cody.dev'
+    DestinationPort:
+      - 443
+  # Image/video/music generation connections
+  selection_image_gen_connection:
+    DestinationHostname|contains:
+      - 'midjourney.com'
+      - 'api.leonardo.ai'
+      - 'api.runwayml.com'
+      - 'studio-api.suno.ai'
+      - 'dreamstudio.ai'
+    DestinationPort:
+      - 443
+  # Voice/transcription AI connections
+  selection_voice_ai_connection:
+    DestinationHostname|contains:
+      - 'api.elevenlabs.io'
+      - 'api.assemblyai.com'
+      - 'otter.ai'
+    DestinationPort:
+      - 443
+  # Vector database cloud connections
+  selection_vector_db_connection:
+    DestinationHostname|contains:
+      - '.svc.pinecone.io'
+      - 'api.pinecone.io'
+      - '.weaviate.network'
+      - '.cloud.qdrant.io'
+      - 'api.trychroma.com'
+      - '.zillizcloud.com'
+      - 'api.zilliz.com'
+  # AI observability/tracing connections
+  selection_observability_connection:
+    DestinationHostname|contains:
+      - 'cloud.langfuse.com'
+      - 'api.arize.com'
+      - 'api.promptlayer.com'
+      - 'api.crewai.com'
+      - 'api.litellm.ai'
+  # Model download connections
+  selection_model_download_connection:
+    DestinationHostname|contains:
+      - 'registry.ollama.ai'
+      - 'cdn-lfs.huggingface.co'
+      - 'models.lmstudio.ai'
+      - 'download.pytorch.org'
+      - 'nvcr.io'
+    DestinationPort:
+      - 443
   # AI proxy/gateway connections
   selection_proxy_connection:
     DestinationHostname|contains:
@@ -191,6 +274,10 @@ detection:
     selection_huggingface_connection or selection_ai21_connection or
     selection_sambanova_connection or selection_cerebras_connection or
     selection_stability_connection or selection_voyageai_connection or
+    selection_chinese_ai_connection or selection_code_assistant_connection or
+    selection_image_gen_connection or selection_voice_ai_connection or
+    selection_vector_db_connection or selection_observability_connection or
+    selection_model_download_connection or
     selection_proxy_connection or selection_clawdbot_connection or
     selection_local_ollama or selection_local_lmstudio or
     selection_local_gpt4all or selection_local_vllm or
