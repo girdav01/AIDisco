@@ -1,0 +1,75 @@
+# =============================================================================
+# AIDisco - AI SDK User-Agent Strings
+# For HTTP header inspection (proxy logs, TLS inspection, WAF)
+# Author: David Girard (@girdav01)
+# Last Updated: 2026-02-22
+# =============================================================================
+# Format: user_agent_pattern | provider | sdk | risk_level
+# Patterns use * as wildcard
+# =============================================================================
+
+# OpenAI SDKs
+OpenAI/Python * | OpenAI | openai-python | high
+OpenAI/Node * | OpenAI | openai-node | high
+OpenAI/Java * | OpenAI | openai-java | high
+openai-python/* | OpenAI | openai-python | high
+
+# Anthropic SDKs
+Anthropic/Python * | Anthropic | anthropic-python | high
+Anthropic/TypeScript * | Anthropic | anthropic-ts | high
+anthropic-python/* | Anthropic | anthropic-python | high
+
+# Google AI SDKs
+google-cloud-sdk/* | Google | gcloud | medium
+gcloud/* | Google | gcloud | medium
+google-api-python-client/* | Google | google-api | medium
+grpc-python/* | Google | grpc | low
+
+# AWS SDKs (Bedrock)
+aws-sdk-python/* | AWS | boto3 | medium
+Boto3/* | AWS | boto3 | medium
+aws-sdk-js/* | AWS | aws-sdk-js | medium
+aws-sdk-java/* | AWS | aws-sdk-java | medium
+aws-cli/* | AWS | aws-cli | low
+
+# Azure SDKs
+azsdk-python-ai-inference/* | Azure | azure-ai | high
+azsdk-python-openai/* | Azure | azure-openai | high
+azsdk-js-openai/* | Azure | azure-openai-js | high
+
+# Hugging Face
+huggingface_hub/* | HuggingFace | hf-hub | medium
+transformers/* | HuggingFace | transformers | medium
+
+# LangChain / LangSmith
+langchain/* | LangChain | langchain | high
+langchain-core/* | LangChain | langchain-core | high
+langsmith/* | LangChain | langsmith | high
+
+# Cohere
+cohere-python/* | Cohere | cohere-python | high
+cohere-go/* | Cohere | cohere-go | high
+
+# Replicate
+replicate-python/* | Replicate | replicate-python | high
+
+# Groq
+Groq/* | Groq | groq-sdk | high
+groq-python/* | Groq | groq-python | high
+
+# Mistral
+mistralai/* | Mistral | mistral-python | high
+
+# Pinecone
+pinecone-python-client/* | Pinecone | pinecone-python | high
+
+# W&B
+wandb/* | W&B | wandb-python | medium
+wandb-client/* | W&B | wandb-client | medium
+
+# Generic AI Framework indicators (in user-agent or custom headers)
+# These may appear in X-Client-Name or similar headers
+litellm/* | BerriAI | litellm | medium
+LiteLLM/* | BerriAI | litellm | medium
+helicone/* | Helicone | helicone | high
+portkey/* | Portkey | portkey | high

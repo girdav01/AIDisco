@@ -1,0 +1,57 @@
+title: DNS Query to Cloud-Hosted AI Service - Requires Context Validation
+id: aidisco-net-007
+status: experimental
+description: |
+  Detects DNS queries to cloud-hosted AI services (Azure OpenAI, AWS Bedrock,
+  GCP Vertex AI) that use subdomains of major cloud providers. These are
+  inherently harder to detect because they share parent domains with legitimate
+  non-AI cloud services. Alerts from this rule require additional context
+  (EDR process data, proxy logs, or TLS inspection) to confirm AI usage.
+  Use in conjunction with EDR-based AI SDK detection rules.
+references:
+  - https://github.com/girdav01/AIDisco
+author: David Girard (@girdav01)
+date: 2026/02/22
+modified: 2026/02/22
+tags:
+  - attack.exfiltration
+  - attack.t1567          # Exfiltration Over Web Service
+  - cve.shadow_ai
+  - aidisco.network
+logsource:
+  category: dns
+detection:
+  # Azure OpenAI - pattern: <resource-name>.openai.azure.com
+  selection_azure_openai:
+    query|endswith:
+      - '.openai.azure.com'
+      - 'oai.azure.com'
+      - 'cognitiveservices.azure.com'
+  # AWS Bedrock - pattern: bedrock-runtime.<region>.amazonaws.com
+  selection_aws_bedrock:
+    query|contains:
+      - 'bedrock-runtime.'
+      - 'bedrock-agent-runtime.'
+      - 'bedrock.'
+    query|endswith:
+      - '.amazonaws.com'
+  # GCP Vertex AI
+  selection_gcp_vertex:
+    query|endswith:
+      - 'aiplatform.googleapis.com'
+      - 'generativelanguage.googleapis.com'
+      - 'notebooks.googleapis.com'
+      - 'ml.googleapis.com'
+  # Amazon Q / CodeWhisperer
+  selection_aws_ai_tools:
+    query|contains:
+      - 'codewhisperer.'
+      - 'qdeveloper.'
+    query|endswith:
+      - '.amazonaws.com'
+  condition: selection_azure_openai or selection_aws_bedrock or selection_gcp_vertex or selection_aws_ai_tools
+falsepositives:
+  - Sanctioned cloud AI services used by approved teams
+  - General Azure/AWS/GCP traffic matching patterns (high FP rate without context)
+  - Cloud management and monitoring tools
+level: low

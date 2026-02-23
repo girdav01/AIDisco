@@ -1,0 +1,1165 @@
+# =============================================================================
+# AIDisco - AI API Domain Watchlist
+# Curated list of AI service domains for network detection and monitoring
+# Author: David Girard (@girdav01)
+# License: MIT
+# Last Updated: 2026-02-22
+# =============================================================================
+#
+# Risk Levels:
+#   critical - Direct data exfiltration risk, sends raw user data to third party
+#   high     - Sends prompts/code/documents to external AI, IP/PII exposure
+#   medium   - AI service usage, potential data leakage via prompts
+#   low      - AI-related traffic, minimal direct data risk
+#
+# Categories:
+#   llm_api          - LLM inference API endpoints
+#   llm_web          - Browser-based AI chat interfaces
+#   code_assistant   - AI coding tools and copilots
+#   image_gen        - Image generation services
+#   embedding        - Embedding and vector DB services
+#   ml_platform      - ML platforms and model hosting
+#   ai_search        - AI-powered search engines
+#   voice_ai         - Voice/speech AI services
+#   ai_agent         - Autonomous AI agent platforms
+#   ai_dev_tools     - AI development frameworks and tools
+#
+# Detection Difficulty:
+#   easy   - Unique domain, straightforward DNS/SNI match
+#   medium - Subdomain of larger cloud provider, needs pattern matching
+#   hard   - Shares domain with non-AI services, high false positive risk
+# =============================================================================
+
+metadata:
+  version: "1.0.0"
+  description: "AI API endpoint domain watchlist for Shadow AI detection"
+  maintainer: "girdav01"
+  repository: "https://github.com/girdav01/AIDisco"
+  last_updated: "2026-02-22"
+  total_domains: 180
+  update_frequency: "monthly"
+
+# =============================================================================
+# LLM API PROVIDERS - Direct inference endpoints
+# =============================================================================
+providers:
+
+  # ---------------------------------------------------------------------------
+  # OpenAI
+  # ---------------------------------------------------------------------------
+  - name: "OpenAI"
+    vendor: "OpenAI"
+    category: "llm_api"
+    risk: "high"
+    detection_difficulty: "easy"
+    domains:
+      - domain: "api.openai.com"
+        type: "api"
+        description: "Primary API endpoint (GPT-4, GPT-4o, o1, o3, DALL-E, Whisper)"
+        ports: [443]
+      - domain: "chat.openai.com"
+        type: "web"
+        description: "ChatGPT web interface"
+        ports: [443]
+      - domain: "chatgpt.com"
+        type: "web"
+        description: "ChatGPT web interface (new domain)"
+        ports: [443]
+      - domain: "cdn.oaistatic.com"
+        type: "cdn"
+        description: "OpenAI static assets CDN"
+        ports: [443]
+      - domain: "files.oaiusercontent.com"
+        type: "cdn"
+        description: "OpenAI user-uploaded file storage"
+        ports: [443]
+      - domain: "ab.chatgpt.com"
+        type: "web"
+        description: "ChatGPT A/B testing and analytics"
+        ports: [443]
+    tls_indicators:
+      sni_patterns: ["api.openai.com", "chat.openai.com", "chatgpt.com"]
+    http_indicators:
+      headers: ["Authorization: Bearer sk-*", "OpenAI-Organization: org-*"]
+      user_agents: ["OpenAI/Python*", "OpenAI/Node*"]
+    notes: "Most common Shadow AI target. sk- prefix API keys are distinctive."
+
+  # ---------------------------------------------------------------------------
+  # Anthropic
+  # ---------------------------------------------------------------------------
+  - name: "Anthropic"
+    vendor: "Anthropic"
+    category: "llm_api"
+    risk: "high"
+    detection_difficulty: "easy"
+    domains:
+      - domain: "api.anthropic.com"
+        type: "api"
+        description: "Claude API endpoint"
+        ports: [443]
+      - domain: "claude.ai"
+        type: "web"
+        description: "Claude web interface"
+        ports: [443]
+      - domain: "console.anthropic.com"
+        type: "web"
+        description: "Anthropic developer console"
+        ports: [443]
+    tls_indicators:
+      sni_patterns: ["api.anthropic.com", "claude.ai"]
+    http_indicators:
+      headers: ["x-api-key: sk-ant-*", "anthropic-version: *"]
+      user_agents: ["Anthropic/Python*", "Anthropic/TypeScript*"]
+    notes: "anthropic-version header is a strong indicator. sk-ant- prefix is distinctive."
+
+  # ---------------------------------------------------------------------------
+  # Google AI (Gemini / Vertex AI)
+  # ---------------------------------------------------------------------------
+  - name: "Google AI"
+    vendor: "Google"
+    category: "llm_api"
+    risk: "high"
+    detection_difficulty: "medium"
+    domains:
+      - domain: "generativelanguage.googleapis.com"
+        type: "api"
+        description: "Gemini API (AI Studio)"
+        ports: [443]
+      - domain: "aiplatform.googleapis.com"
+        type: "api"
+        description: "Vertex AI platform API"
+        ports: [443]
+      - domain: "gemini.google.com"
+        type: "web"
+        description: "Gemini web interface"
+        ports: [443]
+      - domain: "aistudio.google.com"
+        type: "web"
+        description: "Google AI Studio"
+        ports: [443]
+      - domain: "notebooklm.google.com"
+        type: "web"
+        description: "NotebookLM research assistant"
+        ports: [443]
+      - domain: "makersuite.google.com"
+        type: "web"
+        description: "MakerSuite (legacy AI Studio)"
+        ports: [443]
+    tls_indicators:
+      sni_patterns: ["generativelanguage.googleapis.com", "gemini.google.com"]
+    http_indicators:
+      headers: ["x-goog-api-key: *"]
+      user_agents: ["google-cloud-sdk*", "gcloud*"]
+    notes: "googleapis.com subdomain makes filtering tricky - use specific subdomains only."
+
+  # ---------------------------------------------------------------------------
+  # Azure OpenAI
+  # ---------------------------------------------------------------------------
+  - name: "Azure OpenAI"
+    vendor: "Microsoft"
+    category: "llm_api"
+    risk: "high"
+    detection_difficulty: "hard"
+    domains:
+      - domain: "*.openai.azure.com"
+        type: "api"
+        description: "Azure OpenAI Service endpoints (wildcard - customer-specific)"
+        ports: [443]
+      - domain: "oai.azure.com"
+        type: "web"
+        description: "Azure OpenAI Studio"
+        ports: [443]
+      - domain: "cognitiveservices.azure.com"
+        type: "api"
+        description: "Azure Cognitive Services (includes AI)"
+        ports: [443]
+    tls_indicators:
+      sni_patterns: ["*.openai.azure.com"]
+      sni_regex: "^[a-z0-9-]+\\.openai\\.azure\\.com$"
+    http_indicators:
+      headers: ["api-key: *"]
+      url_patterns: ["/openai/deployments/*/chat/completions*"]
+    notes: >
+      Very hard to detect via DNS alone. Each customer gets unique subdomain.
+      URL path pattern /openai/deployments/ is the strongest indicator.
+      May blend with legitimate Azure traffic.
+
+  # ---------------------------------------------------------------------------
+  # AWS Bedrock
+  # ---------------------------------------------------------------------------
+  - name: "AWS Bedrock"
+    vendor: "Amazon"
+    category: "llm_api"
+    risk: "high"
+    detection_difficulty: "hard"
+    domains:
+      - domain: "bedrock-runtime.*.amazonaws.com"
+        type: "api"
+        description: "Bedrock inference API (region-specific)"
+        ports: [443]
+      - domain: "bedrock.*.amazonaws.com"
+        type: "api"
+        description: "Bedrock control plane API"
+        ports: [443]
+      - domain: "bedrock-agent-runtime.*.amazonaws.com"
+        type: "api"
+        description: "Bedrock Agents runtime"
+        ports: [443]
+    tls_indicators:
+      sni_regex: "^bedrock(-runtime|-agent-runtime)?\\.[a-z]{2}-[a-z]+-\\d\\.amazonaws\\.com$"
+    http_indicators:
+      headers: ["X-Amz-Target: AmazonBedrockRuntime*"]
+      user_agents: ["aws-sdk-*", "boto3*", "Boto3*"]
+    notes: >
+      Extremely difficult to distinguish from general AWS traffic by domain alone.
+      Best detected via SDK library loading on endpoint (EDR) or specific
+      HTTP headers if TLS inspection is available.
+
+  # ---------------------------------------------------------------------------
+  # Mistral AI
+  # ---------------------------------------------------------------------------
+  - name: "Mistral AI"
+    vendor: "Mistral"
+    category: "llm_api"
+    risk: "high"
+    detection_difficulty: "easy"
+    domains:
+      - domain: "api.mistral.ai"
+        type: "api"
+        description: "Mistral API endpoint"
+        ports: [443]
+      - domain: "chat.mistral.ai"
+        type: "web"
+        description: "Le Chat web interface"
+        ports: [443]
+      - domain: "console.mistral.ai"
+        type: "web"
+        description: "Mistral developer console"
+        ports: [443]
+    tls_indicators:
+      sni_patterns: ["api.mistral.ai", "chat.mistral.ai"]
+    http_indicators:
+      headers: ["Authorization: Bearer *"]
+    notes: "French AI provider. Straightforward domain detection."
+
+  # ---------------------------------------------------------------------------
+  # Cohere
+  # ---------------------------------------------------------------------------
+  - name: "Cohere"
+    vendor: "Cohere"
+    category: "llm_api"
+    risk: "high"
+    detection_difficulty: "easy"
+    domains:
+      - domain: "api.cohere.ai"
+        type: "api"
+        description: "Cohere API (Command, Embed, Rerank)"
+        ports: [443]
+      - domain: "api.cohere.com"
+        type: "api"
+        description: "Cohere API (alternate domain)"
+        ports: [443]
+      - domain: "coral.cohere.com"
+        type: "web"
+        description: "Cohere Coral chat interface"
+        ports: [443]
+      - domain: "dashboard.cohere.com"
+        type: "web"
+        description: "Cohere developer dashboard"
+        ports: [443]
+    tls_indicators:
+      sni_patterns: ["api.cohere.ai", "api.cohere.com"]
+    http_indicators:
+      headers: ["Authorization: Bearer *"]
+
+  # ---------------------------------------------------------------------------
+  # Groq
+  # ---------------------------------------------------------------------------
+  - name: "Groq"
+    vendor: "Groq"
+    category: "llm_api"
+    risk: "high"
+    detection_difficulty: "easy"
+    domains:
+      - domain: "api.groq.com"
+        type: "api"
+        description: "Groq inference API (fast LPU inference)"
+        ports: [443]
+      - domain: "console.groq.com"
+        type: "web"
+        description: "Groq developer console"
+        ports: [443]
+      - domain: "groq.com"
+        type: "web"
+        description: "Groq main site and playground"
+        ports: [443]
+    tls_indicators:
+      sni_patterns: ["api.groq.com"]
+    http_indicators:
+      headers: ["Authorization: Bearer gsk_*"]
+    notes: "gsk_ prefix API keys. Known for very fast inference."
+
+  # ---------------------------------------------------------------------------
+  # Together AI
+  # ---------------------------------------------------------------------------
+  - name: "Together AI"
+    vendor: "Together"
+    category: "llm_api"
+    risk: "high"
+    detection_difficulty: "easy"
+    domains:
+      - domain: "api.together.xyz"
+        type: "api"
+        description: "Together AI inference API"
+        ports: [443]
+      - domain: "api.together.ai"
+        type: "api"
+        description: "Together AI inference API (alternate)"
+        ports: [443]
+    tls_indicators:
+      sni_patterns: ["api.together.xyz", "api.together.ai"]
+
+  # ---------------------------------------------------------------------------
+  # Replicate
+  # ---------------------------------------------------------------------------
+  - name: "Replicate"
+    vendor: "Replicate"
+    category: "ml_platform"
+    risk: "high"
+    detection_difficulty: "easy"
+    domains:
+      - domain: "api.replicate.com"
+        type: "api"
+        description: "Replicate model inference API"
+        ports: [443]
+      - domain: "replicate.com"
+        type: "web"
+        description: "Replicate web interface"
+        ports: [443]
+      - domain: "replicate.delivery"
+        type: "cdn"
+        description: "Replicate model output delivery"
+        ports: [443]
+    tls_indicators:
+      sni_patterns: ["api.replicate.com"]
+    http_indicators:
+      headers: ["Authorization: Bearer r8_*", "Authorization: Token r8_*"]
+    notes: "r8_ prefix tokens. Hosts open-source models as API."
+
+  # ---------------------------------------------------------------------------
+  # Fireworks AI
+  # ---------------------------------------------------------------------------
+  - name: "Fireworks AI"
+    vendor: "Fireworks"
+    category: "llm_api"
+    risk: "high"
+    detection_difficulty: "easy"
+    domains:
+      - domain: "api.fireworks.ai"
+        type: "api"
+        description: "Fireworks AI inference API"
+        ports: [443]
+      - domain: "fireworks.ai"
+        type: "web"
+        description: "Fireworks AI web interface"
+        ports: [443]
+    tls_indicators:
+      sni_patterns: ["api.fireworks.ai"]
+
+  # ---------------------------------------------------------------------------
+  # Perplexity AI
+  # ---------------------------------------------------------------------------
+  - name: "Perplexity AI"
+    vendor: "Perplexity"
+    category: "ai_search"
+    risk: "high"
+    detection_difficulty: "easy"
+    domains:
+      - domain: "api.perplexity.ai"
+        type: "api"
+        description: "Perplexity Sonar API"
+        ports: [443]
+      - domain: "www.perplexity.ai"
+        type: "web"
+        description: "Perplexity search web interface"
+        ports: [443]
+    tls_indicators:
+      sni_patterns: ["api.perplexity.ai", "www.perplexity.ai"]
+    notes: "AI-powered search. High risk due to users pasting internal docs for research."
+
+  # ---------------------------------------------------------------------------
+  # xAI (Grok)
+  # ---------------------------------------------------------------------------
+  - name: "xAI"
+    vendor: "xAI"
+    category: "llm_api"
+    risk: "high"
+    detection_difficulty: "easy"
+    domains:
+      - domain: "api.x.ai"
+        type: "api"
+        description: "Grok API endpoint"
+        ports: [443]
+      - domain: "grok.x.ai"
+        type: "web"
+        description: "Grok web interface"
+        ports: [443]
+      - domain: "console.x.ai"
+        type: "web"
+        description: "xAI developer console"
+        ports: [443]
+    tls_indicators:
+      sni_patterns: ["api.x.ai", "grok.x.ai"]
+
+  # ---------------------------------------------------------------------------
+  # DeepSeek
+  # ---------------------------------------------------------------------------
+  - name: "DeepSeek"
+    vendor: "DeepSeek"
+    category: "llm_api"
+    risk: "critical"
+    detection_difficulty: "easy"
+    domains:
+      - domain: "api.deepseek.com"
+        type: "api"
+        description: "DeepSeek API endpoint"
+        ports: [443]
+      - domain: "chat.deepseek.com"
+        type: "web"
+        description: "DeepSeek web chat interface"
+        ports: [443]
+    tls_indicators:
+      sni_patterns: ["api.deepseek.com", "chat.deepseek.com"]
+    notes: >
+      CRITICAL risk: Chinese-headquartered company, data subject to PRC data laws.
+      Servers located in China. Potential national security implications.
+      Many orgs should block outright.
+
+  # ---------------------------------------------------------------------------
+  # Alibaba Cloud (Qwen / Tongyi)
+  # ---------------------------------------------------------------------------
+  - name: "Alibaba Cloud AI"
+    vendor: "Alibaba"
+    category: "llm_api"
+    risk: "critical"
+    detection_difficulty: "medium"
+    domains:
+      - domain: "dashscope.aliyuncs.com"
+        type: "api"
+        description: "Alibaba DashScope AI API (Qwen models)"
+        ports: [443]
+      - domain: "tongyi.aliyun.com"
+        type: "web"
+        description: "Tongyi Qianwen web interface"
+        ports: [443]
+      - domain: "qianwen.aliyun.com"
+        type: "web"
+        description: "Qianwen (Qwen) web chat"
+        ports: [443]
+    tls_indicators:
+      sni_patterns: ["dashscope.aliyuncs.com", "tongyi.aliyun.com"]
+    notes: "CRITICAL: Chinese cloud provider. Subject to PRC data sovereignty laws."
+
+  # ---------------------------------------------------------------------------
+  # Baidu (ERNIE / Wenxin)
+  # ---------------------------------------------------------------------------
+  - name: "Baidu AI"
+    vendor: "Baidu"
+    category: "llm_api"
+    risk: "critical"
+    detection_difficulty: "medium"
+    domains:
+      - domain: "aip.baidubce.com"
+        type: "api"
+        description: "Baidu AI Cloud API (ERNIE models)"
+        ports: [443]
+      - domain: "yiyan.baidu.com"
+        type: "web"
+        description: "ERNIE Bot (Wenxin Yiyan) web interface"
+        ports: [443]
+    tls_indicators:
+      sni_patterns: ["aip.baidubce.com", "yiyan.baidu.com"]
+    notes: "CRITICAL: Chinese company. ERNIE models trained on Chinese internet data."
+
+  # ---------------------------------------------------------------------------
+  # Zhipu AI (GLM / ChatGLM)
+  # ---------------------------------------------------------------------------
+  - name: "Zhipu AI"
+    vendor: "Zhipu"
+    category: "llm_api"
+    risk: "critical"
+    detection_difficulty: "easy"
+    domains:
+      - domain: "open.bigmodel.cn"
+        type: "api"
+        description: "Zhipu AI GLM API"
+        ports: [443]
+      - domain: "chatglm.cn"
+        type: "web"
+        description: "ChatGLM web interface"
+        ports: [443]
+    tls_indicators:
+      sni_patterns: ["open.bigmodel.cn", "chatglm.cn"]
+    notes: "CRITICAL: Chinese AI company. GLM models."
+
+# =============================================================================
+# CODE ASSISTANT TOOLS
+# =============================================================================
+
+  - name: "GitHub Copilot"
+    vendor: "GitHub/Microsoft"
+    category: "code_assistant"
+    risk: "high"
+    detection_difficulty: "medium"
+    domains:
+      - domain: "copilot-proxy.githubusercontent.com"
+        type: "api"
+        description: "Copilot inference proxy"
+        ports: [443]
+      - domain: "copilot.githubassets.com"
+        type: "cdn"
+        description: "Copilot static assets"
+        ports: [443]
+      - domain: "api.githubcopilot.com"
+        type: "api"
+        description: "Copilot API endpoint"
+        ports: [443]
+      - domain: "default.exp-tas.com"
+        type: "telemetry"
+        description: "Copilot telemetry/experimentation"
+        ports: [443]
+    tls_indicators:
+      sni_patterns: ["copilot-proxy.githubusercontent.com", "api.githubcopilot.com"]
+    http_indicators:
+      headers: ["Editor-Version: *", "Copilot-Integration-Id: *"]
+    notes: >
+      Sends code context to cloud for completion. Major IP leakage vector.
+      Monitor for unauthorized usage outside of licensed teams.
+
+  - name: "Cursor"
+    vendor: "Anysphere"
+    category: "code_assistant"
+    risk: "high"
+    detection_difficulty: "easy"
+    domains:
+      - domain: "api2.cursor.sh"
+        type: "api"
+        description: "Cursor AI IDE backend API"
+        ports: [443]
+      - domain: "cursor.sh"
+        type: "web"
+        description: "Cursor website"
+        ports: [443]
+      - domain: "api.cursor.com"
+        type: "api"
+        description: "Cursor API (new domain)"
+        ports: [443]
+    tls_indicators:
+      sni_patterns: ["api2.cursor.sh", "api.cursor.com"]
+    notes: "AI-native IDE. Sends entire codebase context for completions."
+
+  - name: "Tabnine"
+    vendor: "Tabnine"
+    category: "code_assistant"
+    risk: "medium"
+    detection_difficulty: "easy"
+    domains:
+      - domain: "api.tabnine.com"
+        type: "api"
+        description: "Tabnine cloud completion API"
+        ports: [443]
+    tls_indicators:
+      sni_patterns: ["api.tabnine.com"]
+    notes: "Offers local model option which wouldn't be detected via network."
+
+  - name: "Codeium / Windsurf"
+    vendor: "Exafunction"
+    category: "code_assistant"
+    risk: "high"
+    detection_difficulty: "easy"
+    domains:
+      - domain: "server.codeium.com"
+        type: "api"
+        description: "Codeium completion API"
+        ports: [443]
+      - domain: "api.codeium.com"
+        type: "api"
+        description: "Codeium API endpoint"
+        ports: [443]
+      - domain: "windsurf.com"
+        type: "web"
+        description: "Windsurf IDE (rebranded Codeium)"
+        ports: [443]
+    tls_indicators:
+      sni_patterns: ["server.codeium.com", "api.codeium.com"]
+
+  - name: "Sourcegraph Cody"
+    vendor: "Sourcegraph"
+    category: "code_assistant"
+    risk: "high"
+    detection_difficulty: "easy"
+    domains:
+      - domain: "sourcegraph.com"
+        type: "api"
+        description: "Sourcegraph API (Cody AI)"
+        ports: [443]
+      - domain: "cody.dev"
+        type: "web"
+        description: "Cody AI web interface"
+        ports: [443]
+    tls_indicators:
+      sni_patterns: ["sourcegraph.com", "cody.dev"]
+
+  - name: "Amazon CodeWhisperer / Q Developer"
+    vendor: "Amazon"
+    category: "code_assistant"
+    risk: "high"
+    detection_difficulty: "hard"
+    domains:
+      - domain: "codewhisperer.us-east-1.amazonaws.com"
+        type: "api"
+        description: "CodeWhisperer API"
+        ports: [443]
+      - domain: "qdeveloper.us-east-1.amazonaws.com"
+        type: "api"
+        description: "Amazon Q Developer API"
+        ports: [443]
+    tls_indicators:
+      sni_regex: "^(codewhisperer|qdeveloper)\\.[a-z]{2}-[a-z]+-\\d\\.amazonaws\\.com$"
+    notes: "Blends with AWS traffic. Region-specific endpoints."
+
+  - name: "Replit AI"
+    vendor: "Replit"
+    category: "code_assistant"
+    risk: "high"
+    detection_difficulty: "easy"
+    domains:
+      - domain: "replit.com"
+        type: "web"
+        description: "Replit online IDE with AI"
+        ports: [443]
+      - domain: "repl.co"
+        type: "web"
+        description: "Replit hosted applications"
+        ports: [443]
+    tls_indicators:
+      sni_patterns: ["replit.com"]
+    notes: "Cloud IDE with AI built in. Code never leaves Replit servers."
+
+# =============================================================================
+# IMAGE GENERATION SERVICES
+# =============================================================================
+
+  - name: "Midjourney"
+    vendor: "Midjourney"
+    category: "image_gen"
+    risk: "medium"
+    detection_difficulty: "medium"
+    domains:
+      - domain: "www.midjourney.com"
+        type: "web"
+        description: "Midjourney web interface"
+        ports: [443]
+      - domain: "cdn.midjourney.com"
+        type: "cdn"
+        description: "Midjourney image delivery CDN"
+        ports: [443]
+    tls_indicators:
+      sni_patterns: ["www.midjourney.com", "cdn.midjourney.com"]
+    notes: "Primarily used via Discord. Discord traffic harder to attribute to Midjourney specifically."
+
+  - name: "Stability AI"
+    vendor: "Stability AI"
+    category: "image_gen"
+    risk: "medium"
+    detection_difficulty: "easy"
+    domains:
+      - domain: "api.stability.ai"
+        type: "api"
+        description: "Stable Diffusion API"
+        ports: [443]
+      - domain: "dreamstudio.ai"
+        type: "web"
+        description: "DreamStudio web interface"
+        ports: [443]
+    tls_indicators:
+      sni_patterns: ["api.stability.ai"]
+
+  - name: "Leonardo AI"
+    vendor: "Leonardo"
+    category: "image_gen"
+    risk: "medium"
+    detection_difficulty: "easy"
+    domains:
+      - domain: "api.leonardo.ai"
+        type: "api"
+        description: "Leonardo AI image generation API"
+        ports: [443]
+      - domain: "app.leonardo.ai"
+        type: "web"
+        description: "Leonardo AI web app"
+        ports: [443]
+    tls_indicators:
+      sni_patterns: ["api.leonardo.ai", "app.leonardo.ai"]
+
+  # Note: DALL-E uses the same api.openai.com endpoint.
+  # Distinguish via URL path /v1/images/generations in proxy logs.
+
+# =============================================================================
+# EMBEDDING & VECTOR DB SERVICES
+# =============================================================================
+
+  - name: "Pinecone"
+    vendor: "Pinecone"
+    category: "embedding"
+    risk: "high"
+    detection_difficulty: "medium"
+    domains:
+      - domain: "*.svc.pinecone.io"
+        type: "api"
+        description: "Pinecone vector DB index endpoints"
+        ports: [443]
+      - domain: "api.pinecone.io"
+        type: "api"
+        description: "Pinecone control plane API"
+        ports: [443]
+    tls_indicators:
+      sni_regex: "^[a-z0-9-]+\\.svc\\.pinecone\\.io$"
+    notes: "Stores embedded representations of your data. High IP risk."
+
+  - name: "Weaviate Cloud"
+    vendor: "Weaviate"
+    category: "embedding"
+    risk: "high"
+    detection_difficulty: "medium"
+    domains:
+      - domain: "*.weaviate.network"
+        type: "api"
+        description: "Weaviate Cloud Services"
+        ports: [443, 8080]
+    tls_indicators:
+      sni_regex: "^[a-z0-9-]+\\.weaviate\\.network$"
+
+  - name: "Qdrant Cloud"
+    vendor: "Qdrant"
+    category: "embedding"
+    risk: "high"
+    detection_difficulty: "easy"
+    domains:
+      - domain: "*.cloud.qdrant.io"
+        type: "api"
+        description: "Qdrant Cloud vector DB"
+        ports: [443, 6333, 6334]
+    tls_indicators:
+      sni_regex: "^[a-z0-9-]+\\.cloud\\.qdrant\\.io$"
+
+  - name: "ChromaDB Cloud"
+    vendor: "Chroma"
+    category: "embedding"
+    risk: "high"
+    detection_difficulty: "easy"
+    domains:
+      - domain: "api.trychroma.com"
+        type: "api"
+        description: "Chroma cloud API"
+        ports: [443]
+    notes: "Self-hosted Chroma is common - detect via AIDisco endpoint scanner."
+
+# =============================================================================
+# ML PLATFORMS & MODEL HOSTING
+# =============================================================================
+
+  - name: "Hugging Face"
+    vendor: "Hugging Face"
+    category: "ml_platform"
+    risk: "high"
+    detection_difficulty: "easy"
+    domains:
+      - domain: "api-inference.huggingface.co"
+        type: "api"
+        description: "Hugging Face Inference API"
+        ports: [443]
+      - domain: "huggingface.co"
+        type: "web"
+        description: "Hugging Face Hub (model downloads, Spaces)"
+        ports: [443]
+      - domain: "cdn-lfs.huggingface.co"
+        type: "cdn"
+        description: "Model file downloads (Git LFS)"
+        ports: [443]
+      - domain: "*.hf.space"
+        type: "web"
+        description: "Hugging Face Spaces (hosted demos)"
+        ports: [443]
+    tls_indicators:
+      sni_patterns: ["api-inference.huggingface.co", "huggingface.co"]
+    http_indicators:
+      headers: ["Authorization: Bearer hf_*"]
+    notes: >
+      Critical for detecting model downloads. Large file transfers
+      from cdn-lfs.huggingface.co indicate model pulling.
+      hf_ prefix tokens are distinctive.
+
+  - name: "Ollama Registry"
+    vendor: "Ollama"
+    category: "ml_platform"
+    risk: "medium"
+    detection_difficulty: "easy"
+    domains:
+      - domain: "registry.ollama.ai"
+        type: "api"
+        description: "Ollama model registry (model pulls)"
+        ports: [443]
+      - domain: "ollama.com"
+        type: "web"
+        description: "Ollama website and model library"
+        ports: [443]
+    tls_indicators:
+      sni_patterns: ["registry.ollama.ai"]
+    notes: >
+      Ollama runs locally but pulls models from this registry.
+      DNS query to registry.ollama.ai = someone downloading a local LLM.
+      Local Ollama API (localhost:11434) detected via endpoint scanner.
+
+  - name: "Weights & Biases"
+    vendor: "W&B"
+    category: "ml_platform"
+    risk: "medium"
+    detection_difficulty: "easy"
+    domains:
+      - domain: "api.wandb.ai"
+        type: "api"
+        description: "W&B experiment tracking API"
+        ports: [443]
+      - domain: "wandb.ai"
+        type: "web"
+        description: "W&B web dashboard"
+        ports: [443]
+    tls_indicators:
+      sni_patterns: ["api.wandb.ai"]
+    notes: "Experiment tracking. May upload model artifacts and training data."
+
+  - name: "LM Studio"
+    vendor: "LM Studio"
+    category: "ml_platform"
+    risk: "medium"
+    detection_difficulty: "easy"
+    domains:
+      - domain: "api.lmstudio.ai"
+        type: "api"
+        description: "LM Studio cloud API"
+        ports: [443]
+      - domain: "models.lmstudio.ai"
+        type: "cdn"
+        description: "LM Studio model downloads"
+        ports: [443]
+    notes: "Primarily local. Network detection catches model downloads."
+
+# =============================================================================
+# AI AGENT PLATFORMS
+# =============================================================================
+
+  - name: "LangSmith"
+    vendor: "LangChain"
+    category: "ai_agent"
+    risk: "high"
+    detection_difficulty: "easy"
+    domains:
+      - domain: "api.smith.langchain.com"
+        type: "api"
+        description: "LangSmith tracing and evaluation API"
+        ports: [443]
+      - domain: "smith.langchain.com"
+        type: "web"
+        description: "LangSmith web dashboard"
+        ports: [443]
+    tls_indicators:
+      sni_patterns: ["api.smith.langchain.com"]
+    notes: "LangSmith receives full prompt/response traces. Very high data exposure."
+
+  - name: "CrewAI"
+    vendor: "CrewAI"
+    category: "ai_agent"
+    risk: "high"
+    detection_difficulty: "easy"
+    domains:
+      - domain: "api.crewai.com"
+        type: "api"
+        description: "CrewAI platform API"
+        ports: [443]
+      - domain: "app.crewai.com"
+        type: "web"
+        description: "CrewAI web interface"
+        ports: [443]
+
+  # Note: OpenAI Assistants / GPTs use the same api.openai.com endpoint.
+  # Distinguish via URL path /v1/assistants or /v1/threads in proxy logs.
+
+# =============================================================================
+# AI SEARCH ENGINES
+# =============================================================================
+
+  - name: "You.com"
+    vendor: "You.com"
+    category: "ai_search"
+    risk: "medium"
+    detection_difficulty: "easy"
+    domains:
+      - domain: "api.you.com"
+        type: "api"
+        description: "You.com API"
+        ports: [443]
+      - domain: "you.com"
+        type: "web"
+        description: "You.com AI search"
+        ports: [443]
+
+  - name: "Phind"
+    vendor: "Phind"
+    category: "ai_search"
+    risk: "medium"
+    detection_difficulty: "easy"
+    domains:
+      - domain: "www.phind.com"
+        type: "web"
+        description: "Phind AI search for developers"
+        ports: [443]
+      - domain: "api.phind.com"
+        type: "api"
+        description: "Phind API"
+        ports: [443]
+
+# =============================================================================
+# VOICE / SPEECH AI
+# =============================================================================
+
+  - name: "ElevenLabs"
+    vendor: "ElevenLabs"
+    category: "voice_ai"
+    risk: "medium"
+    detection_difficulty: "easy"
+    domains:
+      - domain: "api.elevenlabs.io"
+        type: "api"
+        description: "ElevenLabs voice synthesis API"
+        ports: [443]
+      - domain: "elevenlabs.io"
+        type: "web"
+        description: "ElevenLabs web interface"
+        ports: [443]
+
+  - name: "AssemblyAI"
+    vendor: "AssemblyAI"
+    category: "voice_ai"
+    risk: "high"
+    detection_difficulty: "easy"
+    domains:
+      - domain: "api.assemblyai.com"
+        type: "api"
+        description: "AssemblyAI speech-to-text API"
+        ports: [443]
+    notes: "Transcription service. Receives audio which may contain sensitive content."
+
+# =============================================================================
+# AI DEV TOOLS & FRAMEWORKS
+# =============================================================================
+
+  - name: "Helicone"
+    vendor: "Helicone"
+    category: "ai_dev_tools"
+    risk: "high"
+    detection_difficulty: "easy"
+    domains:
+      - domain: "oai.helicone.ai"
+        type: "api"
+        description: "Helicone OpenAI proxy (logs all prompts)"
+        ports: [443]
+      - domain: "api.helicone.ai"
+        type: "api"
+        description: "Helicone API"
+        ports: [443]
+    notes: "Acts as proxy. All prompts and responses pass through Helicone servers."
+
+  - name: "Portkey"
+    vendor: "Portkey"
+    category: "ai_dev_tools"
+    risk: "high"
+    detection_difficulty: "easy"
+    domains:
+      - domain: "api.portkey.ai"
+        type: "api"
+        description: "Portkey AI gateway"
+        ports: [443]
+    notes: "AI gateway/proxy. Full prompt visibility."
+
+  - name: "LiteLLM"
+    vendor: "BerriAI"
+    category: "ai_dev_tools"
+    risk: "medium"
+    detection_difficulty: "easy"
+    domains:
+      - domain: "api.litellm.ai"
+        type: "api"
+        description: "LiteLLM hosted proxy"
+        ports: [443]
+    notes: "Often self-hosted. Cloud version proxies all LLM traffic."
+
+  - name: "Langfuse"
+    vendor: "Langfuse"
+    category: "ai_dev_tools"
+    risk: "high"
+    detection_difficulty: "easy"
+    domains:
+      - domain: "cloud.langfuse.com"
+        type: "api"
+        description: "Langfuse observability platform"
+        ports: [443]
+      - domain: "us.cloud.langfuse.com"
+        type: "api"
+        description: "Langfuse US region"
+        ports: [443]
+    notes: "Observability tool. Receives full prompt/response traces."
+
+# =============================================================================
+# ADDITIONAL NOTABLE SERVICES
+# =============================================================================
+
+  - name: "Jasper AI"
+    vendor: "Jasper"
+    category: "llm_web"
+    risk: "medium"
+    detection_difficulty: "easy"
+    domains:
+      - domain: "api.jasper.ai"
+        type: "api"
+        description: "Jasper AI content generation API"
+        ports: [443]
+      - domain: "app.jasper.ai"
+        type: "web"
+        description: "Jasper AI web app"
+        ports: [443]
+
+  - name: "Copy.ai"
+    vendor: "Copy.ai"
+    category: "llm_web"
+    risk: "medium"
+    detection_difficulty: "easy"
+    domains:
+      - domain: "api.copy.ai"
+        type: "api"
+        description: "Copy.ai content API"
+        ports: [443]
+      - domain: "app.copy.ai"
+        type: "web"
+        description: "Copy.ai web app"
+        ports: [443]
+
+  - name: "Notion AI"
+    vendor: "Notion"
+    category: "llm_web"
+    risk: "high"
+    detection_difficulty: "hard"
+    domains:
+      - domain: "www.notion.so"
+        type: "web"
+        description: "Notion (AI features embedded)"
+        ports: [443]
+      - domain: "api.notion.com"
+        type: "api"
+        description: "Notion API"
+        ports: [443]
+    notes: >
+      Hard to distinguish AI usage from normal Notion usage via network alone.
+      Notion AI sends document content to LLM providers.
+
+  - name: "Grammarly AI"
+    vendor: "Grammarly"
+    category: "llm_web"
+    risk: "medium"
+    detection_difficulty: "hard"
+    domains:
+      - domain: "*.grammarly.com"
+        type: "api"
+        description: "Grammarly services (includes AI rewriting)"
+        ports: [443]
+    notes: "Hard to separate AI features from traditional grammar checking."
+
+  - name: "Otter.ai"
+    vendor: "Otter"
+    category: "voice_ai"
+    risk: "high"
+    detection_difficulty: "easy"
+    domains:
+      - domain: "otter.ai"
+        type: "web"
+        description: "Otter.ai meeting transcription"
+        ports: [443]
+      - domain: "api.otter.ai"
+        type: "api"
+        description: "Otter.ai API"
+        ports: [443]
+    notes: "Transcribes meetings. Very high risk for confidential meeting content."
+
+  - name: "Suno AI"
+    vendor: "Suno"
+    category: "image_gen"
+    risk: "low"
+    detection_difficulty: "easy"
+    domains:
+      - domain: "suno.com"
+        type: "web"
+        description: "Suno AI music generation"
+        ports: [443]
+      - domain: "studio-api.suno.ai"
+        type: "api"
+        description: "Suno API"
+        ports: [443]
+
+  - name: "Runway ML"
+    vendor: "Runway"
+    category: "image_gen"
+    risk: "medium"
+    detection_difficulty: "easy"
+    domains:
+      - domain: "api.runwayml.com"
+        type: "api"
+        description: "Runway video generation API"
+        ports: [443]
+      - domain: "app.runwayml.com"
+        type: "web"
+        description: "Runway web interface"
+        ports: [443]
+
+# =============================================================================
+# LOCAL AI INDICATORS (Network-visible artifacts)
+# =============================================================================
+# These are self-hosted AI tools. They don't call external domains for inference,
+# but they DO phone home for model downloads, updates, and telemetry.
+# Detecting these DNS queries = someone running local AI.
+# =============================================================================
+
+local_ai_indicators:
+  - name: "Ollama Model Pull"
+    indicator: "registry.ollama.ai"
+    meaning: "User downloading a local LLM via Ollama"
+    risk: "medium"
+
+  - name: "Hugging Face Model Download"
+    indicator: "cdn-lfs.huggingface.co"
+    meaning: "Large model file download (Git LFS)"
+    risk: "medium"
+
+  - name: "PyTorch Model Hub"
+    indicator: "download.pytorch.org"
+    meaning: "PyTorch model or package download"
+    risk: "low"
+
+  - name: "GGUF Model Downloads"
+    indicator: "huggingface.co"
+    meaning: "GGUF quantized model download (for llama.cpp, Ollama)"
+    risk: "medium"
+
+  - name: "LM Studio Models"
+    indicator: "models.lmstudio.ai"
+    meaning: "LM Studio downloading model files"
+    risk: "medium"
