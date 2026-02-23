@@ -53,6 +53,8 @@ import argparse
 from datetime import datetime
 import traceback
 
+from network_detection import NetworkDetector
+
 # Configure logging for security audit trail
 logging.basicConfig(
     level=logging.INFO,
@@ -1755,6 +1757,21 @@ class LLMSoftwareDetector:
             print("Scanning for AI software in WSL2 distributions...")
             wsl_results = self.detect_wsl2_ai()
             all_results.extend(wsl_results)
+
+        # Network connection detection (active connections, listening ports, DNS cache)
+        print("Scanning for active AI network connections...")
+        try:
+            net_detector = NetworkDetector(verbose=self.verbose)
+            for nr in net_detector.detect_all():
+                all_results.append(DetectionResult(
+                    software=nr.software,
+                    detection_type=nr.detection_type,
+                    value=nr.value,
+                    path=nr.path,
+                    confidence=nr.confidence,
+                ))
+        except Exception as e:
+            logger.warning(f"Network detection failed: {e}")
 
         # De-duplicate results from overlapping detection methods
         print("De-duplicating detection results...")
